@@ -1,0 +1,34 @@
+﻿@*Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@{ 
+    string contactUs = await resourcesService.GetString(ViewBag.BestForCulture, "contact_us");
+    string suggestions = await resourcesService.GetString(ViewBag.BestForCulture, "suggestions_upper");
+
+}
+<div style="text-align:right">
+        
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Contact" y-action="Index">
+        @suggestions
+    </yakor>&nbsp;&nbsp;
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Contact" y-action="Index">
+        @contactUs
+    </yakor>
+    <!--<a href="/home/index">English</a>&nbsp;&nbsp;
+    <a href="/ru-RU/home/index">Русский</a>&nbsp;&nbsp;
+    <a href="/fi-FI/home/index">Finnish</a>&nbsp;&nbsp;
+    <a href="/admin/index">Admin</a>&nbsp;&nbsp;
+    <a href="/tests/index">Tests</a>-->
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-83704789-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+

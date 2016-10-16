@@ -1,0 +1,9 @@
+﻿User-agent: *
+Disallow: /sdch
+Disallow: /en-US/AnswerAction/AddDescription*
+
+User-agent: Twitterbot
+Disallow: /images
+
+User-agent: facebookexternalhit
+Disallow: /images

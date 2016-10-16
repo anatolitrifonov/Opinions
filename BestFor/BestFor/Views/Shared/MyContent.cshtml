@@ -1,0 +1,135 @@
+﻿@model BestFor.Dto.AnswerDetailsDto
+@using BestFor.Services
+@* Inject the service that generates anti forgery keys *@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@functions
+{
+    // Generate the token that we will use in requests sending data to server in headers.
+    public string GetAntiXsrfToken()
+    {
+        var tokens = Xsrf.GetTokens(Context);
+        return tokens.CookieToken + ":" + tokens.RequestToken;
+    }
+}
+@{
+    // Read localized strings
+    var strings = await resourcesService.GetCommonStrings(ViewBag.BestForCulture);
+    string flagString = strings.FlagUpper;
+    string voteString = strings.VoteUpper;
+
+    string addYourDescription = await resourcesService.GetString(ViewBag.BestForCulture, "add_your_description");
+    string answerDetails = await resourcesService.GetString(ViewBag.BestForCulture, "answer_details");
+    string noDescriptionLine = await resourcesService.GetString(ViewBag.BestForCulture, "no_description_or_reasoning");
+    string votedForThis = await resourcesService.GetString(ViewBag.BestForCulture, "voted_for_this_opinion");
+    string editString = await resourcesService.GetString(ViewBag.BestForCulture, "edit_capital");
+    string searchContribute = await resourcesService.GetString(this.ViewBag.BestForCulture, "contribute_capital");
+
+    // Set it as a title
+    ViewData["Title"] = Model.ThisAnswerText;
+}
+@section MetaKeyword {
+    <meta name="keywords" content="@Model.ThisAnswerText" />
+    <meta property="og:description" content="@Model.ThisAnswerText" />
+}
+@* Show the answer itself *@
+<h1>@Model.ThisAnswerText</h1>
+@* Show additional message if passed *@
+@if (Model.Reason != null)
+{
+    <div class="best-success">@Model.Reason</div>
+}
+<br />
+@* Who added it originally *@
+Added by @Model.UserDisplayName.
+@* How many times this opinion was repeated *@
+Repeated @Model.Answer.Count times.
+@* How many people voted for this *@
+@Model.NumberVotes @votedForThis<br />
+
+@* Show descriptions or no description *@
+@if (Model.Descriptions == null || Model.Descriptions.Count() == 0)
+{
+    @noDescriptionLine<br />
+}
+else
+{
+    foreach (var item in Model.Descriptions)
+    {
+        @Html.DisplayFor(x => item, "DisplayAnswerDescription")
+    }
+}
+<br />
+@* Links to do something with this answer *@
+<div class="row">
+    <div class="col-sm-6">
+        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="AddDescription"
+               y-querystring="@new { answerId = Model.Answer.Id }"
+               y-class="btn btn-default btn-lg"><span class="glyphicon glyphicon-book" aria-hidden="true"
+                                                       />&nbsp;<span class="special_glyph_anchor">@addYourDescription</span></yakor>
+        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Vote" y-action="VoteAnswer"
+               y-querystring="@new { answerId = Model.Answer.Id }"
+               y-class="btn btn-default btn-lg"><span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                                       />&nbsp;<span class="special_glyph_anchor">@voteString</span></yakor>
+    </div>
+    <div class="col-sm-3" style="padding-top:10px">
+        @* Show share of facebook *@
+        @if (Model.EnableFacebookSharing)
+        {
+            await Html.RenderPartialAsync("ShareOnFacebook", Model);
+        }
+    </div>
+    <div class="col-sm-3">
+        @* Show edit only the answer owner *@
+        @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Answer.UserId)
+        {
+            <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="Edit"
+                   y-querystring="@new { id = Model.Answer.Id }"
+                   y-class="btn btn-default"><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"
+                                                          />&nbsp;<span class="special_glyph_anchor">@editString</span></yakor>
+        }
+        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Flag" y-action="FlagAnswer"
+               y-querystring="@new { answerId = Model.Answer.Id }"
+               y-class="btn btn-default"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"
+                                                       />&nbsp;<span class="special_glyph_anchor">@flagString</span></yakor>
+        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+               y-class="btn btn-default">@searchContribute</yakor>
+    </div>
+</div>
+<br />
+@Html.React("AffiliateProductDetails",
+    new
+    {
+        productsUrl = "/api/product",
+        productLeftWord = Model.Answer.LeftWord,
+        productRightWord = Model.Answer.RightWord,
+        productPhrase = Model.Answer.Phrase,
+        productCategory = Model.Answer.Category,
+        antiForgeryHeaderName = BestFor.Controllers.BaseApiController.ANTI_FORGERY_HEADER_NAME,
+        antiForgeryToken = GetAntiXsrfToken(),
+        resourceStrings = await resourcesService.GetStringsAsJson(this.ViewBag.BestForCulture,
+            new string[]
+            {
+                "title_upper",
+                "link_upper",
+                "price_upper",
+                "not_able_to_find_product",
+                "found_useful_product"
+            }),
+        debug = Model.DebugReactControls
+    })
+@* Load react client scripts *@
+@section TopScripts {
+    @{ await Html.RenderPartialAsync("_ReactJsScriptsPartial"); }
+}
+@* Load this page specific react sripts *@
+<script src="@Url.Content("~/Scripts/AffiliateProductDetails.jsx")"></script>
+@Html.ReactInitJavaScript()
+
+
+
+

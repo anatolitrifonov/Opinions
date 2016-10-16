@@ -1,0 +1,38 @@
+﻿@model BestFor.Models.AdminAnswerViewModel
+@using BestFor.Services
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@Html.Partial("Menu")
+Showing answer info
+@{ 
+    var strings = await resourcesService.GetCommonStrings(this.ViewBag.BestForCulture);
+    string linkToAnswer = LinkingHelper.ConvertAnswerToUrlWithCulture(this.ViewBag.BestForCulture, strings, Model.Answer);
+}
+<dl class="dl-horizontal">
+    <dt>Id</dt><dd>@Model.Answer.Id</dd>
+    <dt>LeftWord</dt><dd>@Model.Answer.LeftWord</dd>
+    <dt>RightWord</dt><dd>@Model.Answer.RightWord</dd>
+    <dt>Phrase</dt><dd>@Model.Answer.Phrase</dd>
+    <dt>Count</dt><dd>@Model.Answer.Count</dd>
+    <dt>UserId</dt><dd>@Html.ActionLink(Model.Answer.UserId, "ShowUser", new { id = Model.Answer.UserId })</dd>
+    <dt>View on the site</dt>
+    <dd>@Html.ActionLink(Model.Answer.Id.ToString(), "ShowAnswer", "AnswerAction", new { answerId = Model.Answer.Id }, new { target = "_blank"})</dd>
+    <dt>View on the site as content</dt><dd><a target = "_blank" href="@linkToAnswer">View as content link</a></dd>
+</dl>
+<table class="table">
+    <tr><th colspan="4">Descriptions (@(Model.AnswerDescriptions == null ? 0 : Model.AnswerDescriptions.Count()))</th></tr>
+    <tr><th>Description</th><th>Date Added</th><th>User</th></tr>
+    @if (Model.AnswerDescriptions != null)
+    {
+        foreach (var description in Model.AnswerDescriptions)
+        {
+            <tr>
+                <td>@Html.DisplayFor(x => description.Description)</td>
+                <td>@Html.DisplayFor(x => description.DateAdded)</td>
+                <td>@Html.ActionLink(description.UserId, "ShowUser", new { id = description.UserId })</td>
+            </tr>
+        }
+    }
+</table>
+
+<a asp-controller="Admin" asp-action="HideAnswer" asp-route-id="@Model.Answer.Id">Hide</a>

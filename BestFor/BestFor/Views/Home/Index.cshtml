@@ -1,0 +1,94 @@
+﻿@model BestFor.Dto.HomePageDto
+@* Inject the service that generates anti forgery keys *@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@functions
+{
+    // Generate the token that we will use in requests sending data to server in headers.
+    public string GetAntiXsrfToken()
+    {
+        var tokens = Xsrf.GetTokens(Context);
+        return tokens.CookieToken + ":" + tokens.RequestToken;
+    }
+}
+@{
+    @* Culture is placed into view bag by action filter *@
+    @* This is the "normal" way of getting a localized string value *@
+    // Set the title
+    ViewData["Title"] = await resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
+    var searchFor = await resourcesService.GetString(ViewBag.BestForCulture, "search_for_opinion");
+    var searchContribute = await resourcesService.GetString(ViewBag.BestForCulture, "contribute_capital");
+    var searchButton = await resourcesService.GetString(ViewBag.BestForCulture, "search_capital");
+}
+@section MetaKeyword {
+    <meta name="keywords" content="best opinions on thousands of questions and best products" />
+    <meta property="og:description" content="best opinions on thousands of questions and best products" />
+}
+@section TopCenter {
+    <div style="display: inline-block; padding-top:9px">
+        <span class="best-top-center-general-text">More than</span>
+        <span class="best-top-center-highlighted-text">200 000</span>
+        <span class="best-top-center-general-text">opinions on thousands of questions</span>
+    </div>
+}
+@*  Main idea: do not put the logic of localization into react control because it should not really care about it.
+    It should work with any language. This approach might not be considered clean since control "should" be selfcontained.
+    Use resource service to get dynamic json object and feed it as a property to react control.
+    Json object will be rendered as good JavaScript defined object. Refer to control jsx file for the list of expected strings.
+*@  
+<div class="row best-theme-color">
+    @* Second part of the banner message *@
+    <div class="text-center best-center-light-text">
+        <form method="get" class="form-horizontal" role="form">
+            <div class="row">
+                <div class="col-md-offset-1 col-md-8">
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" name="searchPhrase" placeholder="@searchFor">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">@searchButton</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+                           y-class="btn btn-default btn-lg">@searchContribute</yakor>
+                </div>
+            </div>
+        </form>
+        <br />
+        <br />
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Reason) && !string.IsNullOrWhiteSpace(Model.Reason))
+    {
+        @* Second part of the banner message *@
+        <div class="text-center col-lg-offset-3 col-sm-6 text-center best-message-light">@Model.Reason</div>
+    }
+</div>
+@* Trending today *@
+<div class="panel panel-default">
+    <div class="panel-heading text-center best-section-header">
+        <h4>@Model.HeaderText</h4>
+    </div>
+    <div class="panel-body">
+        @if (Model.TopToday != null && Model.TopToday.Answers != null)
+        {
+            for (int i = 0; i < Model.TopToday.Answers.Count(); i++)
+            {
+                <div class="row">
+                    <div class="col-sm-4">@Html.Partial("AnswerCard", Model.TopToday.Answers.ElementAtOrDefault(i))</div>
+                    @if (i < Model.TopToday.Answers.Count())
+                    {
+                        i++;
+                        <div class="col-sm-4">@Html.Partial("AnswerCard", Model.TopToday.Answers.ElementAtOrDefault(i))</div>
+                    }
+                    @if (i < Model.TopToday.Answers.Count())
+                    {
+                        i++;
+                        <div class="col-sm-4">@Html.Partial("AnswerCard", Model.TopToday.Answers.ElementAtOrDefault(i))</div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
