@@ -77,7 +77,7 @@ namespace BestFor.UnitTests.Controllers
 
             // Setup resource service
             var resourceServiceMock = new Mock<IResourcesService>();
-            resourceServiceMock.Setup(x => x.GetString(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync("A");
+            resourceServiceMock.Setup(x => x.GetString(It.IsAny<string>(), It.IsAny<string>())).Returns("A");
 
             var controller = new VoteController(userManager, voteServiceMock.Object, resourceServiceMock.Object, testLoggerFactory)
             {

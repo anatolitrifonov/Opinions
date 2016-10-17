@@ -14,7 +14,7 @@
 }
 @{
     // Set the title
-    ViewData["Title"] = await resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
+    ViewData["Title"] = resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
 }
 @section MetaKeyword {
     <meta name="keywords" content="best opinions on thousands of questions and best products" />
@@ -51,7 +51,7 @@
                     answersUrl = "/api/answer",
                     antiForgeryHeaderName = BestFor.Controllers.BaseApiController.ANTI_FORGERY_HEADER_NAME,
                     antiForgeryToken = GetAntiXsrfToken(),
-                    resourceStrings = await resourcesService.GetStringsAsJson(this.ViewBag.BestForCulture,
+                    resourceStrings = resourcesService.GetStringsAsJson(this.ViewBag.BestForCulture,
                         new string[]
                         {
                             "suggestion_panel_initial_message",
@@ -86,7 +86,7 @@
     <div class="panel-heading text-center best-section-header">
         @* Culture is placed into view bag by action filter *@
         @* This is the "normal" way of getting a localized string value *@
-        <h4>@await resourcesService.GetString(this.ViewBag.BestForCulture, "trending_today")</h4>
+        <h4>@resourcesService.GetString(this.ViewBag.BestForCulture, "trending_today")</h4>
     </div>
     <div class="panel-body">
         <div class="row">

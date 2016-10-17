@@ -29,27 +29,14 @@ namespace BestFor.UnitTests.Services
         {
             public UserService UserService;
             public Mock<ICacheManager> CacheMock;
-            //public Mock<IAnswerDescriptionService> AnswerDescriptionServiceMock;
-            //public Repository<AnswerVote> AnswerVotesRepository;
-            //public Repository<AnswerDescriptionVote> AnswerDescriptionVoteRepository;
             public TestLoggerFactory TestLoggerFactory;
             public UserManager<ApplicationUser> UserManager;
 
             public TestSetup()
             {
-                // var dataContext = new FakeDataContext();
-                //AnswerVotesRepository = new Repository<AnswerVote>(dataContext);
-                //AnswerDescriptionVoteRepository = new Repository<AnswerDescriptionVote>(dataContext);
                 CacheMock = new TestCacheManager().CacheMock;
-
-                //AnswerDescriptionServiceMock = new Mock<IAnswerDescriptionService>();
-                //// Suppose we always adding answer 15
-                //AnswerDescriptionServiceMock.Setup(
-                //    x => x.FindByAnswerDescriptionId(It.IsAny<int>())
-                //    ).Returns(Task.FromResult(new AnswerDescriptionDto() { AnswerId = 15 }));
                 TestLoggerFactory = new TestLoggerFactory();
                 UserManager = MoqHelper.GetTestUserManager();
-
                 UserService = new UserService(CacheMock.Object, UserManager, TestLoggerFactory);
             }
         }
@@ -70,6 +57,9 @@ namespace BestFor.UnitTests.Services
 
             // check that cache has the user
             Assert.NotNull(cache["A"]);
+
+            // Check that random user is not there
+            Assert.Null(setup.UserService.FindById("B"));
         }
 
         [Fact]
@@ -115,190 +105,84 @@ namespace BestFor.UnitTests.Services
             Assert.Equal(user.NumberOfAnswers, currentCount);
         }
 
-        //[Fact]
-        //public void VoteService_VoteAnswerNullData_ThrowsException()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
+        [Fact]
+        public void UserServiceTests_FindByDisplayName_FindsUser()
+        {
+            // Setup
+            var setup = new TestSetup();
 
-        //    // Call the method we are testing
-        //    // (input parameters) => expression // Expression Lambdas
+            // this loads from database so no reason to play with cache.
+            // this loads from fakes only
+            Assert.Equal(setup.UserService.FindByDisplayName("Orsa").DisplayName, "Orsa");
 
-        //    Assert.ThrowsAny<ServicesException>(() => setup.VoteService.VoteAnswer(null));
+            // Check that random user is not there
+            Assert.Null(setup.UserService.FindByDisplayName("B"));
 
-        //    Assert.ThrowsAny<ServicesException>(() => setup.VoteService.VoteAnswer(new AnswerVoteDto() { AnswerId = 0 }));
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindByDisplayName(null));
 
-        //    // This will throw exception because there is no UserId
-        //    Assert.ThrowsAny<ServicesException>(() => setup.VoteService.VoteAnswer(new AnswerVoteDto() { AnswerId = 1 }));
-        //}
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindByDisplayName(""));
 
-        //[Fact]
-        //public void VoteService_VoteExistingAnswer_DoesNotAddAgain()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindByDisplayName("    "));
 
-        //    var answerVote1 = new AnswerVoteDto() { AnswerId = 1, UserId = "1" };
-        //    var answerVote2 = new AnswerVoteDto() { AnswerId = 1, UserId = "1" };
+            // FYI IsNullOrWhiteSpace includes \n\r\t
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindByDisplayName("  \n  "));
 
-        //    var count = setup.AnswerVotesRepository.Queryable().Where(x => x.UserId == "1").Count();
-        //    Assert.Equal(0, count);
-        //    setup.VoteService.VoteAnswer(answerVote1);
-        //    count = setup.AnswerVotesRepository.Queryable().Where(x => x.UserId == "1").Count();
-        //    Assert.Equal(1, count);
-        //    setup.VoteService.VoteAnswer(answerVote2);
-        //    // Verify insert was called only once.
-        //    count = setup.AnswerVotesRepository.Queryable().Where(x => x.UserId == "1").Count();
-        //    Assert.Equal(1, count);
-        //}
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindByDisplayName("  \r  "));
 
-        //[Fact]
-        //public void VoteService_VoteAnswer_AddsVote()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
-        //    // Object we will be adding
-        //    var answerVoteDto = new AnswerVoteDto() { AnswerId = 5, UserId ="D" };
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindByDisplayName("  \t  "));
+        }
 
-        //    // Call the method we are testing
-        //    var result = setup.VoteService.VoteAnswer(answerVoteDto);
+        [Fact]
+        public void UserServiceTests_FindById_FindsUser()
+        {
+            // Setup
+            var setup = new TestSetup();
 
-        //    // Check that same Phrase is returned
-        //    Assert.Equal(result, answerVoteDto.AnswerId);
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindById(null));
 
-        //    // Verify cache get was called only once
-        //    setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_VOTES_DATA), Times.Once());
-        //    // Verify cache add to cache was called only once
-        //    setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_VOTES_DATA,
-        //        It.IsAny<KeyIndexedDataSource<AnswerVote>>()), Times.Once());
-        //    // Verify repository has the item
-        //    Assert.NotNull(setup.AnswerVotesRepository.Queryable()
-        //        .Where(x => x.AnswerId == answerVoteDto.AnswerId).FirstOrDefault());
-        //}
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindById(""));
 
-        //[Fact]
-        //public void VoteService_VoteAnswerDescriptionNullData_ThrowsException()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindById("    "));
 
-        //    // Call the method we are testing
-        //    // (input parameters) => expression // Expression Lambdas
+            // FYI IsNullOrWhiteSpace includes \n\r\t
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindById("  \n  "));
 
-        //    Assert.ThrowsAny<ServicesException>(() => setup.VoteService.VoteAnswerDescription(null));
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindById("  \r  "));
 
-        //    Assert.ThrowsAny<ServicesException>(() => setup
-        //        .VoteService.VoteAnswerDescription(new AnswerDescriptionVoteDto() { AnswerDescriptionId = 0 }));
+            // Check that null gives null
+            Assert.Null(setup.UserService.FindById("  \t  "));
+        }
 
-        //    // This will throw exception because there is no UserId
-        //    Assert.ThrowsAny<ServicesException>(() => setup
-        //        .VoteService.VoteAnswerDescription(new AnswerDescriptionVoteDto() { AnswerDescriptionId = 1 }));
-        //}
+        [Fact]
+        public void UserServiceTests_FindByIds_FindsUsers()
+        {
+            // Setup
+            var setup = new TestSetup();
 
-        //[Fact]
-        //public void VoteService_VoteExistingAnswerDescription_DoesNotAddAgain()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
+            var user = new ApplicationUser() { Id = "A" };
+            setup.UserService.AddUserToCache(user);
 
-        //    var answerDescriptionVote1 = new AnswerDescriptionVoteDto() { AnswerDescriptionId = 1, UserId = "1" };
-        //    var answerDescriptionVote2 = new AnswerDescriptionVoteDto() { AnswerDescriptionId = 1, UserId = "1" };
+            var result = setup.UserService.FindByIds(new List<string>() { "A", "1", "222" });
 
-        //    var count = setup.AnswerDescriptionVoteRepository.Queryable().Where(x => x.UserId == "1").Count();
-        //    Assert.Equal(0, count);
-        //    setup.VoteService.VoteAnswerDescription(answerDescriptionVote1);
-        //    count = setup.AnswerDescriptionVoteRepository.Queryable().Where(x => x.UserId == "1").Count();
-        //    Assert.Equal(1, count);
-        //    setup.VoteService.VoteAnswerDescription(answerDescriptionVote2);
-        //    // Verify insert was called only once.
-        //    count = setup.AnswerDescriptionVoteRepository.Queryable().Where(x => x.UserId == "1").Count();
-        //    Assert.Equal(1, count);
-        //}
+            // Only two users should be returned because "222" is not there.
+            Assert.Equal(result.Count, 2);
 
-        //[Fact]
-        //public void VoteService_VoteAnswerDescription_AddsDescription()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
-        //    // Object we will be adding
-        //    var answerDescriptionVoteDto = new AnswerDescriptionVoteDto() { AnswerDescriptionId = 55, UserId = "D" };
+            Assert.Null(setup.UserService.FindByIds(null));
 
-        //    // Call the method we are testing
-        //    var result = setup.VoteService.VoteAnswerDescription(answerDescriptionVoteDto);
+            result = setup.UserService.FindByIds(new List<string>());
 
-        //    // Check that same Phrase is returned
-        //    Assert.Equal(result, 15);
-
-        //    // Verify cache get was called only once
-        //    setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA), Times.Once());
-        //    // Verify cache add to cache was called only once
-        //    setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA,
-        //        It.IsAny<KeyIndexedDataSource<AnswerDescriptionVote>>()), Times.Once());
-        //    // Verify repository has the item
-        //    Assert.NotNull(setup.AnswerDescriptionVoteRepository.Queryable()
-        //        .Where(x => x.AnswerDescriptionId == answerDescriptionVoteDto.AnswerDescriptionId).FirstOrDefault());
-        //}
-
-        //[Fact]
-        //public void VoteService_VoteExistingAnswerDescription_DoesNotCacheAgain()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
-
-        //    var answerDescriptionVote1 = new AnswerDescriptionVoteDto() { AnswerDescriptionId = 1, UserId = "1" };
-        //    var answerDescriptionVote2 = new AnswerDescriptionVoteDto() { AnswerDescriptionId = 2, UserId = "1" };
-
-        //    setup.VoteService.VoteAnswerDescription(answerDescriptionVote1);
-        //    setup.VoteService.VoteAnswerDescription(answerDescriptionVote2);
-
-        //    // Verify cache add to cache was called only once
-        //    setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA,
-        //        It.IsAny<KeyIndexedDataSource<AnswerDescriptionVote>>()), Times.Once());
-        //}
-
-        //[Fact]
-        //public void VoteService_VoteExistingAnswer_DoesNotCacheAgain()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
-
-        //    var answerVote1 = new AnswerVoteDto() { AnswerId = 1, UserId = "1" };
-        //    var answerVote2 = new AnswerVoteDto() { AnswerId = 2, UserId = "1" };
-
-        //    setup.VoteService.VoteAnswer(answerVote1);
-        //    setup.VoteService.VoteAnswer(answerVote2);
-
-        //    // Verify cache add to cache was called only once
-        //    setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_VOTES_DATA,
-        //        It.IsAny<KeyIndexedDataSource<AnswerVote>>()), Times.Once());
-        //}
-
-        //[Fact]
-        //public void VoteService_CountAnswerVotes_ReturnsAnswerVotes()
-        //{
-        //    // Setup
-        //    var setup = new TestSetup();
-
-        //    var answerVote1 = new AnswerVoteDto() { Id = 1234, AnswerId = 111, UserId = "1" };
-        //    var answerVote2 = new AnswerVoteDto() { Id = 1235, AnswerId = 111, UserId = "2" };
-
-        //    setup.VoteService.VoteAnswer(answerVote1);
-        //    setup.VoteService.VoteAnswer(answerVote2);
-
-        //    var count = setup.VoteService.CountAnswerVotes(111);
-        //    // Verify that cache has 2 votes.
-        //    Assert.Equal(2, count);
-
-        //    count = setup.VoteService.CountAnswerVotes(0);
-        //    // Verify that cache has 2 votes.
-        //    Assert.Equal(0, count);
-
-        //    setup.ClearCache();
-
-        //    count = setup.VoteService.CountAnswerVotes(112);
-        //    // Verify that cache does not contain random items.
-        //    Assert.Equal(0, count);
-
-        //}
+            Assert.Equal(result.Count, 0);
+        }
     }
 }

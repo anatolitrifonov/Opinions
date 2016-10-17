@@ -3,20 +3,20 @@
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @{
-    string helpOthersString = await resourcesService.GetString(this.ViewBag.BestForCulture, "help_others");
-    string addYourOpinionString = await resourcesService.GetString(this.ViewBag.BestForCulture, "add_your_opinion");
+    string helpOthersString = resourcesService.GetString(this.ViewBag.BestForCulture, "help_others");
+    string addYourOpinionString = resourcesService.GetString(this.ViewBag.BestForCulture, "add_your_opinion");
 
     // Screw all ... take the latest answer and use as title
 
     if (Model != null && Model.Answers != null && Model.Answers.Count() > 0)
     {
         var answer = Model.Answers.OrderByDescending(x => x.DateAdded).First();
-        ViewData["Title"] = LinkingHelper.ConvertAnswerToText(await resourcesService.GetCommonStrings(this.ViewBag.BestForCulture), answer);
+        ViewData["Title"] = LinkingHelper.ConvertAnswerToText(resourcesService.GetCommonStrings(this.ViewBag.BestForCulture), answer);
     }
     else
     {
-        string searchResultsString = await resourcesService.GetString(this.ViewBag.BestForCulture, "search_results_for");
-        ViewData["Title"] = searchResultsString + " " + (await resourcesService.GetCommonStrings(this.ViewBag.BestForCulture)).For +
+        string searchResultsString = resourcesService.GetString(this.ViewBag.BestForCulture, "search_results_for");
+        ViewData["Title"] = searchResultsString + " " + (resourcesService.GetCommonStrings(this.ViewBag.BestForCulture)).For +
             " " + Model.SearchKeyword;
     }
 }

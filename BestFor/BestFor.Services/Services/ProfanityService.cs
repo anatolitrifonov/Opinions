@@ -75,13 +75,13 @@ namespace BestFor.Services.Services
             if (result.HasBadCharacters)
             {
                 // leave variable assignment in case we need to step through.
-                var badCharacters = await _resourcesService.GetString(culture, Lines.ERROR_BAD_CHARACTERS);
+                var badCharacters = _resourcesService.GetString(culture, Lines.ERROR_BAD_CHARACTERS);
                 result.ErrorMessage = badCharacters;
             }
             if (result.ProfanityWord != null)
             {
                 // leave variable assignment in case we need to step through.
-                var errorProfanity = await _resourcesService.GetString(culture, Lines.ERROR_PROFANITY);
+                var errorProfanity = _resourcesService.GetString(culture, Lines.ERROR_PROFANITY);
                 result.ErrorMessage = (result.HasBadCharacters ? " " : string.Empty) + errorProfanity + ": " + result.ProfanityWord;
             }
             return result;

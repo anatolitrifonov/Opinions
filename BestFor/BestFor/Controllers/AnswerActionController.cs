@@ -145,7 +145,7 @@ namespace BestFor.Controllers
             var addedAnswerDescription = await _answerDescriptionService.AddAnswerDescription(answerDescription);
 
             // Read the reason to return it to UI.
-            var reason = await _resourcesService.GetString(this.Culture, Lines.DESCRIPTION_WAS_ADDED_SUCCESSFULLY);
+            var reason = _resourcesService.GetString(this.Culture, Lines.DESCRIPTION_WAS_ADDED_SUCCESSFULLY);
 
             // Redirect to show the answer. This will prevent user refreshing the page.
             return RedirectToAction("ShowAnswer", new { answerId = answerDescription.AnswerId, reason = reason });
@@ -213,7 +213,7 @@ namespace BestFor.Controllers
                 var updatedAnswer = await _answerService.UpdateAnswer(answerToModify);
             }
             // Read the reason
-            var reason = await _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_IMPROVING);
+            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_IMPROVING);
 
             // Redirect to show the answer. This will prevent user refreshing the page.
             return RedirectToAction("ShowAnswer", new { answerId = answer.Id, reason = reason });

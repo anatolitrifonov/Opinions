@@ -31,6 +31,11 @@ namespace BestFor.Services.Services
         }
 
         #region IUserService implementation
+        /// <summary>
+        /// This one loads straight from the database
+        /// </summary>
+        /// <param name="displayName"></param>
+        /// <returns></returns>
         public ApplicationUser FindByDisplayName(string displayName)
         {
             // Do not check nulls
@@ -102,7 +107,7 @@ namespace BestFor.Services.Services
             // load cache
             Dictionary<string, ApplicationUser> data = GetCachedData();
             // Something went wrong if this is null.
-            if (data == null) return 0;
+            // if (data == null) return 0;
 
             if (!data.ContainsKey(user.Id))
                 data.Add(user.Id, user);
@@ -124,7 +129,7 @@ namespace BestFor.Services.Services
             // load cache
             Dictionary<string, ApplicationUser> data = GetCachedData();
             // Something went wrong if this is null.
-            if (data == null) return 0;
+            // if (data == null) return 0;
 
             ApplicationUser user;
             if (!data.TryGetValue(answer.UserId, out user)) return 0;

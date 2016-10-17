@@ -3,11 +3,11 @@
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @{
-    string registrationString = await resourcesService.GetString(this.ViewBag.BestForCulture, "registration_capital");
-    string registerString = await resourcesService.GetString(this.ViewBag.BestForCulture, "register_capital");
-    string createANewAccountString = await resourcesService.GetString(this.ViewBag.BestForCulture, "create_a_new_account");
-    string termsTitleString = await resourcesService.GetString(this.ViewBag.BestForCulture, "terms_title");
-    string termsOfUseString = await resourcesService.GetString(this.ViewBag.BestForCulture, "terms_of_use");
+    string registrationString = resourcesService.GetString(this.ViewBag.BestForCulture, "registration_capital");
+    string registerString = resourcesService.GetString(this.ViewBag.BestForCulture, "register_capital");
+    string createANewAccountString = resourcesService.GetString(this.ViewBag.BestForCulture, "create_a_new_account");
+    string termsTitleString = resourcesService.GetString(this.ViewBag.BestForCulture, "terms_title");
+    string termsOfUseString = resourcesService.GetString(this.ViewBag.BestForCulture, "terms_of_use");
 
     ViewData["Title"] = registrationString;
 }

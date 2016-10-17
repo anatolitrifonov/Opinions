@@ -53,7 +53,7 @@ namespace BestFor.Controllers
             // get and call the service
             //Thread.Sleep(4000);
 
-            result.Suggestions = await _suggestionService.FindSuggestions(validationResult.CleanedInput);
+            result.Suggestions = _suggestionService.FindSuggestions(validationResult.CleanedInput);
 
             return result;
         }

@@ -5,19 +5,19 @@
 @* This template shows content of the answer with the link to content *@
 @* Form renders with antiforgery token without doing any jumping. We can mark controller as validate anti forgery *@
 @{
-    ViewData["Title"] = await resourcesService.GetString(ViewBag.BestForCulture, "contact_us");
+    ViewData["Title"] = resourcesService.GetString(ViewBag.BestForCulture, "contact_us");
 }
 <h2>@ViewData["Title"]</h2>
 @{
     // Read localized strings
-    string sendString = await resourcesService.GetString(ViewBag.BestForCulture, "send_capital");
+    string sendString = resourcesService.GetString(ViewBag.BestForCulture, "send_capital");
 }
 
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
         <section>
             <form asp-controller="Contact" asp-action="Index" method="post" class="form-horizontal" role="form">
-                <h4>@await resourcesService.GetString(this.ViewBag.BestForCulture, "contact_us_page_text")</h4>
+                <h4>@resourcesService.GetString(this.ViewBag.BestForCulture, "contact_us_page_text")</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">

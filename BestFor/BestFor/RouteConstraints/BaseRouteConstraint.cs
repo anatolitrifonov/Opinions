@@ -35,7 +35,7 @@ namespace BestFor.RouteConstraints
                 if (service != null)
                 {
                     var resourceService = (IResourcesService)service;
-                    _allCommonStrings = resourceService.GetCommonStringsForAllCultures().Result;
+                    _allCommonStrings = resourceService.GetCommonStringsForAllCultures();
                 }
             }
 

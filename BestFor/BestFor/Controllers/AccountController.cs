@@ -479,7 +479,7 @@ namespace BestFor.Controllers
             if (updateResult.Succeeded)
             {
                 // Read the reason
-                var reason = await _resourcesService.GetString(this.Culture, Lines.YOUR_PROFILE_WAS_REMOVED);
+                var reason = _resourcesService.GetString(this.Culture, Lines.YOUR_PROFILE_WAS_REMOVED);
                 return RedirectToAction("Index", "Home", new { reason = reason });
             }
 

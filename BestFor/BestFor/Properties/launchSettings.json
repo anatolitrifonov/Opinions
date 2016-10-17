@@ -12,8 +12,6 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "Key": "Value",
-        "main_database_connection": ";lsdf;ksd;fl;sd;sdks;dflksdf",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

@@ -17,7 +17,7 @@ using BestFor.UnitTests.Testables;
 namespace BestFor.UnitTests.Services
 {
     [ExcludeFromCodeCoverage]
-    public class ServicesSuggestionServiceTests
+    public class SuggestionServiceTests
     {
         /// <summary>
         /// Constructor sets up the needed data.
@@ -29,19 +29,13 @@ namespace BestFor.UnitTests.Services
             public Mock<ICacheManager> CacheMock;
             public Repository<Suggestion> Repository;
             public TestLoggerFactory TestLoggerFactory;
-            // public TestLogger<SuggestionService> TestLogger;
 
             public TestSetup()
             {
                 var dataContext = new FakeDataContext();
                 Repository = new Repository<Suggestion>(dataContext);
-                CacheMock = new Mock<ICacheManager>();
+                CacheMock = new TestCacheManager().CacheMock;
 
-                //LoggerMock = new Mock<ILogger<SuggestionService>>();
-                //LoggerMock.Setup(x => x.LogInformation(It.IsAny<string>()));
-                // LoggerMock.Setup(x => x.LogInformation(It.IsAny<string>(), It.IsAny<object[]>()));
-
-                // TestLogger = new TestLogger<SuggestionService>();
                 TestLoggerFactory = new TestLoggerFactory();
 
                 SuggestionService = new SuggestionService(CacheMock.Object, Repository, TestLoggerFactory);
@@ -50,7 +44,7 @@ namespace BestFor.UnitTests.Services
         }
 
         [Fact]
-        public async Task SuggestionService_AddSuggestions_AddsSuggestion()
+        public void SuggestionServiceTests_AddSuggestions_AddsSuggestion()
         {
             // Setup
             var setup = new TestSetup();
@@ -58,7 +52,7 @@ namespace BestFor.UnitTests.Services
             var suggestionDto = new SuggestionDto() { Phrase = "Hello" };
 
             // Call the method we are testing
-            var result = await setup.SuggestionService.AddSuggestion(suggestionDto);
+            var result = setup.SuggestionService.AddSuggestion(suggestionDto);
 
             // Check that same Phrase is returned
             Assert.Equal(result.Phrase, suggestionDto.Phrase);
@@ -69,16 +63,22 @@ namespace BestFor.UnitTests.Services
             setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_SUGGESTIONS_DATA, It.IsAny<KeyDataSource<Suggestion>>()), Times.Once());
             // Verify repository has the item
             Assert.NotNull(setup.Repository.Queryable().Where(x => x.Phrase == suggestionDto.Phrase).FirstOrDefault());
+
+            var suggestions = setup.SuggestionService.FindSuggestions("Hello");
+            Assert.Equal(suggestions.Count(), 1);
+
+            // Lets see if this verifies the code that returns the same suggestion without assert
+            var suggestion = setup.SuggestionService.AddSuggestion(suggestionDto);
         }
 
         [Fact]
-        public async Task SuggestionService_FindSuggestions_SomeResults()
+        public void SuggestionServiceTests_FindSuggestions_SomeResults()
         {
             // Setup
             var setup = new TestSetup();
 
             // Call the method we are testing
-            var result = await setup.SuggestionService.FindSuggestions("test");
+            var result = setup.SuggestionService.FindSuggestions("test");
 
             // Check number of test suggestions
             Assert.Equal(result.Count(), setup.FakeSuggestions.NumberOfTestSuggestions);
@@ -89,27 +89,24 @@ namespace BestFor.UnitTests.Services
             setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_SUGGESTIONS_DATA, It.IsAny<KeyDataSource<Suggestion>>()), Times.Once());
 
             // Call the method we are testing
-            result = await setup.SuggestionService.FindSuggestions("abc");
+            result = setup.SuggestionService.FindSuggestions("abc");
 
             // Check number of abc suggestions returned is max allowed
             Assert.Equal(result.Count(), KeyDataSource<Suggestion>.DEFAULT_TOP_COUNT);
 
             // Verify that get was called twice
             setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_SUGGESTIONS_DATA), Times.Exactly(2));
-            // Cache Add will also be called twice since this is a fake cache and it does not store anything.
-            // We are not testing cache at the moment
-            // We are testing FindSuggestions
-            setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_SUGGESTIONS_DATA, It.IsAny<KeyDataSource<Suggestion>>()), Times.Exactly(2));
+            setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_SUGGESTIONS_DATA, It.IsAny<KeyDataSource<Suggestion>>()), Times.Exactly(1));
         }
 
         [Fact]
-        public async Task SuggestionService_FindSuggestions_NoResults()
+        public void SuggestionServiceTests_FindSuggestions_NoResults()
         {
             // Setup
             var setup = new TestSetup();
 
             // Call the method we are testing
-            var result = await setup.SuggestionService.FindSuggestions("ztest");
+            var result = setup.SuggestionService.FindSuggestions("ztest");
 
             // Check number of test suggestions
             Assert.Equal(result.Count(), 0);

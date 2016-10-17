@@ -47,7 +47,7 @@ namespace BestFor.Controllers
             }
 
             // Read the reason
-            var reason = await _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
+            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
 
             return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId, reason = reason });
         }
@@ -69,7 +69,7 @@ namespace BestFor.Controllers
             }
 
             // Read the reason
-            var reason = await _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
+            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
 
             return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId, reason = reason });
         }

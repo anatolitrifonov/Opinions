@@ -72,7 +72,7 @@ namespace BestFor.Services.DataSources
             if (_data == null) return null;
 
             // Get all items for the key
-            return _data.Where(x => x.Key.StartsWith(key)).Select(x => x.Value);
+            return _data.Where(x => x.Key.StartsWith(key.ToLower())).Select(x => x.Value);
         }
 
         /// <summary>
@@ -86,22 +86,22 @@ namespace BestFor.Services.DataSources
 
             // Get all items for the key
             // Splitting for debugging
-            int c = _data.Where(x => x.Key.StartsWith(key)).Count();
-            return _data.Where(x => x.Key.StartsWith(key)).Select(x => x.Value).Take(DEFAULT_TOP_COUNT);
+            // int c = _data.Where(x => x.Key.StartsWith(key)).Count();
+            return _data.Where(x => x.Key.StartsWith(key.ToLower())).Select(x => x.Value).Take(DEFAULT_TOP_COUNT);
         }
 
         public TEntity FindExact(string key)
         {
             if (_data == null) return null;
 
-            if (!_data.ContainsKey(key)) return null;
+            if (!_data.ContainsKey(key.ToLower())) return null;
 
             return _data[key];
         }
 
         public TEntity Insert(TEntity entity)
         {
-            var key = entity.IndexKey;
+            var key = entity.IndexKey.ToLower();
             // Add to a set of items under index value
             if (!_data.ContainsKey(key))
             {

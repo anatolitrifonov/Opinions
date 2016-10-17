@@ -6,13 +6,13 @@
 @* This template shows content of the answer with the link to content *@
 @* Form renders with antiforgery token without doing any jumping. We can mark controller as validate anti forgery *@
 <form asp-controller="AnswerAction" asp-action="Edit" method="post" class="form-horizontal" role="form">
-    <br />@await resourcesService.GetString(this.ViewBag.BestForCulture, "you_are_editing_your_answer")<br />
-    <h2>@LinkingHelper.ConvertAnswerToText(await resourcesService.GetCommonStrings(this.ViewBag.BestForCulture), Model)</h2>
+    <br />@resourcesService.GetString(this.ViewBag.BestForCulture, "you_are_editing_your_answer")<br />
+    <h2>@LinkingHelper.ConvertAnswerToText(resourcesService.GetCommonStrings(this.ViewBag.BestForCulture), Model)</h2>
 
-    @await resourcesService.GetString(this.ViewBag.BestForCulture, "improve_your_answer")<br /><br />
-    @await resourcesService.GetString(this.ViewBag.BestForCulture, "pick_category")<br />
+    @resourcesService.GetString(this.ViewBag.BestForCulture, "improve_your_answer")<br /><br />
+    @resourcesService.GetString(this.ViewBag.BestForCulture, "pick_category")<br />
     @{
-        string none = await resourcesService.GetString(this.ViewBag.BestForCulture, "none_capital");
+        string none = resourcesService.GetString(this.ViewBag.BestForCulture, "none_capital");
         foreach (var category in Model.Categories)
         {
             <div>
@@ -27,5 +27,5 @@
     }
     <br />
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-default btn-lg">@await resourcesService.GetString(this.ViewBag.BestForCulture, "save_capital")</button>
+    <button type="submit" class="btn btn-default btn-lg">@resourcesService.GetString(this.ViewBag.BestForCulture, "save_capital")</button>
 </form>

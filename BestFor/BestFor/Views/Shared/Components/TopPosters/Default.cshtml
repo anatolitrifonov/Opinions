@@ -4,12 +4,12 @@
 @* Trending overall *@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4>@await resourcesService.GetString(this.ViewBag.BestForCulture, "top_posters")</h4>
+        <h4>@resourcesService.GetString(this.ViewBag.BestForCulture, "top_posters")</h4>
     </div>
     <div class="panel-body">
         <div class="best-div-fluid">
             @{ 
-                var stringOpinions = await resourcesService.GetString(this.ViewBag.BestForCulture, "opinions_lower");
+                var stringOpinions = resourcesService.GetString(this.ViewBag.BestForCulture, "opinions_lower");
             }
             @foreach (var item in Model.Users)
             {

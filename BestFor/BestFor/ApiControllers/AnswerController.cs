@@ -75,10 +75,10 @@ namespace BestFor.Controllers
             if (gotProfanityIssues) return result;
 
             // Add left word and right word to suggestions
-            var addedSuggestion = await _suggestionService.AddSuggestion(new SuggestionDto() { Phrase = answer.LeftWord });
+            var addedSuggestion = _suggestionService.AddSuggestion(new SuggestionDto() { Phrase = answer.LeftWord });
             // Add the right word if different from left
             if (answer.LeftWord != answer.RightWord)
-                addedSuggestion = await _suggestionService.AddSuggestion(new SuggestionDto() { Phrase = answer.RightWord });
+                addedSuggestion = _suggestionService.AddSuggestion(new SuggestionDto() { Phrase = answer.RightWord });
 
             // If user is logged in let's add him to the object
             // This will return null if user is not logged in and this is OK.

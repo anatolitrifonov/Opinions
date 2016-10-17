@@ -15,8 +15,8 @@
         <span class="best-trending-overall">
             <a href="@LinkingHelper.ConvertAnswerToUrlWithCulture(
             ViewBag.BestForCulture,
-            await resourcesService.GetCommonStrings(ViewBag.BestForCulture),
-            Model)">@LinkingHelper.ConvertAnswerToText(await resourcesService.GetCommonStrings(ViewBag.BestForCulture), Model)
+            resourcesService.GetCommonStrings(ViewBag.BestForCulture),
+            Model)">@LinkingHelper.ConvertAnswerToText(resourcesService.GetCommonStrings(ViewBag.BestForCulture), Model)
             </a>
         </span>
     }

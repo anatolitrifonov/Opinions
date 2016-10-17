@@ -3,17 +3,17 @@
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @{ 
-    string addYourDescriptionString = await resourcesService.GetString(this.ViewBag.BestForCulture, "add_your_description");
-    string cancelString = await resourcesService.GetString(this.ViewBag.BestForCulture, "cancel_capital");
-    string youAreAddingString = await resourcesService.GetString(this.ViewBag.BestForCulture, "you_are_adding_detailed_description");
-    string searchContribute = await resourcesService.GetString(this.ViewBag.BestForCulture, "contribute_capital");
+    string addYourDescriptionString = resourcesService.GetString(this.ViewBag.BestForCulture, "add_your_description");
+    string cancelString = resourcesService.GetString(this.ViewBag.BestForCulture, "cancel_capital");
+    string youAreAddingString = resourcesService.GetString(this.ViewBag.BestForCulture, "you_are_adding_detailed_description");
+    string searchContribute = resourcesService.GetString(this.ViewBag.BestForCulture, "contribute_capital");
 }
 @* Culture is placed into view bag by action filter *@
 @* This template shows content of the answer with the link to content *@
 @* Form renders with antiforgery token without doing any jumping. We can mark controller as validate anti forgery *@
 <form asp-controller="AnswerAction" asp-action="AddDescription" method="post" class="form-horizontal" role="form">
     <br />@youAreAddingString<br />
-    <h2>@LinkingHelper.ConvertAnswerToText(await resourcesService.GetCommonStrings(this.ViewBag.BestForCulture), Model.Answer)</h2><br /><br />
+    <h2>@LinkingHelper.ConvertAnswerToText(resourcesService.GetCommonStrings(this.ViewBag.BestForCulture), Model.Answer)</h2><br /><br />
     <input type="hidden" asp-for="AnswerId" />
     <textarea asp-for="Description" rows="10" cols="100"></textarea><br /><br />
     <div class="row">

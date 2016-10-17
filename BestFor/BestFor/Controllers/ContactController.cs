@@ -69,7 +69,7 @@ namespace BestFor.Controllers
             await _emailSender.SendEmailAsync(model.Subject, message);
 
             // Read the reason
-            var reason = await _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_CONTACTING);
+            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_CONTACTING);
 
             // return await Task.FromResult<IActionResult>(View(model));
             return RedirectToAction("Index", "Home", new { reason = reason });

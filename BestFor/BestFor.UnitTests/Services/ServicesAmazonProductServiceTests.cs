@@ -55,7 +55,7 @@ namespace BestFor.UnitTests.Services
         public void AmazonProductService_ParseReturnResult_ReturnsProduct()
         {
             // Load xml from the file
-            string path = @"C:\Users\atrifono\Documents\Personal\Fork\BestFor\BestFor.Services\AffiliateProgram\Amazon\";
+            string path = @"C:\Users\atrifono\Documents\Personal\Opinions\BestFor\BestFor.Services\AffiliateProgram\Amazon\";
             FileStream myFileStream = new FileStream(path + "myxml.xml", FileMode.Open);
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(myFileStream);

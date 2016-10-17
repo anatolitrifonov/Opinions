@@ -15,7 +15,7 @@ namespace BestFor.Services.Services
     /// <summary>
     /// Suggestion service implementation
     /// </summary>
-    public class SuggestionService: ISuggestionService
+    public class SuggestionService : ISuggestionService
     {
         private ICacheManager _cacheManager;
         private IRepository<Suggestion> _repository;
@@ -41,11 +41,11 @@ namespace BestFor.Services.Services
         /// <returns>
         /// Loads cache if empty
         /// </returns>
-        public async Task<IEnumerable<SuggestionDto>> FindSuggestions(string input)
+        public IEnumerable<SuggestionDto> FindSuggestions(string input)
         {
             // We are only looking in cache.
             var cachedData = GetCachedData();
-            return await Task.FromResult(cachedData.FindTopItems(input).Select(x => x.ToDto()));
+            return cachedData.FindTopItems(input).Select(x => x.ToDto());
         }
 
         /// <summary>
@@ -53,14 +53,14 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="suggestion"></param>
         /// <returns></returns>
-        public async Task<Suggestion> AddSuggestion(SuggestionDto suggestion)
+        public Suggestion AddSuggestion(SuggestionDto suggestion)
         {
             var suggestionObject = new Suggestion();
             suggestionObject.FromDto(suggestion);
 
             // Repository might get a different object back.
             // We will also let repository do the counting
-            suggestionObject = await PersistSuggestion(suggestionObject);
+            suggestionObject = PersistSuggestion(suggestionObject);
 
             var cachedData = GetCachedData();
             cachedData.Insert(suggestionObject);
@@ -74,7 +74,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="suggestion"></param>
         /// <returns></returns>
-        private async Task<Suggestion> PersistSuggestion(Suggestion suggestion)
+        private Suggestion PersistSuggestion(Suggestion suggestion)
         {
             // Find if answer already exists
             var existingSuggestion = _repository.Queryable().Where(x => x.Phrase == suggestion.Phrase).FirstOrDefault();
@@ -82,8 +82,9 @@ namespace BestFor.Services.Services
             if (existingSuggestion == null)
             {
                 _repository.Insert(suggestion);
+                var task = _repository.SaveChangesAsync();
+                task.Wait();
             }
-            await _repository.SaveChangesAsync();
             return existingSuggestion == null ? suggestion : existingSuggestion;
         }
 

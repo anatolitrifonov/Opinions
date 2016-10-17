@@ -35,7 +35,7 @@ namespace BestFor.Fakes
             Add(new ApplicationUser{ Id = "0" });
             Add(new ApplicationUser { Id = "1" });
             Add(new ApplicationUser { Id = "2" });
-            Add(new ApplicationUser { Id = "3" });
+            Add(new ApplicationUser { Id = "3", DisplayName = "Orsa" });
         }
 
         public IQueryable<ApplicationUser> Users

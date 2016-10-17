@@ -3,9 +3,9 @@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @{
     // Read localized strings
-    string stringEditProfile = await resourcesService.GetString(ViewBag.BestForCulture, "edit_profile");
-    string stringSave = await resourcesService.GetString(ViewBag.BestForCulture, "save_capital");
-    string cancelString = await resourcesService.GetString(this.ViewBag.BestForCulture, "cancel_capital");
+    string stringEditProfile = resourcesService.GetString(ViewBag.BestForCulture, "edit_profile");
+    string stringSave = resourcesService.GetString(ViewBag.BestForCulture, "save_capital");
+    string cancelString = resourcesService.GetString(this.ViewBag.BestForCulture, "cancel_capital");
 
     ViewData["Title"] = stringEditProfile;
 }

@@ -16,7 +16,7 @@ namespace BestFor.Services.Services
         /// <param name="culture"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        Task<string> GetString(string culture, string key);
+        string GetString(string culture, string key);
 
         /// <summary>
         /// Find a set of strings for set of keys
@@ -24,7 +24,7 @@ namespace BestFor.Services.Services
         /// <param name="culture"></param>
         /// <param name="keys"></param>
         /// <returns></returns>
-        Task<string[]> GetStrings(string culture, string[] keys);
+        string[] GetStrings(string culture, string[] keys);
 
         /// <summary>
         /// Find strings for keys and return as javascript json object.
@@ -40,7 +40,7 @@ namespace BestFor.Services.Services
         /// }
         /// script
         /// </returns>
-        Task<string> GetStringsAsJavaScript(string culture, string javaScriptVariableName, string[] keys);
+        string GetStringsAsJavaScript(string culture, string javaScriptVariableName, string[] keys);
 
         /// <summary>
         /// Return dynamic json object containing keys and strings as properties and values.
@@ -49,19 +49,19 @@ namespace BestFor.Services.Services
         /// <param name="culture"></param>
         /// <param name="keys"></param>
         /// <returns></returns>
-        Task<JObject> GetStringsAsJson(string culture, string[] keys);
+        JObject GetStringsAsJson(string culture, string[] keys);
 
         /// <summary>
         /// Return common strings for a given culture.
         /// </summary>
         /// <param name="culture"></param>
         /// <returns></returns>
-        Task<CommonStringsDto> GetCommonStrings(string culture);
+        CommonStringsDto GetCommonStrings(string culture);
 
         /// <summary>
         /// Load all known common strings.
         /// </summary>
         /// <returns></returns>
-        Task<Dictionary<string, CommonStringsDto>> GetCommonStringsForAllCultures();
+        Dictionary<string, CommonStringsDto> GetCommonStringsForAllCultures();
     }
 }

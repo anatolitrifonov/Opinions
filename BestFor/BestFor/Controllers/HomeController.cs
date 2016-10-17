@@ -57,13 +57,13 @@ namespace BestFor.Controllers
             {
                 model.TopToday.Answers = await _answerService.FindLastAnswers(searchPhrase);
                 model.Keyword = searchPhrase;
-                model.HeaderText = await _resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR) +
+                model.HeaderText = _resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR) +
                     ": " + searchPhrase;
             }
             else
             {
                 model.TopToday.Answers = await _answerService.FindAnswersTrendingToday();
-                model.HeaderText = await _resourcesService.GetString(this.Culture, Lines.TRENDING_TODAY);
+                model.HeaderText = _resourcesService.GetString(this.Culture, Lines.TRENDING_TODAY);
             }
 
             model.Reason = reason;
@@ -103,7 +103,7 @@ namespace BestFor.Controllers
             var culture = this.Culture;
             var requestPath = this.RequestPathNoCulture;
             // Now try to parse the request path into known words.
-            var commonStrings = await _resourcesService.GetCommonStrings(culture);
+            var commonStrings = _resourcesService.GetCommonStrings(culture);
             var answer = LinkingHelper.ParseUrlToAnswer(commonStrings, requestPath);
             // Were we able to parse?
             if (answer == null) return RedirectToAction("Index");
@@ -155,7 +155,7 @@ namespace BestFor.Controllers
             var data = new AnswerDetailsDto()
             {
                 Answer = answer,
-                CommonStrings = await resourcesService.GetCommonStrings(culture),
+                CommonStrings = resourcesService.GetCommonStrings(culture),
                 Descriptions = descriptions,
                 UserDisplayName = GetUserDisplayName(answer.UserId, userService),
                 NumberVotes = voteService.CountAnswerVotes(answer.Id)

@@ -12,7 +12,7 @@
 @{
     if (Model != null)
     {
-        var commonStrings = await resourcesService.GetCommonStrings(ViewBag.BestForCulture);
+        var commonStrings = resourcesService.GetCommonStrings(ViewBag.BestForCulture);
         <div class="best-search-result">
             @commonStrings.Best
 

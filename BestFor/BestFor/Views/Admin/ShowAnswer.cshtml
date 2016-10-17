@@ -5,7 +5,7 @@
 @Html.Partial("Menu")
 Showing answer info
 @{ 
-    var strings = await resourcesService.GetCommonStrings(this.ViewBag.BestForCulture);
+    var strings = resourcesService.GetCommonStrings(this.ViewBag.BestForCulture);
     string linkToAnswer = LinkingHelper.ConvertAnswerToUrlWithCulture(this.ViewBag.BestForCulture, strings, Model.Answer);
 }
 <dl class="dl-horizontal">

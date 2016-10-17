@@ -50,7 +50,7 @@ namespace BestFor.Services.Services
         /// <param name="culture"></param>
         /// <returns></returns>
         /// <remarks>Has to be a function. I'd rather not set the culture per instance.</remarks>
-        public async Task<CommonStringsDto> GetCommonStrings(string culture)
+        public CommonStringsDto GetCommonStrings(string culture)
         {
             // See if we got the strings already
             if (_commonStrings != null) return _commonStrings.Strings;
@@ -58,7 +58,7 @@ namespace BestFor.Services.Services
             var resourceStrings = GetCachedData();
             // Setup common strings so that we do not have to touch cache with no need.
             _commonStrings = LoadCommonStrings(culture, resourceStrings);
-            return await Task.FromResult(_commonStrings.Strings);
+            return _commonStrings.Strings;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace BestFor.Services.Services
         /// If not found seach English
         /// If not found return key
         /// </remarks>
-        public async Task<string> GetString(string culture, string key)
+        public string GetString(string culture, string key)
         {
             // Do some checks before we go to cache.
             // No need to touch cache if blanks.
@@ -85,7 +85,7 @@ namespace BestFor.Services.Services
             // Get the string for this culture
             string result = FindOneString(culture, key, resourceStrings);
             result = ReplacePatterns(result, _commonStrings.Translations);
-            return await Task.FromResult(result);
+            return result;
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace BestFor.Services.Services
         /// <param name="culture"></param>
         /// <param name="keys"></param>
         /// <returns></returns>
-        public async Task<string[]> GetStrings(string culture, string[] keys)
+        public string[] GetStrings(string culture, string[] keys)
         {
             // Do some checks before we go to cache.
             // No need to touch cache if blanks.
@@ -113,7 +113,7 @@ namespace BestFor.Services.Services
                 else
                     result[i] = FindOneString(culture, keys[i], resourceStrings);
             }
-            return await Task.FromResult(result);
+            return result;
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace BestFor.Services.Services
         /// }
         /// script
         /// </returns>
-        public async Task<string> GetStringsAsJavaScript(string culture, string javaScriptVariableName, string[] keys)
+        public string GetStringsAsJavaScript(string culture, string javaScriptVariableName, string[] keys)
         {
-            var strings = await GetStrings(culture, keys);
+            var strings = GetStrings(culture, keys);
             var sb = new StringBuilder("<script>\n\r")
                 .Append("var ").Append(javaScriptVariableName).Append(" = {\n\r");
             for (var i = 0; i < keys.Length; i++)
@@ -141,7 +141,7 @@ namespace BestFor.Services.Services
                 sb.Append("\"").Append(keys[i]).Append("\" : \"").Append(strings[i]).Append(i < keys.Length - 1 ? "\",\n\r" : "\"\n\r");
             }
             sb.Append("}\r\n</script>\n\r");
-            return await Task.FromResult(sb.ToString());
+            return sb.ToString();
         }
 
         /// <summary>
@@ -151,10 +151,10 @@ namespace BestFor.Services.Services
         /// <param name="culture"></param>
         /// <param name="keys"></param>
         /// <returns></returns>
-        public async Task<JObject> GetStringsAsJson(string culture, string[] keys)
+        public JObject GetStringsAsJson(string culture, string[] keys)
         {
             // Get strings -> build json object
-            var strings = await GetStrings(culture, keys);
+            var strings = GetStrings(culture, keys);
             var result = new JObject();
             for (var i = 0; i < keys.Length; i++)
                 result.Add(new JProperty(keys[i], strings[i]));
@@ -165,14 +165,14 @@ namespace BestFor.Services.Services
         /// Load all known common strings for all cultures.
         /// </summary>
         /// <returns></returns>
-        public async Task<Dictionary<string, CommonStringsDto>> GetCommonStringsForAllCultures()
+        public Dictionary<string, CommonStringsDto> GetCommonStringsForAllCultures()
         {
             var data = GetCachedData().Where(x => x.Key == "best_start_capital" || x.Key == "for_lower" || x.Key == "is_lower").ToList();
             var result = new Dictionary<string, CommonStringsDto>();
             var cultures = data.Select(x => x.CultureName).Distinct();
             foreach (var culture in cultures)
                 result.Add(culture, LoadCommonStrings(culture, data).Strings);
-            return await Task.FromResult(result);
+            return result;
         }
 
 

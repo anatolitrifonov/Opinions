@@ -16,10 +16,10 @@
     @* Culture is placed into view bag by action filter *@
     @* This is the "normal" way of getting a localized string value *@
     // Set the title
-    ViewData["Title"] = await resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
-    var searchFor = await resourcesService.GetString(ViewBag.BestForCulture, "search_for_opinion");
-    var searchContribute = await resourcesService.GetString(ViewBag.BestForCulture, "contribute_capital");
-    var searchButton = await resourcesService.GetString(ViewBag.BestForCulture, "search_capital");
+    ViewData["Title"] = resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
+    var searchFor = resourcesService.GetString(ViewBag.BestForCulture, "search_for_opinion");
+    var searchContribute = resourcesService.GetString(ViewBag.BestForCulture, "contribute_capital");
+    var searchButton = resourcesService.GetString(ViewBag.BestForCulture, "search_capital");
 }
 @section MetaKeyword {
     <meta name="keywords" content="best opinions on thousands of questions and best products" />

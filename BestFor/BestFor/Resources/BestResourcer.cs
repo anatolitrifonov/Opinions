@@ -87,9 +87,7 @@ namespace BestFor.Resources
             string thisCulture = currentThreadCulture == null ? "en-US" : currentThreadCulture.ToString();
 
             // Use the service to get the string
-            var task = ((IResourcesService)service).GetString(thisCulture, key);
-            task.Wait();
-            var result = task.Result;
+            var result = ((IResourcesService)service).GetString(thisCulture, key);
 
             return result == null ? key : result;
         }        
