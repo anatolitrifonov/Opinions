@@ -234,7 +234,7 @@ namespace BestFor.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                _emailSender.SendEmailAsync(model.Email, "Reset Password",
                    "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
                 return View("ForgotPasswordConfirmation");
             }
@@ -528,16 +528,11 @@ namespace BestFor.Controllers
         {
             // Do profanity checks. We already validated the model.
             // we can only change a couple of fields.
-            var result = await _profanityService.CheckProfanity(model.DisplayName);
+            var result =  _profanityService.CheckProfanity(model.DisplayName);
             // Disaply name can be blank.
             if (!string.IsNullOrEmpty(model.DisplayName) && !string.IsNullOrWhiteSpace(model.DisplayName))
                 if (result.HasIssues)
                     ModelState.AddModelError(string.Empty, result.ErrorMessage);
-
-            // We are not showing email anywhere so let's let users pick whatever the hell they want
-            //result = _profanityService.CheckProfanity(model.Email);
-            //if (result.HasIssues)
-            //    ModelState.AddModelError(string.Empty, result.ErrorMessage);
 
             return ModelState.ErrorCount == 0;
         }
@@ -551,14 +546,14 @@ namespace BestFor.Controllers
         {
             // Do profanity checks. We already validated the model.
             // we can only change a couple of fields.
-            var result = await _profanityService.CheckProfanity(model.DisplayName);
+            var result = _profanityService.CheckProfanity(model.DisplayName);
             // Disaply name can be blank.
             if (!string.IsNullOrEmpty(model.DisplayName) && !string.IsNullOrWhiteSpace(model.DisplayName))
                 if (result.HasIssues)
                     ModelState.AddModelError(string.Empty, result.ErrorMessage);
 
             // We do want to check the username since it is displayable
-            result = await _profanityService.CheckProfanity(model.UserName);
+            result = _profanityService.CheckProfanity(model.UserName);
             if (result.HasIssues)
                 ModelState.AddModelError(string.Empty, result.ErrorMessage);
 

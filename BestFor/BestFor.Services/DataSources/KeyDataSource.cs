@@ -31,7 +31,7 @@ namespace BestFor.Services.DataSources
         /// <summary>
         /// Get all items
         /// </summary>
-        public IEnumerable<TEntity> Items { get { return _data.Values.AsEnumerable<TEntity>(); } }
+        public IEnumerable<TEntity> Items { get { return _data.Values.AsEnumerable(); } }
 
         /// <summary>
         /// Load all entities from repository.
@@ -51,10 +51,9 @@ namespace BestFor.Services.DataSources
                 var enumerator = repository.List().GetEnumerator();
                 for (var i = 0; i < numberItems; i++)
                 {
-                    if (enumerator.MoveNext())
-                        Insert(enumerator.Current);
-                    else
-                        break;
+                    // We reset the count to maximum so no need to check result of MoveNext.
+                    enumerator.MoveNext();
+                    Insert(enumerator.Current);
                 }
             }
             else
@@ -70,6 +69,7 @@ namespace BestFor.Services.DataSources
         public IEnumerable<TEntity> Find(string key)
         {
             if (_data == null) return null;
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key)) return null;
 
             // Get all items for the key
             return _data.Where(x => x.Key.StartsWith(key.ToLower())).Select(x => x.Value);
@@ -83,6 +83,7 @@ namespace BestFor.Services.DataSources
         public IEnumerable<TEntity> FindTopItems(string key)
         {
             if (_data == null) return null;
+            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key)) return null;
 
             // Get all items for the key
             // Splitting for debugging
@@ -101,6 +102,8 @@ namespace BestFor.Services.DataSources
 
         public TEntity Insert(TEntity entity)
         {
+            if (entity == null) return null;
+
             var key = entity.IndexKey.ToLower();
             // Add to a set of items under index value
             if (!_data.ContainsKey(key))

@@ -35,14 +35,24 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerFlag"></param>
         /// <returns></returns>
-        public async Task<int> FlagAnswer(AnswerFlagDto answerFlag)
+        public int FlagAnswer(AnswerFlagDto answerFlag)
         {
+            if (answerFlag == null)
+                throw new ServicesException("Null parameter FlagService.FlagAnswer(answerFlag)");
+
+            if (answerFlag.AnswerId <= 0)
+                throw new ServicesException("Unexpected AnswerId in FlagService.FlagAnswer(answerFlag)");
+
+            if (answerFlag.UserId == null)
+                throw new ServicesException("Unexpected UserId in FlagService.FlagAnswer(answerFlag)");
+
             var answerFlagObject = new AnswerFlag();
             answerFlagObject.FromDto(answerFlag);
 
             _answerFlagRepository.Insert(answerFlagObject);
 
-            await _answerFlagRepository.SaveChangesAsync();
+            var task = _answerFlagRepository.SaveChangesAsync();
+            task.Wait();
 
             return answerFlagObject.Id;
         }
@@ -52,14 +62,25 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerFlag"></param>
         /// <returns></returns>
-        public async Task<int> FlagAnswerDescription(AnswerDescriptionFlagDto answerDescriptionFlag)
+        public int FlagAnswerDescription(AnswerDescriptionFlagDto answerDescriptionFlag)
         {
+            if (answerDescriptionFlag == null)
+                throw new ServicesException("Null parameter FlagService.FlagAnswerDescription(answerDescriptionFlag)");
+
+            if (answerDescriptionFlag.AnswerDescriptionId <= 0)
+                throw new ServicesException("Unexpected AnswerDescriptionId in FlagService.FlagAnswerDescription(answerDescriptionFlag)");
+
+            if (answerDescriptionFlag.UserId == null)
+                throw new ServicesException("Unexpected UserId in FlagService.FlagAnswerDescription(answerDescriptionFlag)");
+
+
             var answerDescriptionFlagObject = new AnswerDescriptionFlag();
             answerDescriptionFlagObject.FromDto(answerDescriptionFlag);
 
             _answerDescriptionFlagRepository.Insert(answerDescriptionFlagObject);
 
-            await _answerDescriptionFlagRepository.SaveChangesAsync();
+            var task = _answerDescriptionFlagRepository.SaveChangesAsync();
+            task.Wait();
 
             return answerDescriptionFlagObject.Id;
         }

@@ -6,15 +6,13 @@ using BestFor.Fakes;
 using BestFor.Services.Cache;
 using BestFor.Services.DataSources;
 using BestFor.Services.Services;
-using Microsoft.Extensions.Logging;
+using BestFor.UnitTests.Testables;
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
-using BestFor.UnitTests.Testables;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Services
 {
     [ExcludeFromCodeCoverage]
     public class SuggestionServiceTests

@@ -112,7 +112,7 @@ namespace BestFor.Controllers
             // Go to home index if not found
             if (answer == null) return RedirectToAction("Index");
             // Get data
-            var answerDetails = await FillInDetails(answer, _answerDescriptionService, _userService, _voteService, _resourcesService,
+            var answerDetails = FillInDetails(answer, _answerDescriptionService, _userService, _voteService, _resourcesService,
                 culture, _appSettings.Value.FullDomainAddress);
 
             // Do a bit more playing with data
@@ -134,12 +134,12 @@ namespace BestFor.Controllers
         /// <param name="resourcesService"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        public static async Task<AnswerDetailsDto> FillInDetails(AnswerDto answer, IAnswerDescriptionService answerDescriptionService,
+        public static AnswerDetailsDto FillInDetails(AnswerDto answer, IAnswerDescriptionService answerDescriptionService,
             IUserService userService, IVoteService  voteService, IResourcesService resourcesService, string culture, string fullDomainName)
         {
             // Load answer descriptions
             // Have to do the list otherwise setting description.UserDisplayName below will not work.
-            var searchResult = await answerDescriptionService.FindByAnswerId(answer.Id);
+            var searchResult = answerDescriptionService.FindByAnswerId(answer.Id);
             List<AnswerDescriptionDto> descriptions = searchResult == null ? null : searchResult.ToList();
 
             // Set the username for each description

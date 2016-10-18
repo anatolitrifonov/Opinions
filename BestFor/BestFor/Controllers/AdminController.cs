@@ -95,7 +95,7 @@ namespace BestFor.Controllers
         {
             var answer = await _answerService.FindByAnswerId(answerId);
             // Load descriptions directly from database
-            var descriptions = await _answerDescriptionService.FindDirectByAnswerId(answerId);
+            var descriptions = _answerDescriptionService.FindDirectByAnswerId(answerId);
 
             var model = new AdminAnswerViewModel() { Answer = answer, AnswerDescriptions = descriptions };
             return model;
@@ -135,7 +135,7 @@ namespace BestFor.Controllers
         {
             var user = _userService.FindById(id);
 
-            var answerDescriptions = await _answerDescriptionService.FindDirectByUserId(id);
+            var answerDescriptions = _answerDescriptionService.FindDirectByUserId(id);
 
             var model = new AdminUserDescriptionsViewModel() { User = user, AnswerDescriptions = answerDescriptions };
 
@@ -151,7 +151,7 @@ namespace BestFor.Controllers
 
         public async Task<IActionResult> ListBlankDescription()
         {
-            var answers = await _answerDescriptionService.FindDirectBlank();
+            var answers = _answerDescriptionService.FindDirectBlank();
 
             return View(answers);
         }

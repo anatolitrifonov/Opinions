@@ -109,10 +109,8 @@ namespace BestFor.Services.Services
             cachedData.Insert(answerDescriptionVoteObject);
 
             // Find the id of the answer whos description was voted for
-            var task = _answerDescriptionService
-                .FindByAnswerDescriptionId(answerDescriptionVote.AnswerDescriptionId);
-            task.Wait();
-            var answerDescriptionDto = task.Result; 
+            var answerDescriptionDto = _answerDescriptionService
+                .FindByAnswerDescriptionId(answerDescriptionVote.AnswerDescriptionId); 
 
             return answerDescriptionDto.AnswerId;
         }

@@ -33,7 +33,7 @@ namespace BestFor.Services.Messaging
         /// <param name="subject"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task SendEmailAsync(string email, string subject, string message)
+        public void SendEmailAsync(string email, string subject, string message)
         {
             using (var smtp = new SmtpClient(_emailServerAddress, _emailServerPort))
             {
@@ -48,7 +48,7 @@ namespace BestFor.Services.Messaging
                 };
 
                 mail.To.Add(email);
-                await smtp.SendMailAsync(mail);
+                smtp.SendMailAsync(mail);
             }
         }
 
@@ -58,7 +58,7 @@ namespace BestFor.Services.Messaging
         /// <param name="subject"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task SendEmailAsync(string subject, string message)
+        public void SendEmailAsync(string subject, string message)
         {
             using (var smtp = new SmtpClient(_emailServerAddress, _emailServerPort))
             {
@@ -73,14 +73,13 @@ namespace BestFor.Services.Messaging
                 };
 
                 mail.To.Add(_emailFromAddress);
-                await smtp.SendMailAsync(mail);
+                smtp.SendMailAsync(mail);
             }
         }
 
-        public Task SendSmsAsync(string number, string message)
+        public void SendSmsAsync(string number, string message)
         {
             // Plug in your SMS service here to send a text message.
-            return Task.FromResult(0);
         }
     }
 }

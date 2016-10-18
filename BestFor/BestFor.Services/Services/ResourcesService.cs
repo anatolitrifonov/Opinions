@@ -132,6 +132,7 @@ namespace BestFor.Services.Services
         /// </returns>
         public string GetStringsAsJavaScript(string culture, string javaScriptVariableName, string[] keys)
         {
+            if (keys == null) return null;
             var strings = GetStrings(culture, keys);
             var sb = new StringBuilder("<script>\n\r")
                 .Append("var ").Append(javaScriptVariableName).Append(" = {\n\r");
@@ -153,6 +154,8 @@ namespace BestFor.Services.Services
         /// <returns></returns>
         public JObject GetStringsAsJson(string culture, string[] keys)
         {
+            if (keys == null) return null;
+
             // Get strings -> build json object
             var strings = GetStrings(culture, keys);
             var result = new JObject();
@@ -175,15 +178,13 @@ namespace BestFor.Services.Services
             return result;
         }
 
-
-        #region Private Methods
         /// <summary>
         /// Find a string by key and culture in the list of resource strings
         /// </summary>
         /// <param name="culture"></param>
         /// <param name="resourceStrings"></param>
         /// <returns></returns>
-        private string FindOneString(string culture, string key, List<ResourceString> resourceStrings)
+        public string FindOneString(string culture, string key, List<ResourceString> resourceStrings)
         {
             var getStringResult = resourceStrings.FirstOrDefault(x => x.CultureName == culture && x.Key == key);
             if (getStringResult != null) return getStringResult.Value;
@@ -200,7 +201,7 @@ namespace BestFor.Services.Services
         /// <param name="input"></param>
         /// <param name="commonStrings"></param>
         /// <returns></returns>
-        private string ReplacePatterns(string input, Dictionary<string, string> commonStringTranslations)
+        public string ReplacePatterns(string input, Dictionary<string, string> commonStringTranslations)
         {
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input)) return input;
             // no patterens -> exit
@@ -210,6 +211,7 @@ namespace BestFor.Services.Services
             return input;
         }
 
+        #region Private Methods
         /// <summary>
         /// Get data from cache. Load into cache from repo if needed.
         /// </summary>

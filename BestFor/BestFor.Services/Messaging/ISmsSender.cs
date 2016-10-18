@@ -4,6 +4,6 @@ namespace BestFor.Services.Messaging
 {
     public interface ISmsSender
     {
-        Task SendSmsAsync(string number, string message);
+        void SendSmsAsync(string number, string message);
     }
 }

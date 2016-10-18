@@ -108,19 +108,19 @@ namespace BestFor.Controllers
         /// <returns>true if profanity found</returns>
         private async Task<bool> CheckProfanity(IProfanityService service, AddedAnswerDto answer)
         {
-            var profanityCheckResult = await service.CheckProfanity(answer.Answer.LeftWord);
+            var profanityCheckResult = service.CheckProfanity(answer.Answer.LeftWord);
             if (profanityCheckResult.HasIssues)
             {
                 answer.ErrorMessage = profanityCheckResult.ErrorMessage;
                 return true;
             }
-            profanityCheckResult = await service.CheckProfanity(answer.Answer.RightWord);
+            profanityCheckResult = service.CheckProfanity(answer.Answer.RightWord);
             if (profanityCheckResult.HasIssues)
             {
                 answer.ErrorMessage = profanityCheckResult.ErrorMessage;
                 return true;
             }
-            profanityCheckResult = await service.CheckProfanity(answer.Answer.Phrase);
+            profanityCheckResult = service.CheckProfanity(answer.Answer.Phrase);
             if (profanityCheckResult.HasIssues)
             {
                 answer.ErrorMessage = profanityCheckResult.ErrorMessage;
@@ -146,7 +146,6 @@ namespace BestFor.Controllers
             // let's only serve alphanumeric for now.
             if (ProfanityFilter.AllCharactersAllowed(userInput))
                 return userInput;
-            // if (!ProfanityFilter.IsAlphaNumeric(userInput)) return null;
             return null;
         }
         #endregion Private Members

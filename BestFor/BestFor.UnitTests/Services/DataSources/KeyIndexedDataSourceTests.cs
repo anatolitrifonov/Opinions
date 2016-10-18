@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using Xunit;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Datasources
 {
     /// <summary>
     /// Unit tests for DefaultSuggestions object
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class ServicesKeyIndexedDataSourceTests : BaseTest
+    public class KeyIndexedDataSourceTests
     {
         //[Fact]
         //public async Task KeyIndexedDataSource_FakeInitialize_Initializes()

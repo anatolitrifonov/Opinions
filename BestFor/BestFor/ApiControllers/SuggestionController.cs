@@ -83,9 +83,6 @@ namespace BestFor.Controllers
                 result.ErrorMessage = badCharacter;
             }
 
-            // if (ProfanityFilter.AllCharactersAllowed(userInput)) return userInput;
-            // if (!ProfanityFilter.IsAlphaNumeric(userInput)) return null;
-            // return null;
             return result;
         }
     }

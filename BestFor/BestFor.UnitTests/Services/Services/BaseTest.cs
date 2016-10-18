@@ -3,7 +3,7 @@ using BestFor.Data;
 using BestFor.Fakes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Services
 {
     [ExcludeFromCodeCoverage]
     public class BaseTest

@@ -12,11 +12,8 @@ using Moq;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Services
 {
     [ExcludeFromCodeCoverage]
     public class VoteServiceTests
@@ -44,7 +41,7 @@ namespace BestFor.UnitTests.Services
                 // Suppose we always adding answer 15
                 AnswerDescriptionServiceMock.Setup(
                     x => x.FindByAnswerDescriptionId(It.IsAny<int>())
-                    ).Returns(Task.FromResult(new AnswerDescriptionDto() { AnswerId = 15 }));
+                    ).Returns(new AnswerDescriptionDto() { AnswerId = 15 });
                 TestLoggerFactory = new TestLoggerFactory();
 
                 VoteService = new VoteService(

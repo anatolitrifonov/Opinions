@@ -38,14 +38,14 @@ namespace BestFor.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FlagAnswer(int answerId = 0)
+        public IActionResult FlagAnswer(int answerId = 0)
         {
             _logger.LogDebug("FlagAnswer answerId = " + answerId);
 
             // Only do something is answer id is not zero
             if (answerId != 0)
             {
-                await _flagService.FlagAnswer(new AnswerFlagDto() { AnswerId = answerId, UserId = _userManager.GetUserId(User) } );
+                _flagService.FlagAnswer(new AnswerFlagDto() { AnswerId = answerId, UserId = _userManager.GetUserId(User) } );
             }
 
             // Read the reason
@@ -55,7 +55,7 @@ namespace BestFor.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FlagAnswerDescription(int answerDescriptionId = 0)
+        public IActionResult FlagAnswerDescription(int answerDescriptionId = 0)
         {
             _logger.LogDebug("FlagAnswerDescription answerDescriptionId = " + answerDescriptionId);
 
@@ -65,7 +65,7 @@ namespace BestFor.Controllers
             if (answerDescriptionId != 0)
             {
                 // this does return answerId
-                answerId = await _flagService.FlagAnswerDescription(
+                answerId = _flagService.FlagAnswerDescription(
                     new AnswerDescriptionFlagDto() { AnswerDescriptionId = answerDescriptionId, UserId = _userManager.GetUserId(User) }
                     );
             }

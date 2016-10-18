@@ -5,7 +5,7 @@ namespace BestFor.Services.Services
 {
     public interface IProfanityService
     {
-        Task<ProfanityCheckResult> CheckProfanity(string input);
+        ProfanityCheckResult CheckProfanity(string input);
 
         /// <summary>
         /// Error message will be localized for the passed culture
@@ -13,6 +13,6 @@ namespace BestFor.Services.Services
         /// <param name="input"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        Task<ProfanityCheckResult> CheckProfanity(string input, string culture);
+        ProfanityCheckResult CheckProfanity(string input, string culture);
     }
 }

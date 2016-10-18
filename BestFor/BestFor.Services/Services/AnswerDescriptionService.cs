@@ -42,14 +42,14 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerDescription"></param>
         /// <returns></returns>
-        public async Task<AnswerDescription> AddAnswerDescription(AnswerDescriptionDto answerDescription)
+        public AnswerDescription AddAnswerDescription(AnswerDescriptionDto answerDescription)
         {
             var answerDescriptionObject = new AnswerDescription();
             answerDescriptionObject.FromDto(answerDescription);
 
             // Save to database
             _repository.Insert(answerDescriptionObject);
-            await _repository.SaveChangesAsync();
+            _repository.SaveChangesAsync().Wait();
 
             // Add to cache.
             var cachedData = GetCachedData();
@@ -63,10 +63,10 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDescriptionDto>> FindByAnswerId(int answerId)
+        public IEnumerable<AnswerDescriptionDto> FindByAnswerId(int answerId)
         {
             // return blank list if invalid answerId
-            if (answerId == 0) return await Task.FromResult(Enumerable.Empty<AnswerDescriptionDto>());
+            if (answerId == 0) return Enumerable.Empty<AnswerDescriptionDto>();
             // Get cache
             var cachedData = GetCachedData();
             // Get data
@@ -85,10 +85,10 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDescriptionDto>> FindDirectByAnswerId(int answerId)
+        public IEnumerable<AnswerDescriptionDto> FindDirectByAnswerId(int answerId)
         {
             // return blank list if invalid answerId
-            if (answerId == 0) return await Task.FromResult(Enumerable.Empty<AnswerDescriptionDto>());
+            if (answerId == 0) return Enumerable.Empty<AnswerDescriptionDto>();
 
             var data = _repository.FindByAnswerId(answerId);
 
@@ -101,14 +101,16 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerDescriptionId"></param>
         /// <returns></returns>
-        public async Task<AnswerDescriptionDto> FindByAnswerDescriptionId(int answerDescriptionId)
+        public AnswerDescriptionDto FindByAnswerDescriptionId(int answerDescriptionId)
         {
             // return blank list if invalid answerId
-            if (answerDescriptionId == 0) return await Task.FromResult<AnswerDescriptionDto>(new AnswerDescriptionDto());
+            if (answerDescriptionId == 0) return new AnswerDescriptionDto();
             // Get cache
             var cachedData = GetCachedData();
             // Get data
-            var data = await cachedData.FindExactById(answerDescriptionId);
+            var task = cachedData.FindExactById(answerDescriptionId);
+            task.Wait();
+            var data = task.Result;
             if (data == null) return null;
 
             // Return data
@@ -119,10 +121,10 @@ namespace BestFor.Services.Services
         /// Find all answers with no user going directly to the database
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDescriptionDto>> FindDirectBlank()
+        public IEnumerable<AnswerDescriptionDto> FindDirectBlank()
         {
             var data = _repository.FindAnswerDescriptionsWithNoUser();
-            return await Task.FromResult(data.Select(x => x.ToDto()));
+            return data.Select(x => x.ToDto());
         }
 
         /// <summary>
@@ -130,10 +132,10 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDescriptionDto>> FindDirectByUserId(string userId)
+        public IEnumerable<AnswerDescriptionDto> FindDirectByUserId(string userId)
         {
             var data = _repository.FindByUserId(userId);
-            return await Task.FromResult(data.Select(x => x.ToDto()));
+            return data.Select(x => x.ToDto());
         }
         #endregion
 

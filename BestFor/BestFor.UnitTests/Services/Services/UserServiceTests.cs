@@ -1,23 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Autofac;
-using BestFor.Data;
-using BestFor.Domain.Entities;
-using BestFor.Dto;
+﻿using BestFor.Domain.Entities;
 using BestFor.Fakes;
-using BestFor.Services;
 using BestFor.Services.Cache;
-using BestFor.Services.DataSources;
 using BestFor.Services.Services;
 using BestFor.UnitTests.Testables;
+using Microsoft.AspNetCore.Identity;
 using Moq;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Services
 {
     [ExcludeFromCodeCoverage]
     public class UserServiceTests

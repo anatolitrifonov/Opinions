@@ -70,7 +70,7 @@ namespace BestFor.Controllers
             // Go home is not found
             if (answer == null) return RedirectToAction("Index", "Home");
 
-            var answerDetailsDto = await HomeController.FillInDetails(answer, _answerDescriptionService, _userService, _voteService,
+            var answerDetailsDto = HomeController.FillInDetails(answer, _answerDescriptionService, _userService, _voteService,
                 _resourcesService, culture, _appSettings.Value.FullDomainAddress);
             // Set the reason to be shown on the page in case someone sent it
             answerDetailsDto.Reason = reason;
@@ -123,7 +123,7 @@ namespace BestFor.Controllers
             answerDescription.Description = answerDescription.Description.TrimEnd(new Char[] { ' ', '\n', '\r' });
 
             // Let's first check for profanities.
-            var profanityCheckResult = await _profanityService.CheckProfanity(answerDescription.Description, this.Culture);
+            var profanityCheckResult = _profanityService.CheckProfanity(answerDescription.Description, this.Culture);
             if (profanityCheckResult.HasIssues)
             {
                 // answer.ErrorMessage = profanityCheckResult.ErrorMessage;
@@ -142,7 +142,7 @@ namespace BestFor.Controllers
             answerDescription.UserId = _userManager.GetUserId(User);
 
             // Add answer description
-            var addedAnswerDescription = await _answerDescriptionService.AddAnswerDescription(answerDescription);
+            var addedAnswerDescription = _answerDescriptionService.AddAnswerDescription(answerDescription);
 
             // Read the reason to return it to UI.
             var reason = _resourcesService.GetString(this.Culture, Lines.DESCRIPTION_WAS_ADDED_SUCCESSFULLY);

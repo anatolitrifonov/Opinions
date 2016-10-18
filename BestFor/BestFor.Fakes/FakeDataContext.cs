@@ -30,7 +30,10 @@ namespace BestFor.Fakes
             AddFakeDbSet<AnswerDescription, FakeAnswerDescriptions>();
             AddFakeDbSet<AnswerVote, FakeAnswerVotes>();
             AddFakeDbSet<AnswerDescriptionVote, FakeAnswerDescriptionVotes>();
-            
+            AddFakeDbSet<ResourceString, FakeResourceStrings>();
+            AddFakeDbSet<AnswerFlag, FakeAnswerFlags>();
+            AddFakeDbSet<AnswerDescriptionFlag, FakeAnswerDescriptionFlags>();
+
             // Have to deal with users separately
             _fakeDbSets.Add(typeof(ApplicationUser), new FakeApplicationUsers());
         }

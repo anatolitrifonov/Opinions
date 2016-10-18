@@ -2,16 +2,17 @@
 using BestFor.Data;
 using BestFor.Domain.Entities;
 using BestFor.Services.Profanity;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Services
 {
     /// <summary>
     /// Unit tests for DefaultSuggestions object
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class ServicesProfanityTests : BaseTest
+    public class ProfanityFilterTests : BaseTest
     {
         [Fact]
         public void ProfanityFilter_Character17_NotAllowed()
@@ -174,5 +175,68 @@ namespace BestFor.UnitTests.Services
             Assert.True(result == badWord);
         }
 
+        [Fact]
+        public void ProfanityCheck_FirstDisallowedCharacter_Returns()
+        {
+            char bad = Convert.ToChar(23);
+            char random = Convert.ToChar(17);
+            var result = ProfanityFilter.FirstDisallowedCharacter("I3" + bad + random);
+            Assert.Equal(result, bad.ToString());
+
+            result = ProfanityFilter.FirstDisallowedCharacter("I3");
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void ProfanityCheck_CleanupData_Corners()
+        {
+            var result = ProfanityFilter.CleanupData(null);
+            Assert.Null(result);
+            result = ProfanityFilter.CleanupData("    ");
+            Assert.Equal(result, "    ");
+        }
+
+        [Fact]
+        public void ProfanityCheck_CheckContains_Additional()
+        {
+            var result = ProfanityFilter.CheckContains("a", "bad", " !~");
+            Assert.Null(result);
+
+            result = ProfanityFilter.CheckContains("my !bad!", "bad", " !~");
+            Assert.Equal(result, "!bad!");
+        }
+
+        [Fact]
+        public void ProfanityCheck_GetProfanity_Extensive()
+        {
+            var repo = new Repository<BadWord>(resolver.Resolve<IDataContext>());
+
+            var result = ProfanityFilter.GetProfanity(null, null);
+            Assert.Null(result);
+            var badWord = "panty";
+            var checkPhrase = "She was whereing panty.";
+            result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
+            Assert.Equal(result, badWord);
+
+            checkPhrase = "panty well";
+            result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
+            Assert.Equal(result, badWord);
+
+            checkPhrase = " panty well";
+            result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
+            Assert.Equal(result, badWord);
+
+            checkPhrase = "panty";
+            result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
+            Assert.Equal(result, badWord);
+
+            checkPhrase = "panty.";
+            result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
+            Assert.Equal(result, badWord);
+
+            checkPhrase = "$panty$";
+            result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
+            Assert.Equal(result, badWord);
+        }
     }
 }

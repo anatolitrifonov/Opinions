@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
-namespace BestFor.UnitTests.Services
+namespace BestFor.UnitTests.Services.Services
 {
     /// <summary>
     /// Unit tests for DefaultSuggestions object

@@ -66,7 +66,7 @@ namespace BestFor.Controllers
 
             string message = "User " + model.UserName + " is contacting us. " + model.Content;
 
-            await _emailSender.SendEmailAsync(model.Subject, message);
+            _emailSender.SendEmailAsync(model.Subject, message);
 
             // Read the reason
             var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_CONTACTING);

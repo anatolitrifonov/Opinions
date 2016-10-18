@@ -8,8 +8,8 @@ namespace BestFor.Services.Services
     /// </summary>
     public interface IFlagService
     {
-        Task<int> FlagAnswer(AnswerFlagDto answerFlag);
+        int FlagAnswer(AnswerFlagDto answerFlag);
 
-        Task<int> FlagAnswerDescription(AnswerDescriptionFlagDto answerFlag);
+        int FlagAnswerDescription(AnswerDescriptionFlagDto answerFlag);
     }
 }

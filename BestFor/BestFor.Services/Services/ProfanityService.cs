@@ -36,12 +36,12 @@ namespace BestFor.Services.Services
             return (KeyDataSource<BadWord>)data;
         }
 
-        public async Task<ProfanityCheckResult> CheckProfanity(string input)
+        public ProfanityCheckResult CheckProfanity(string input)
         {
-            return await CheckProfanity(input, null);
+            return CheckProfanity(input, null);
         }
 
-        public async Task<ProfanityCheckResult> CheckProfanity(string input, string culture)
+        public ProfanityCheckResult CheckProfanity(string input, string culture)
         {
             var result = new ProfanityCheckResult();
             // Check blank first.
@@ -49,13 +49,13 @@ namespace BestFor.Services.Services
             // Check funny characters
             result.HasBadCharacters = !ProfanityFilter.AllCharactersAllowed(input);
             // Having bad character is enough to not touch cache
-            if (result.HasBadCharacters) return await LocalizeResult(result, culture);
+            if (result.HasBadCharacters) return LocalizeResult(result, culture);
 
             // Theoretically this shold never throw exception unless we got some timeout on initialization or something strange.
             var cachedData = GetCachedData();
             result.ProfanityWord = ProfanityFilter.GetProfanity(input, cachedData.Items);
 
-            return await (result.HasIssues ? LocalizeResult(result, culture) : Task.FromResult<ProfanityCheckResult>(result));
+            return result.HasIssues ? LocalizeResult(result, culture) : result;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public async Task<ProfanityCheckResult> LocalizeResult(ProfanityCheckResult result, string culture)
+        public ProfanityCheckResult LocalizeResult(ProfanityCheckResult result, string culture)
         {
             if (result == null)
                 throw new Exception("Null result passed to ProfanityService.LocalizeResult");
