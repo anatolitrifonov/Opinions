@@ -24,7 +24,7 @@ namespace BestFor
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddJsonFile("appsettings.secret.sample.json", optional: true);
+                .AddJsonFile("appsettings.secret.json", optional: true);
 
             //if (env.IsDevelopment())
             //{
@@ -83,7 +83,13 @@ namespace BestFor
 
             // We added MVC -> we get Antiforgery enabled
             // Now just tweak configuration a bit so that we get more controler over cookie.
-            services.AddAntiforgery(options => options.CookieName = Controllers.BaseApiController.ANTI_FORGERY_COOKIE_NAME);
+            services.AddAntiforgery(options =>
+            {
+                options.CookieName = Controllers.BaseApiController.ANTI_FORGERY_COOKIE_NAME;
+                options.FormFieldName = "HelloFormProtection"; // This changes the name of the field generated in forms
+                options.HeaderName = Controllers.BaseApiController.ANTI_FORGERY_HEADER_NAME;
+                options.SuppressXFrameOptionsHeader = false;
+            });
 
             // Register application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

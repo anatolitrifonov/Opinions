@@ -1,4 +1,5 @@
-﻿using BestFor.Domain.Entities;
+﻿using Microsoft.AspNetCore.Antiforgery;
+using BestFor.Domain.Entities;
 using BestFor.Dto;
 using BestFor.Services.Profanity;
 using BestFor.Services.Services;
@@ -23,14 +24,16 @@ namespace BestFor.Controllers
         private IAnswerService _answerService;
         private IProfanityService _profanityService;
         private ISuggestionService _suggestionService;
+        private IAntiforgery _antiforgery;
 
         public AnswerController(IAnswerService answerService, IProfanityService profanityService, ISuggestionService suggestionService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, IAntiforgery antiforgery)
         {
             _answerService = answerService;
             _profanityService = profanityService;
             _suggestionService = suggestionService;
             _userManager = userManager;
+            _antiforgery = antiforgery;
         }
 
         // GET: api/values
@@ -40,7 +43,8 @@ namespace BestFor.Controllers
             var result = new AnswersDto();
 
             // This might throw exception if there was a header but invalid. But if someone is just messing with us we will return nothing.
-            if (!ParseAntiForgeryHeader()) return result;
+            if (!ParseAntiForgeryHeader(_antiforgery, result, HttpContext))
+                return result;
 
             // validate input
             var leftWord = ValidateInputForGet(QUERY_STRING_PARAMETER_LEFT_WORD);
@@ -68,10 +72,11 @@ namespace BestFor.Controllers
             if (result.Answer == null) return SetErrorMessage(result, "Incoming data is null.");
 
             // This might throw exception if there was a header but invalid. But if someone is just messing with us we will return nothing.
-            if (!ParseAntiForgeryHeader()) return SetErrorMessage(result, "Antiforgery issue");
+            if (!ParseAntiForgeryHeader(_antiforgery, result, HttpContext))
+                return result;
 
             // Let's first check for profanities.
-            bool gotProfanityIssues = await CheckProfanity(_profanityService, result);
+            bool gotProfanityIssues = CheckProfanity(_profanityService, result);
             if (gotProfanityIssues) return result;
 
             // Add left word and right word to suggestions
@@ -106,7 +111,7 @@ namespace BestFor.Controllers
         /// <param name="service"></param>
         /// <param name="answer"></param>
         /// <returns>true if profanity found</returns>
-        private async Task<bool> CheckProfanity(IProfanityService service, AddedAnswerDto answer)
+        private bool CheckProfanity(IProfanityService service, AddedAnswerDto answer)
         {
             var profanityCheckResult = service.CheckProfanity(answer.Answer.LeftWord);
             if (profanityCheckResult.HasIssues)

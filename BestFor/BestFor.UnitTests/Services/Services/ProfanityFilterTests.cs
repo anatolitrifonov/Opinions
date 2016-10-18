@@ -214,7 +214,7 @@ namespace BestFor.UnitTests.Services.Services
             var result = ProfanityFilter.GetProfanity(null, null);
             Assert.Null(result);
             var badWord = "panty";
-            var checkPhrase = "She was whereing panty.";
+            var checkPhrase = "She was whereing Panty.";
             result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
             Assert.Equal(result, badWord);
 
@@ -236,7 +236,7 @@ namespace BestFor.UnitTests.Services.Services
 
             checkPhrase = "$panty$";
             result = ProfanityFilter.GetProfanity(checkPhrase, repo.List());
-            Assert.Equal(result, badWord);
+            Assert.True(result.Contains(badWord));
         }
     }
 }

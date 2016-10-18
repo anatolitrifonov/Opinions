@@ -133,9 +133,12 @@ namespace BestFor.Services.Services
             var rightCachedData = await GetRightCachedData();
             rightCachedData.Insert(new AnswerRightMask(persistResult.Answer));
 
-            // Add to user cache
-            var userCachedData = await GetUserCachedData();
-            userCachedData.Insert(new AnswerUserMask(persistResult.Answer));
+            // Add to user cache if there is a user
+            if (persistResult.Answer.UserId != null)
+            {
+                var userCachedData = await GetUserCachedData();
+                userCachedData.Insert(new AnswerUserMask(persistResult.Answer));
+            }
 
             // Add to trending today
             AddToTrendingToday(persistResult.Answer);

@@ -1,8 +1,8 @@
 ﻿using BestFor.Dto;
 using BestFor.Services.Profanity;
 using BestFor.Services.Services;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,20 +28,26 @@ namespace BestFor.Controllers
 
         private ISuggestionService _suggestionService;
         private IProfanityService _profanityService;
+        private IAntiforgery _antiforgery;
 
-        public SuggestionController(ISuggestionService suggestionService, IProfanityService profanityService)
+        public SuggestionController(ISuggestionService suggestionService, IProfanityService profanityService, IAntiforgery antiforgery)
         {
             _suggestionService = suggestionService;
             _profanityService = profanityService;
+            _antiforgery = antiforgery;
         }
 
         // GET: api/values
+        // Does not look like we can use this here [ValidateAntiForgeryToken]
+        // see the code below. Request is valid but [ValidateAntiForgeryToken] throws it away
         [HttpGet]
-        //[ValidateAntiForgeryToken]
-        public async Task<SuggestionsDto> Get()
+        public SuggestionsDto Get()
         {
             var result = new SuggestionsDto();
-            if (!ParseAntiForgeryHeader()) return result;
+            
+            // check headers for antiforgery tokens
+            if (!ParseAntiForgeryHeader(_antiforgery, result, HttpContext))
+                return result;
 
             // validate input
             var validationResult = ValidateInputForGet();
@@ -50,9 +56,6 @@ namespace BestFor.Controllers
                 result.ErrorMessage = validationResult.ErrorMessage;
                 return result;
             }
-            // get and call the service
-            //Thread.Sleep(4000);
-
             result.Suggestions = _suggestionService.FindSuggestions(validationResult.CleanedInput);
 
             return result;

@@ -6,16 +6,6 @@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
-@functions
-{
-    // Generate the token that we will use in requests sending data to server in headers.
-    public string GetAntiXsrfToken()
-    {
-        var tokens = Xsrf.GetTokens(Context);
-        return tokens.CookieToken + ":" + tokens.RequestToken;
-    }
-}
 @{
     // Read localized strings
     var strings = resourcesService.GetCommonStrings(ViewBag.BestForCulture);
@@ -31,6 +21,11 @@
 
     // Set it as a title
     ViewData["Title"] = Model.ThisAnswerText;
+
+    // Get antiforgery tokens for request
+    var tokens = Xsrf.GetTokens(Context);
+    string xsrfToken = tokens.RequestToken;
+    string xsrfHeader = tokens.HeaderName;
 }
 @section MetaKeyword {
     <meta name="keywords" content="@Model.ThisAnswerText" />
@@ -109,8 +104,8 @@ else
         productRightWord = Model.Answer.RightWord,
         productPhrase = Model.Answer.Phrase,
         productCategory = Model.Answer.Category,
-        antiForgeryHeaderName = BestFor.Controllers.BaseApiController.ANTI_FORGERY_HEADER_NAME,
-        antiForgeryToken = GetAntiXsrfToken(),
+        antiForgeryHeaderName = xsrfHeader,
+        antiForgeryToken = xsrfToken,
         resourceStrings = resourcesService.GetStringsAsJson(this.ViewBag.BestForCulture,
             new string[]
             {

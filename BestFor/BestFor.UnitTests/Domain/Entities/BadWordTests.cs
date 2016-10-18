@@ -20,7 +20,8 @@ namespace BestFor.UnitTests.Domain.Entities
             {
                 Id = 1,
                 DateAdded = new DateTime(2016, 1, 1),
-                ObjectState = ObjectState.Unchanged
+                ObjectState = ObjectState.Unchanged,
+                Phrase = "panty"
             };
         }
 

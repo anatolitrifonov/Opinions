@@ -1,0 +1,41 @@
+﻿each form adds 
+<input name="__RequestVerificationToken" type="hidden" value="..." />
+because
+TagHelpers are enabled for forms
+<form asp-controller="Account" asp-action="LogOff" asp-antiforgery="false" 
+      method="post" id="logoutForm" class="navbar-right">
+</form>
+Can be disabled for form by adding asp-antiforgery="false" 
+
+Global untested turn off is AntiForgeryConfig.SuppressIdentityHeuristicChecks = true
+
+We are good on all the forms that are generated server side with tag helpers.
+
+Goal is to protect controllers inheriting from BaseApiController because they are called from ReactJs
+Has to work for the case of user logged in and user not logged in.
+
+------------------------------------------------------------------------------------------------------
+When this is not added to Startup
+services.AddAntiforgery(options => options.CookieName = Controllers.BaseApiController.ANTI_FORGERY_COOKIE_NAME);
+Pages with asp forms do
+Set-Cookie:.AspNetCore.Antiforgery.Zr3Df9YsNOY=CfDJ8BSP8503hFREmBwXNDZHCbyMlQv1Wau2ofau
+Ws9CKJr35HxAjL9y9vN0dKLJiiLYUkz54rDkt5v_PsBOnpTSFTrb6TzeufQ_h2UJMnuA3xcdFet-jT9d4n7j9LBtQXU7nyrKFiHpOQ5kJyruwBPhKh0; path=/; httponly
+
+When this is added to Startup -> Cookie name changes. That is it.
+Set-Cookie:ANTI_FORGERY_COOKIE_NAME=CfDJ8BSP8503hFREmBwXNDZHCbxkR7p4wHRghigYS7UC_2pXLqnpn_gftrPAvTR9t1Zva5fOKD8kSOB6rlqN3dGLC
+lI9lh0Gf61Y54Iz9P0AdBMV0yZLUzTOTWOc-dXM5b9eFPZY-SLgccEEsbm40bvxuuI; path=/; httponly
+
+    var tokens = Xsrf.GetTokens(Context);
+    tokens.RequestToken		<- never blank. Generated per request.
+    tokens.HeaderName		<- comes from options set above
+	tokens.CookieToken		<- non blank if cookie is not set -> user did visit any page with form with antiforgery enables
+								becomes blank once user visit the page with form with antiforgery enabled.
+								We should not care about this value for securing controllers at all.
+
+
+Unfortunately we still can not put [ValidateAntiForgeryToken] on BaseApiController because looks like it is expecting
+form value, not the header value.
+But putting a proper header into ReactJs code that can add it to header of the get or post looks working fine if we use 
+antiforgery.IsRequestValidAsync(httpContext);
+protected bool ParseAntiForgeryHeader(IAntiforgery antiforgery, CrudMessagesDto dto, HttpContext httpContext) 
+is added to BaseApiController and can be used in each ApiController to make sure request originates from us.

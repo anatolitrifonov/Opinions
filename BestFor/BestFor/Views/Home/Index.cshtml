@@ -1,17 +1,6 @@
 ﻿@model BestFor.Dto.HomePageDto
-@* Inject the service that generates anti forgery keys *@
-@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
-@functions
-{
-    // Generate the token that we will use in requests sending data to server in headers.
-    public string GetAntiXsrfToken()
-    {
-        var tokens = Xsrf.GetTokens(Context);
-        return tokens.CookieToken + ":" + tokens.RequestToken;
-    }
-}
 @{
     @* Culture is placed into view bag by action filter *@
     @* This is the "normal" way of getting a localized string value *@
@@ -32,11 +21,6 @@
         <span class="best-top-center-general-text">opinions on thousands of questions</span>
     </div>
 }
-@*  Main idea: do not put the logic of localization into react control because it should not really care about it.
-    It should work with any language. This approach might not be considered clean since control "should" be selfcontained.
-    Use resource service to get dynamic json object and feed it as a property to react control.
-    Json object will be rendered as good JavaScript defined object. Refer to control jsx file for the list of expected strings.
-*@  
 <div class="row best-theme-color">
     @* Second part of the banner message *@
     <div class="text-center best-center-light-text">

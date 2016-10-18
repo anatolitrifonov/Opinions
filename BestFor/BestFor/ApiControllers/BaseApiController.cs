@@ -1,23 +1,17 @@
-﻿using System;
-using System.Threading;
-using System.Linq;
+﻿using System.Threading;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
+using BestFor.Dto;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
 
 namespace BestFor.Controllers
 {
     /// <summary>
-    /// Contins AntiForgery protection and culture parsing functions helping inheriting api controllers.
-    /// 
     /// ResponseCache applies to all controllers if I am not mistaken.
     /// </summary>
     [ResponseCache(CacheProfileName = "Hello")]
     public abstract class BaseApiController : Controller
     {
-        //[FromServices]
-        public IAntiforgery Antiforgery { get; set; }
-
         /// <summary>
         /// Pages working with these controllers are expected to pass the header with this name.
         /// </summary>
@@ -60,46 +54,18 @@ namespace BestFor.Controllers
             }
         }
 
-        /// <summary>
-        /// Parses values passed in anti forgery header.
-        /// The idea is that if someone blindly calls controller methods we will simply return nothing and not throw expection.
-        /// Exceptions are expensive.
-        /// Let's throw it only if there was something passed in the header and it was not valid.
-        /// Otherwise we will just return nothing.
-        /// 
-        /// Look at the help folder for more explanation.
-        /// 
-        /// Used by inheriting controller to protect the straight calls to controllers.
-        /// Also see file is Help folder about controllers protection
-        /// </summary>
-        /// <returns></returns>
-        protected bool ParseAntiForgeryHeader()
+        protected bool ParseAntiForgeryHeader(IAntiforgery antiforgery, CrudMessagesDto dto, HttpContext httpContext)
         {
-            StringValues tokenHeaders;
-            if (HttpContext.Request.Headers.TryGetValue(ANTI_FORGERY_HEADER_NAME, out tokenHeaders))
+            var task = antiforgery.IsRequestValidAsync(httpContext);
+            task.Wait();
+            var validRequest = task.Result;
+            if (!validRequest)
             {
-                var tokens = tokenHeaders.First().Split(':');
-                if (tokens != null && tokens.Length == 2)
-                {
-                    var cookieToken = tokens[0];
-                    var formToken = tokens[1];
-                    if (string.IsNullOrEmpty(cookieToken) || string.IsNullOrWhiteSpace(cookieToken))
-                    {
-                        // Try the cookies
-                        if (Request.Cookies.Keys.Contains(ANTI_FORGERY_COOKIE_NAME))
-                        {
-                            cookieToken = Request.Cookies[ANTI_FORGERY_COOKIE_NAME];
-                        }
-                    }
-
-                    //antiforgery.ValidateRequestAsync(HttpContext);
-
-                    return true;
-                }
+                dto.ErrorMessage = "Broken antiforgery";
+                return false;
             }
-            return false;
+            return true;
         }
-
         /// <summary>
         /// Read Url parameter as string
         /// </summary>
