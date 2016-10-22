@@ -61,6 +61,7 @@
       "wwwroot",
       "Views",
       "appsettings.json",
+      "appsettings.secret.json",
       "web.config",
       "robots.txt",
       "google9abc4825b19a260b.html"

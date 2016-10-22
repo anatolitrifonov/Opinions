@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BestFor.UnitTests.Testables
 {

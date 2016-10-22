@@ -1,9 +1,8 @@
-﻿using Moq;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BestFor.UnitTests.Testables
 {
@@ -11,6 +10,7 @@ namespace BestFor.UnitTests.Testables
     /// Extensions are not quite testable using Moq.
     /// Have to create solid test classes some time.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class TestMemoryCache : IMemoryCache
     {
         public Dictionary<string, object> Cache;
@@ -37,7 +37,10 @@ namespace BestFor.UnitTests.Testables
 
         public bool TryGetValue(object key, out object value)
         {
-            throw new NotImplementedException();
+            value = "A";
+            if (key.ToString() == "hi")
+                return true;
+            return false;
         }
     }
 }

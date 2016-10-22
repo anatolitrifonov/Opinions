@@ -4,81 +4,113 @@
     Layout = "_SturgeonLayout.cshtml";
     ViewData["Title"] = "Team Page";
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Assign all slots waschecked to be the same as checked on load
+        // because checked comes from the server side.
+        $('input[name*="Slot"]').each(function (i) {
+            $(this).data('waschecked', $(this).prop('checked'));
+        });
 
-<h4>Hi team @Model.TeamName!</h4>
+        // Show all values
+        $('input[name*="Slot"]').each(function (i) {
+            console.log(this.name + " " + $(this).prop('checked') );
+        });
+    });
+
+    $(function () {
+        // bind all clicks
+        $('input[name*="Slot"]').click(function () {
+            var $radio = $(this);
+            console.log($radio.data('waschecked'));
+
+            // if this was previously checked
+            if ($radio.data('waschecked') == true) {
+                $radio.prop('checked', false);
+                $radio.data('waschecked', false);
+            }
+            else
+                $radio.data('waschecked', true);
+
+            // remove was checked from other radios
+            $radio.siblings('input[name*="Slot"]').data('waschecked', false);
+        });
+    });
+
+</script>
+<h2>Team @Model.TeamName!</h2>
 <span class="red">@Model.ErrorMessage</span><br />
-
 <form asp-action="Team" method="post" role="form">
     <input type="hidden" asp-for="TeamName" />
     <table class="score_table">
         <tr>
-            <td>Slot</td>
-            <td>Shaker</td>
-            <td>Slot</td>
-            <td>Oversize</td>
-            <td>Score</td>
+            <th>Entry</th>
+            <th>Shaker</th>
+            <th>Slot</th>
+            <th>Oversize</th>
+            <th>Score</th>
         </tr>
         <tr>
             <td>Entry # 1</td>
-            <td>Shaker <input type="radio" asp-for="Slot1" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot1" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot1" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot1" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot1" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot1" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot1</td>
         </tr>
         <tr>
             <td>Entry # 2</td>
-            <td>Shaker <input type="radio" asp-for="Slot2" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot2" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot2" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot2" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot2" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot2" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot2</td>
         </tr>
         <tr>
             <td>Entry # 3</td>
-            <td>Shaker <input type="radio" asp-for="Slot3" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot3" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot3" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot3" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot3" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot3" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot3</td>
         </tr>
         <tr>
             <td>Entry # 4</td>
-            <td>Shaker <input type="radio" asp-for="Slot4" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot4" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot4" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot4" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot4" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot4" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot4</td>
         </tr>
         <tr>
             <td>Entry # 5</td>
-            <td>Shaker <input type="radio" asp-for="Slot5" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot5" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot5" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot5" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot5" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot5" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot5</td>
         </tr>
         <tr>
             <td>Entry # 6</td>
-            <td>Shaker <input type="radio" asp-for="Slot6" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot6" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot6" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot6" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot6" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot6" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot6</td>
         </tr>
         <tr>
             <td>Entry # 7</td>
-            <td>Shaker <input type="radio" asp-for="Slot7" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot7" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot7" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot7" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot7" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot7" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot7</td>
         </tr>
         <tr>
             <td>Entry # 8</td>
-            <td>Shaker <input type="radio" asp-for="Slot8" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot8" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot8" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot8" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot8" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot8" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot8</td>
         </tr>
         <tr>
             <td>Entry # 9</td>
-            <td>Shaker <input type="radio" asp-for="Slot9" value="3" /></td>
-            <td>Slot <input type="radio" asp-for="Slot9" value="7" /></td>
-            <td>Oversize <input type="radio" asp-for="Slot9" value="5" /></td>
+            <td>Shaker <input type="radio" asp-for="Slot9" value="3" data-waschecked="false" /></td>
+            <td>Slot <input type="radio" asp-for="Slot9" value="7" data-waschecked="false" /></td>
+            <td>Oversize <input type="radio" asp-for="Slot9" value="5" data-waschecked="false" /></td>
             <td>@Model.Slot9</td>
         </tr>
         <tr>

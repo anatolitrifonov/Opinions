@@ -51,14 +51,16 @@ namespace BestFor.Services
             const int GROUP_LEFT_WORD = 1;
             const int GROUP_RIGHT_WORD = 2;
             const int GROUP_PHRASE_WORD = 3;
-            const int NUMBER_GROUPS = 4;
+            // const int NUMBER_GROUPS = 4;
             if (string.IsNullOrEmpty(url)) return null;
             if (string.IsNullOrWhiteSpace(url)) return null;
 
             var matches = Regex.Matches(url.Replace("-", " "), "^/best\\s+(.*)\\s+for\\s+(.*)\\s+is\\s+(.*)");
-            if (matches == null) return null; // Should not be null. Could be count zero but not null.
+            // Good check but we will never run into this
+            // if (matches == null) return null; // Should not be null. Could be count zero but not null.
             if (matches.Count == 0) return null;
-            if (matches[0].Groups.Count != NUMBER_GROUPS) return null;
+            // Good check but we will never run into this
+            //if (matches[0].Groups.Count != NUMBER_GROUPS) return null;
             var answer = new AnswerDto()
             {
                 LeftWord = matches[0].Groups[GROUP_LEFT_WORD].Value,
@@ -73,16 +75,18 @@ namespace BestFor.Services
             const int GROUP_LEFT_WORD = 1;
             const int GROUP_RIGHT_WORD = 2;
             const int GROUP_PHRASE_WORD = 3;
-            const int NUMBER_GROUPS = 4;
+            //const int NUMBER_GROUPS = 4;
             if (string.IsNullOrEmpty(url)) return null;
             if (string.IsNullOrWhiteSpace(url)) return null;
 
             //^/best\\s+(.*)\\s+for\\s+(.*)\\s+is\\s+(.*)
             var expression = "^/" + commonStrings.Best.ToLower() + "\\s+(.*)\\s+" + commonStrings.For.ToLower() + "\\s+(.*)\\s+" + commonStrings.Is.ToLower() + "\\s+(.*)";
             var matches = Regex.Matches(url.Replace("-", " ").ToLower(), expression);
-            if (matches == null) return null; // Should not be null. Could be count zero but not null.
+            // Good check but we will never run into this
+            //if (matches == null) return null; // Should not be null. Could be count zero but not null.
             if (matches.Count == 0) return null;
-            if (matches[0].Groups.Count != NUMBER_GROUPS) return null;
+            // Good check but we will never run into this
+            //if (matches[0].Groups.Count != NUMBER_GROUPS) return null;
             var answer = new AnswerDto()
             {
                 LeftWord = matches[0].Groups[GROUP_LEFT_WORD].Value,

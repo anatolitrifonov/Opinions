@@ -2,13 +2,11 @@
 @model BestFor.Sturgeon.TeamsModel
 @{
     Layout = "_SturgeonLayout.cshtml";
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Addathon Ironman Sturgeon Derby Teams Standings";
 }
-
-Hello Teams.<br /><br />
-
+<h2>Teams Standings</h2>
 <table class="score_table">
-    <tr><td>Team</td><td>Score</td></tr>
+    <tr><th>Team</th><th>Score</th></tr>
     @foreach (var team in Model.Teams)
     {
         <tr>
