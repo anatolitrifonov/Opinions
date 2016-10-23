@@ -1,17 +1,10 @@
-﻿using BestFor.Domain.Entities;
+﻿using BestFor.Common;
 using BestFor.Controllers;
-using BestFor.Dto;
-using BestFor.Services.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using BestFor.Common;
+using System;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace BestFor.Sturgeon
 {
@@ -140,7 +133,7 @@ end", con))
                         var parameterScore = command.Parameters.Add(new SqlParameter("score", model.TeamId));
 
                         // Update scores
-                        for (int i = 1; i < 11; i++)
+                        for (int i = 1; i < 51; i++)
                         {
                             parameterSlot.Value = i;
                             parameterScore.Value = model.GetScore(i);
