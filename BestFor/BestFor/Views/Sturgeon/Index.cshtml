@@ -7,7 +7,7 @@
 <h2>Teams Standings</h2>
 <table class="score_table">
     <tr><th>Team</th><th>Score</th></tr>
-    @foreach (var team in Model.Teams)
+    @foreach (var team in Model.Teams.OrderByDescending(x => x.Score))
     {
         <tr>
             <td>

@@ -1,0 +1,7 @@
+﻿Local development
+
+Start Microsoft Storage Azure Emilator
+Connection String 
+string connString = "UseDevelopmentStorage=true;";
+
+Production

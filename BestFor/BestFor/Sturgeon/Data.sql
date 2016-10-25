@@ -69,3 +69,47 @@ insert sturgeonscores(team_id, slot, score) values(2, 8, 7);
 insert sturgeonscores(team_id, slot, score) values(2, 9, 3);
 go
 
+update sturgeonteams set secret_string = 'andy' where name = N'crazy team 1'
+update sturgeonteams set secret_string = 'chip' where name = N'crazy team 2'
+update sturgeonteams set secret_string = 'dana' where name = N'crazy team 3'
+update sturgeonteams set secret_string = 'gage' where name = N'crazy team 4'
+update sturgeonteams set secret_string = 'jude' where name = N'crazy team 5'
+update sturgeonteams set secret_string = 'nick' where name = N'crazy team 6'
+update sturgeonteams set secret_string = 'rick' where name = N'crazy team 7'
+update sturgeonteams set secret_string = 'todd' where name = N'crazy team 8'
+update sturgeonteams set secret_string = 'zack' where name = N'crazy team 9'
+update sturgeonteams set secret_string = 'ivan' where name = N'crazy team 10'
+update sturgeonteams set secret_string = 'eddy' where name = N'crazy team 11'
+update sturgeonteams set secret_string = 'cody' where name = N'crazy team 12'
+update sturgeonteams set secret_string = 'aron' where name = N'crazy team 13'
+update sturgeonteams set secret_string = 'alba' where name = N'crazy team 14'
+update sturgeonteams set secret_string = 'finn' where name = N'crazy team 15'
+go
+
+insert sturgeonteams(name, secret_string) values (N'crazy team 8', N'alex');
+insert sturgeonteams(name, secret_string) values (N'crazy team 9', N'adda');
+insert sturgeonteams(name, secret_string) values (N'crazy team 10', N'baby');
+
+insert sturgeonteams(name, secret_string) values (N'crazy team 11', N'barb');
+insert sturgeonteams(name, secret_string) values (N'crazy team 12', N'caro');
+insert sturgeonteams(name, secret_string) values (N'crazy team 13', N'dema');
+insert sturgeonteams(name, secret_string) values (N'crazy team 14', N'dyan');
+insert sturgeonteams(name, secret_string) values (N'crazy team 15', N'emmy');
+insert sturgeonteams(name, secret_string) values (N'crazy team 16', N'esta');
+insert sturgeonteams(name, secret_string) values (N'crazy team 17', N'fran');
+insert sturgeonteams(name, secret_string) values (N'crazy team 18', N'gwyn');
+insert sturgeonteams(name, secret_string) values (N'crazy team 19', N'joni');
+insert sturgeonteams(name, secret_string) values (N'crazy team 20', N'kara');
+
+insert sturgeonteams(name, secret_string) values (N'crazy team 21', N'lana');
+insert sturgeonteams(name, secret_string) values (N'crazy team 22', N'lynn');
+insert sturgeonteams(name, secret_string) values (N'crazy team 23', N'neva');
+insert sturgeonteams(name, secret_string) values (N'crazy team 24', N'ozie');
+insert sturgeonteams(name, secret_string) values (N'crazy team 25', N'rose');
+insert sturgeonteams(name, secret_string) values (N'crazy team 26', N'tena');
+insert sturgeonteams(name, secret_string) values (N'crazy team 27', N'vicy');
+insert sturgeonteams(name, secret_string) values (N'crazy team 28', N'zola');
+insert sturgeonteams(name, secret_string) values (N'crazy team 29', N'wade');
+insert sturgeonteams(name, secret_string) values (N'crazy team 30', N'toma');
+go
+

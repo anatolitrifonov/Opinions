@@ -40,6 +40,8 @@ namespace BestFor.Common
 
         public string DatabaseConnectionString { get; set; }
 
+        public string AzureBlobsConnectionString { get; set; }
+
         /// <summary>
         /// Used only for debugging to track when an instance of this class is created.
         /// </summary>
@@ -55,10 +57,11 @@ namespace BestFor.Common
         /// <returns></returns>
         public static IOptions<AppSettings> ReadSettings()
         {
+            var currentDirectory = Directory.GetCurrentDirectory();
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(currentDirectory)
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile("appsettings.secret.json");
+                .AddJsonFile("appsettings.secret.json", true);
             var appSettings = new AppSettings();
 
             builder.Build().GetSection("AppSettings").Bind(appSettings);

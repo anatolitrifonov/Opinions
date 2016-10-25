@@ -21,9 +21,10 @@ namespace BestFor.UnitTests.AppSettings
             Assert.NotNull(settings.Value.EmailFromAddress);
             Assert.True(settings.Value.EnableFacebookSharing);
             Assert.NotNull(settings.Value.FullDomainAddress);
-            Assert.Equal(settings.Value.DatabaseConnectionString, "a");
+            Assert.Equal(settings.Value.DatabaseConnectionString, "b");
             settings.Value.FullDomainAddress = "a";
             Assert.Equal(settings.Value.FullDomainAddress, "a");
+            Assert.Equal(settings.Value.AzureBlobsConnectionString, "UseDevelopmentStorage=true;");
         }
     }
 }
