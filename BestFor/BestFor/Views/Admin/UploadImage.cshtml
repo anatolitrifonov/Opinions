@@ -1,0 +1,93 @@
+﻿@model BestFor.Models.AdminUploadImage
+@Html.Partial("Menu")
+
+@section CustomStyleSheet {
+    <link rel="stylesheet" href="~/lib/dropzonejs/dist/basic.css" asp-append-version="false" />
+    <link rel="stylesheet" href="~/lib/dropzonejs/dist/dropzone.css" asp-append-version="false" />
+}
+
+@section TopScripts {
+    <script src="~/lib/dropzonejs/dist/dropzone.js" asp-append-version="true"></script>
+}
+
+<div>
+    <h4>Test File Upload</h4>
+    <hr />
+
+    <script type="text/javascript">
+        // File Upload response from the server
+        Dropzone.options.dropzoneForm = {
+            maxFiles: 1, // Maximum number of files to upload
+            paramName: "TheImageToUpload", // form parameter name
+            maxFilesize: 0.3, // Max size of each file to upload in megabytes
+            uploadMultiple: false, // Can not upload multiple files
+            init: function () {
+                // Capture the Dropzone instance as closure.
+                var _this = this;
+                // Setup a button to clean control when clicked
+                $("#uploadMessagesResetButton").click(function () {
+                    _this.removeAllFiles();
+                });
+                this.on("complete", function (data) {
+                    //var res = eval('(' + data.xhr.responseText + ')');
+                    // Complete fires all the time
+                    //So we do need to check if we got something.
+                    if (data == null) return;
+                    if (data.xhr == null) return;
+                    var res = JSON.parse(data.xhr.responseText);
+                    // Show upload result.
+                    $("#uploadMessagesSpan").text(res.message);
+                });
+                this.on("maxfilesreached", function (a, b, c) {
+                    // Fires when control reaches max allowed files to upload.
+                    // If multiple files dropped, only one will be uploaded
+                    // And control shows the error saying you can not upload more.
+                });
+                this.on("error", function (file, message) {
+                    // If error -> show error message and remove erroneous file.
+                    $("#uploadMessagesSpan").text(message);
+                    this.removeFile(file);
+                });
+            }
+        };
+        ////File Upload response from the server
+        //Dropzone.options.dropzoneForm = {
+        //    maxFiles: 1,
+        //    url: "WebFormDropzoneDemo.aspx",
+        //    init: function () {
+        //        this.on("maxfilesexceeded", function (data) {
+        //            var res = eval('(' + data.xhr.responseText + ')');
+        //        });
+        //        this.on("addedfile", function (file) {
+        //            // Create the remove button
+        //            var removeButton = Dropzone.createElement("<button>Remove file</button>");
+        //            // Capture the Dropzone instance as closure.
+        //            var _this = this;
+        //            // Listen to the click event
+        //            removeButton.addEventListener("click", function (e) {
+        //                // Make sure the button click doesn't submit the form:
+        //                e.preventDefault();
+        //                e.stopPropagation();
+        //                // Remove the file preview.
+        //                _this.removeFile(file);
+        //                // If you want to the delete the file on the server as well,
+        //                // you can do the AJAX request here.
+        //            });
+        //            // Add the button to the file preview element.
+        //            file.previewElement.appendChild(removeButton);
+        //        });
+        //    }
+        //};
+    </script>
+
+    <!-- style="width: 50px; background: none; border: none;" -->
+    <!-- State message display. Errors or result. -->
+    <span id="uploadMessagesSpan"></span><br />
+    <!-- Keep reset button outside on the form so that it does not submit. Otherwise we will have to fiddle with event. -->
+    <button id="uploadMessagesResetButton">Reset</button><br />
+    <form action="~/Admin/UploadTheImage" method="post" enctype="multipart/form-data" class="dropzone" 
+          id="dropzoneForm" >
+        <label asp-for="UserNameImage"></label> <input asp-for="UserNameImage" /> <br />
+    </form>
+
+</div>

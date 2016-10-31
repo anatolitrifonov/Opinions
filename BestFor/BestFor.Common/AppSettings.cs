@@ -40,7 +40,15 @@ namespace BestFor.Common
 
         public string DatabaseConnectionString { get; set; }
 
+        /// <summary>
+        /// Connection string to azure storage
+        /// </summary>
         public string AzureBlobsConnectionString { get; set; }
+
+        /// <summary>
+        /// Default container name on the azure
+        /// </summary>
+        public string AzureBlobsContainerName { get; set; }
 
         /// <summary>
         /// Used only for debugging to track when an instance of this class is created.

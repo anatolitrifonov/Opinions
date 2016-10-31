@@ -32,7 +32,7 @@ namespace BestFor.Sturgeon
         }
 
         [HttpGet]
-        public IActionResult Admin()
+        public IActionResult AndyAdmin()
         {
             var model = LoadAll();
             return View(model);
@@ -200,6 +200,66 @@ end", con))
             }
 
             return model;
+        }
+
+        [HttpGet]
+        public IActionResult AndyEditTeam(int id)
+        {
+            var model = new TeamModel();
+            model.TeamId = id;
+            // Load scores
+            using (SqlConnection con = new SqlConnection(_appSettings.Value.DatabaseConnectionString))
+            {
+                con.Open();
+                try
+                {
+                    using (SqlCommand command = new SqlCommand("select name, secret_string from sturgeonteams where id = @id", con))
+                    {
+                        command.Parameters.Add(new SqlParameter("id", model.TeamId));
+                        var reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                model.TeamName = reader.GetString(0);
+                                model.Password = reader.GetString(1);
+                            }
+                        }
+                        reader.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult AndyEditTeam(TeamModel team)
+        {
+            // Load scores
+            using (SqlConnection con = new SqlConnection(_appSettings.Value.DatabaseConnectionString))
+            {
+                con.Open();
+                try
+                {
+                    using (SqlCommand command = new SqlCommand(@"update sturgeonteams set name = @name, secret_string = @secret_string " + 
+                        "where id = @teamId", con))
+                    {
+                        var parameterTeamId = command.Parameters.Add(new SqlParameter("teamId", team.TeamId));
+                        var parameterSlot = command.Parameters.Add(new SqlParameter("name", team.TeamName));
+                        var parameterScore = command.Parameters.Add(new SqlParameter("secret_string", team.Password));
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return RedirectToAction("AndyAdmin");
         }
     }
 }

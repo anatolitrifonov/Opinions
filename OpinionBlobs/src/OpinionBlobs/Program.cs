@@ -40,7 +40,7 @@ namespace OpinionBlobs
             //  new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
 
             // Retrieve reference to a blob named "myblob".
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference("my\\blob");
 
             // Create or overwrite the "myblob" blob with contents from a local file.
             using (var fileStream = System.IO.File.OpenRead(@"C:\Users\atrifono\Pictures\20161023 Salmon\IMG_0015.JPG"))

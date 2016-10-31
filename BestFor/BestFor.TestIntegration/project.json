@@ -1,0 +1,15 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "BestFor.Common": "1.0.0-*",
+    "BestFor.Services": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "net452": {}
+  }
+}

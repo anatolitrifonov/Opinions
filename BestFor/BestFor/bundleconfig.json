@@ -20,27 +20,5 @@
     },
     // Optinally generate .map file
     "sourceMap": false
-  }//,
-  // Bundle the react add files.
-  //{
-  //  "outputFileName": "wwwroot/Scripts/HomePageApp.js",
-  //  "inputFiles": [
-  //    "wwwroot/js/site.js",
-  //    "wwwroot/Scripts/SuggestionControl.jsx",
-  //    "wwwroot/Scripts/SuggestionLineItem.jsx",
-  //    "wwwroot/Scripts/SuggestionAnswerItem.js",
-  //    "wwwroot/Scripts/SuggestionResultList.jsx",
-  //    "wwwroot/Scripts/SuggestionAnswerList.jsx",
-  //    "wwwroot/Scripts/SuggestionPanel.jsx",
-  //    "wwwroot/Scripts/SuggestionTextBox.jsx",
-  //    "wwwroot/Scripts/HomePageAppRunner.js"
-  //  ],
-  //  // Optionally specify minification options
-  //  "minify": {
-  //    "enabled": true,
-  //    "renameLocals": true
-  //  },
-  //  // Optinally generate .map file
-  //  "sourceMap": false
-  //}
+  }
 ]

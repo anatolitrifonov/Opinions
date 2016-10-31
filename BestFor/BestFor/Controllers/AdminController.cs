@@ -1,4 +1,6 @@
-﻿using BestFor.Services.Services;
+﻿using System;
+using BestFor.Services.Services;
+using BestFor.Services.Blobs;
 using BestFor.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,13 +23,16 @@ namespace BestFor.Controllers
         private IAnswerService _answerService;
         private IAnswerDescriptionService _answerDescriptionService;
         private IUserService _userService;
+        private IBlobService _blobService;
 
-        public AdminController(IStatusService statusService, IAnswerService answerService, IAnswerDescriptionService answerDescriptionService, IUserService userService)
+        public AdminController(IStatusService statusService, IAnswerService answerService, IAnswerDescriptionService answerDescriptionService,
+            IUserService userService, IBlobService blobService)
         {
             _statusService = statusService;
             _userService = userService;
             _answerService = answerService;
             _answerDescriptionService = answerDescriptionService;
+            _blobService = blobService;
         }
 
         // GET: /<controller>/
@@ -149,11 +154,42 @@ namespace BestFor.Controllers
             return View(answers);
         }
 
-        public async Task<IActionResult> ListBlankDescription()
+        public IActionResult ListBlankDescription()
         {
             var answers = _answerDescriptionService.FindDirectBlank();
 
             return View(answers);
+        }
+
+        [HttpGet]
+        public IActionResult UploadImage()
+        {
+            return View();
+        }
+
+        private IActionResult FormJsonResult(string message)
+        {
+            return Json(new { Message = message });
+        }
+        /// <summary>
+        /// This post is happening from Dropzonejs control.
+        /// Returning the error might not be too cool.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult UploadTheImage(AdminUploadImage model)
+        {
+            if (model == null) return FormJsonResult("empty model");
+            if (string.IsNullOrEmpty(model.UserNameImage) || string.IsNullOrWhiteSpace(model.UserNameImage))
+                return FormJsonResult("empty user name");
+            if (model.TheImageToUpload == null)
+                return FormJsonResult("empty upload file");
+
+            string fileName = model.TheImageToUpload.FileName;
+
+            // _blobService 
+            return FormJsonResult("File " + fileName + " uploaded successfully.");
         }
     }
 }

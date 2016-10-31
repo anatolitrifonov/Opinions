@@ -124,6 +124,7 @@ namespace BestFor
             services.AddScoped<BestFor.Services.Services.IFlagService, BestFor.Services.Services.FlagService>();
             services.AddScoped<BestFor.Services.Services.IVoteService, BestFor.Services.Services.VoteService>();
             services.AddScoped<BestFor.Services.Services.IUserService, BestFor.Services.Services.UserService>();
+            services.AddScoped<BestFor.Services.Blobs.IBlobService, BestFor.Services.Blobs.BlobService>();
 
             // Inject HttpContextAccessor to be able to access http context from classes.
             // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

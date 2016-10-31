@@ -1,7 +1,21 @@
 ﻿Local development
+_______________________________________________________________________
 
 Start Microsoft Storage Azure Emilator
 Connection String 
 string connString = "UseDevelopmentStorage=true;";
 
+Local files are stored at
+C:\Users\{user}\AppData\Local\AzureStorageEmulator
+
+
 Production
+_______________________________________________________________________
+
+General Notes
+_______________________________________________________________________
+
+ContainerName can not have underscores.
+AzureBlobsContainerName <- can not have underscores.
+Block blob name can not contain "\" because it then becomes a CloudBlobDirectory instead of CloudBlockBlob
+GetBlockBlobReference(name) 

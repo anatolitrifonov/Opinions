@@ -25,6 +25,7 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+    @RenderSection("CustomStyleSheet", required: false)
     <script type="application/ld+json">
         {
             "@@context": "http://schema.org",
@@ -51,17 +52,6 @@
             }*@
         }
     </script>
-
-</head>
-<body>
-    @* We are going with container, not container-fluid at least for now because container has a fixed width. *@
-    @* Container-fluid takes the whole width. *@
-    <div class="container best-margin-top best-theme-color">
-        @Html.Partial("TopMenu")
-        @* This section is only filed in on the home page.*@
-        @RenderSection("TopCenter", required: false)
-        @Html.Partial("CurrentUser")
-    </div>
     <environment names="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
@@ -84,6 +74,16 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
+</head>
+<body>
+    @* We are going with container, not container-fluid at least for now because container has a fixed width. *@
+    @* Container-fluid takes the whole width. *@
+    <div class="container best-margin-top best-theme-color">
+        @Html.Partial("TopMenu")
+        @* This section is only filed in on the home page.*@
+        @RenderSection("TopCenter", required: false)
+        @Html.Partial("CurrentUser")
+    </div>
     @* Keep the amount of scripts loaded in this section to minimum *@
     @RenderSection("TopScripts", required: false)
     <div class="container">
