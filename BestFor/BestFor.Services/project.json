@@ -6,6 +6,7 @@
     "BestFor.Data": "1.0.0-*",
     "BestFor.Domain": "1.0.0-*",
     "BestFor.Dto": "1.0.0-*",
+    "ImageResizer": "4.0.5",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
     "Microsoft.Extensions.Logging": "1.0.0",
     "Microsoft.Extensions.Logging.Abstractions": "1.0.0",

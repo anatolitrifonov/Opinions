@@ -51,6 +51,16 @@ namespace BestFor.Common
         public string AzureBlobsContainerName { get; set; }
 
         /// <summary>
+        /// Default avatar width
+        /// </summary>
+        public int AvatarWidth { get; set; } = 100;
+
+        /// <summary>
+        /// Default avatar height
+        /// </summary>
+        public int AvatarHeight { get; set; } = 100;
+
+        /// <summary>
         /// Used only for debugging to track when an instance of this class is created.
         /// </summary>
         /// <remarks>

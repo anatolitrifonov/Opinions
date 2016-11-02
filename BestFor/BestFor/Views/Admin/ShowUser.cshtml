@@ -13,6 +13,18 @@
         <dd>
             @Html.DisplayFor(model => model.User.DisplayName)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User.IsImageCached)
+        </dt>
+        <dd>
+            @Model.User.IsImageCached
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.User.ImagePath)
+        </dt>
+        <dd>@Model.User.ImagePath 
+            &nbsp;@Html.ActionLink("Upload", "UploadImage", new { userName = Model.User.UserName })
+        </dd>
     </dl>
     <table class="table">
         <tr><th colspan="5">Answers (@numberOfRecords) @Html.ActionLink("Show User's Answer Descriptions", "ShowUserDescriptions", new { id = Model.User.Id })</th></tr>

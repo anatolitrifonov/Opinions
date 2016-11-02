@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BestFor.Dto.Account;
 using BestFor.Domain.Interfaces;
 
@@ -42,6 +43,25 @@ namespace BestFor.Domain.Entities
 
         [StringLength(1000, MinimumLength = 3)]
         public string CancellationReason { get; set; }
+
+        /// <summary>
+        /// When this class is instatiated, this property is false.
+        /// It will be set to true once user's image url is requested for the first time.
+        /// </summary>
+        [NotMapped]
+        public bool IsImageCached { get; set; }
+
+        /// <summary>
+        /// User's avatar extension
+        /// </summary>
+        [NotMapped]
+        public string ImageExtension { get; set; }
+
+        /// <summary>
+        /// Path to user's image
+        /// </summary>
+        [NotMapped]
+        public string ImagePath { get; set; }
 
         #region IDtoConvertable implementation
         public ApplicationUserDto ToDto()

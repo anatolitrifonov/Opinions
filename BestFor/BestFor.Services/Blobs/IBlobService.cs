@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BestFor.Dto;
 
 namespace BestFor.Services.Blobs
 {
     public interface IBlobService
     {
+        void SaveUserProfilePicture(string userName, BlobDataDto blobData);
     }
 }

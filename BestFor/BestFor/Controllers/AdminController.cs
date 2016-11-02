@@ -136,7 +136,7 @@ namespace BestFor.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> ShowUserDescriptions(string id)
+        public IActionResult ShowUserDescriptions(string id)
         {
             var user = _userService.FindById(id);
 
@@ -162,15 +162,18 @@ namespace BestFor.Controllers
         }
 
         [HttpGet]
-        public IActionResult UploadImage()
+        public IActionResult UploadImage(string userName)
         {
-            return View();
+            var model = new AdminUploadImage() { ImageForUserName = userName };
+
+            return View(model);
         }
 
         private IActionResult FormJsonResult(string message)
         {
             return Json(new { Message = message });
         }
+
         /// <summary>
         /// This post is happening from Dropzonejs control.
         /// Returning the error might not be too cool.
@@ -181,7 +184,7 @@ namespace BestFor.Controllers
         public IActionResult UploadTheImage(AdminUploadImage model)
         {
             if (model == null) return FormJsonResult("empty model");
-            if (string.IsNullOrEmpty(model.UserNameImage) || string.IsNullOrWhiteSpace(model.UserNameImage))
+            if (string.IsNullOrEmpty(model.ImageForUserName) || string.IsNullOrWhiteSpace(model.ImageForUserName))
                 return FormJsonResult("empty user name");
             if (model.TheImageToUpload == null)
                 return FormJsonResult("empty upload file");

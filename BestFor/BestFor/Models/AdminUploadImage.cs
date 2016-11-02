@@ -12,7 +12,7 @@ namespace BestFor.Models
     /// </summary>
     public class AdminUploadImage
     {
-        public string UserNameImage { get; set; }
+        public string ImageForUserName { get; set; }
 
         public IFormFile TheImageToUpload { get; set; }
     }

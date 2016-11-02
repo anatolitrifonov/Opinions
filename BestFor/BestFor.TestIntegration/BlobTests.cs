@@ -24,16 +24,39 @@ namespace BestFor.TestIntegration
             }
         }
 
+        public static void TestResizeUserFile()
+        {
+            var settings = Common.AppSettings.ReadSettings();
+            var currentDirectory = Directory.GetCurrentDirectory();
+            using (var fileStream = File.OpenRead(currentDirectory + "\\TestData\\mister.jpg"))
+            {
+                var blobService = new BlobService(settings, null);
+
+                var blobData = new BlobDataDto() { FileName = "mister.jpg", Stream = fileStream };
+
+                var stream1 = blobService.ResizeToAvatar(fileStream);
+
+                string path = @"C:\Temp\z1.jpg";
+                if (File.Exists(path)) File.Delete(path);
+
+                using (var fileStream1 = File.OpenWrite(path))
+                {
+                    stream1.Position = 0;
+                    stream1.CopyTo(fileStream1);
+                }
+            }
+        }
+
         public static void TestLoadUserFile()
         {
             var settings = Common.AppSettings.ReadSettings();
 
             var blobService = new BlobService(settings, null);
 
-            string path = @"C:\Temp\z.jpg";
+            string path = @"C:\Temp\z2.jpg";
             if (File.Exists(path)) File.Delete(path);
 
-            var result = blobService.FindUserProfilePicture("Anatoli2");
+            var result = blobService.FindUserProfilePicture("Anatoli");
 
  
             using (var fileStream = File.OpenWrite(path))

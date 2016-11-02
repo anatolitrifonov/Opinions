@@ -1,14 +1,13 @@
 ﻿using BestFor.Common;
 using BestFor.Dto;
-using Microsoft.Extensions.Options;
 using BestFor.Services.Cache;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Blob; // Namespace for Blob storage types
-using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using ImageResizer;
 
 namespace BestFor.Services.Blobs
 {
@@ -23,9 +22,23 @@ namespace BestFor.Services.Blobs
     {
         private const string USER_IMAGES_PATH = "user_";
 
+        /// <summary>
+        /// Connection to blob storage from app settings
+        /// </summary>
         private string _blobServiceConnectionString;
 
+        /// <summary>
+        /// Default images container name from app settings
+        /// </summary>
         private string _blobServiceContainerName;
+
+        /// <summary>
+        /// Default avatar width from app settings
+        /// </summary>
+        private int _avatarWidth;
+
+        /// Default avatar height from app settings
+        private int _avatarHeight;
 
         /// <summary>
         /// Injected cache manager.
@@ -36,6 +49,8 @@ namespace BestFor.Services.Blobs
         {
             _blobServiceConnectionString = appSettings.Value.AzureBlobsConnectionString;
             _blobServiceContainerName = appSettings.Value.AzureBlobsContainerName;
+            _avatarWidth = appSettings.Value.AvatarWidth;
+            _avatarHeight = appSettings.Value.AvatarHeight;
             _cacheManager = cacheManager;
         }
 
@@ -49,6 +64,7 @@ namespace BestFor.Services.Blobs
             }
         }
 
+        #region IBlobService implementation
         /// <summary>
         /// Upload user's avatar picture to blobs
         /// FileName will be taken only for extension.
@@ -63,14 +79,40 @@ namespace BestFor.Services.Blobs
             // Not sure how to save this just yet.
             var path = USER_IMAGES_PATH + userName + "_" + blobData.FileName;
 
-            SaveFileToBlob(path, blobData.Stream);
+            var resized = ResizeToAvatar(blobData.Stream);
+            resized.Position = 0;
+
+            SaveFileToBlob(path, resized);
+
+            // SaveFileToBlob(path, blobData.Stream);
         }
 
+        /// <summary>
+        /// Download user's avatar picture from blobs
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public BlobDataDto FindUserProfilePicture(string userName)
         {
             // Not sure how to save this just yet.
             var path = USER_IMAGES_PATH + userName;
             return FindBlob(path);
+        }        
+        #endregion
+
+        public Stream ResizeToAvatar(Stream input)
+        {
+            var settings = new Instructions()
+            {
+                Width = 100,
+                Height = 100,
+                Format = "jpg"
+            };
+            var result = new MemoryStream();
+            var job = new ImageJob(input, result, settings);
+            ImageBuilder.Current.Build(job);
+
+            return result;
         }
 
         /// <summary>
@@ -125,7 +167,14 @@ namespace BestFor.Services.Blobs
             {
                 try
                 {
+                    //container.DeleteIfExists();
                     container.CreateIfNotExists();
+                    var perm = container.GetPermissions();
+                    perm.PublicAccess = BlobContainerPublicAccessType.Blob;
+                    // set all blobs to anonymous read only
+                    // no one can list all blobs though.
+                    // We will generate direct link to user's image.
+                    container.SetPermissions(perm);
                 }
                 catch (StorageException ex)
                 {

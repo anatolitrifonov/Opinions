@@ -19,3 +19,28 @@ ContainerName can not have underscores.
 AzureBlobsContainerName <- can not have underscores.
 Block blob name can not contain "\" because it then becomes a CloudBlobDirectory instead of CloudBlockBlob
 GetBlockBlobReference(name) 
+
+Will set the permissions on the container to "read blob" and produce the direct link to user's image.
+How it will work.
+All the need to cache is extension of user's image because path is predefined and extension is the only thing we do not know.
+Extension can be received from blob name that was uploaded.
+Once uploaded we will store it in cache.
+And if user cache blob part is not laoded we will load it once user's image is requested.
+We will not store a separate cache of images for now.
+1. Every time user uploads the image we will cache the fact that user has an image.
+2. We will set the cache flag too stating that cache is up to date.
+3. If cache about user's image expires we will go to search blob and return extension.
+
+Not going to do the SAS access thing although the pattern is here.
+
+var sasConstraints = new SharedAccessBlobPolicy();
+sasConstraints.SharedAccessStartTime = DateTime.UtcNow.AddMinutes(-5);
+sasConstraints.SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(10);
+sasConstraints.Permissions = SharedAccessBlobPermissions.Read;
+
+var sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
+
+return blob.Uri + sasBlobToken;
+http://stackoverflow.com/questions/30467013/how-to-download-a-file-to-browser-from-azure-blob-storage
+
+Problem is that it is not clear "when to regenerate the link?" all the time seems too much.

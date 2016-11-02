@@ -21,6 +21,7 @@
             paramName: "TheImageToUpload", // form parameter name
             maxFilesize: 0.3, // Max size of each file to upload in megabytes
             uploadMultiple: false, // Can not upload multiple files
+            acceptedFiles: "image/jpeg,image/png,image/gif",
             init: function () {
                 // Capture the Dropzone instance as closure.
                 var _this = this;
@@ -87,7 +88,7 @@
     <button id="uploadMessagesResetButton">Reset</button><br />
     <form action="~/Admin/UploadTheImage" method="post" enctype="multipart/form-data" class="dropzone" 
           id="dropzoneForm" >
-        <label asp-for="UserNameImage"></label> <input asp-for="UserNameImage" /> <br />
+        <label asp-for="ImageForUserName"></label> <input asp-for="ImageForUserName" /> <br />
     </form>
 
 </div>

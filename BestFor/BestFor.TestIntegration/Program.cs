@@ -9,8 +9,9 @@ namespace BestFor.TestIntegration
     {
         public static void Main(string[] args)
         {
-            // BlobTests.TestUploadUserFile();
-            // BlobTests.TestListAllBlobs();
+            //BlobTests.TestResizeUserFile();
+            BlobTests.TestUploadUserFile();
+            //BlobTests.TestListAllBlobs();
             // BlobTests.TestClearAllBlobs();
             BlobTests.TestLoadUserFile();
             Console.WriteLine("Done.");
