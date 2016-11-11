@@ -22,9 +22,9 @@ GetBlockBlobReference(name)
 
 Will set the permissions on the container to "read blob" and produce the direct link to user's image.
 How it will work.
-All the need to cache is extension of user's image because path is predefined and extension is the only thing we do not know.
-Extension can be received from blob name that was uploaded.
-Once uploaded we will store it in cache.
+All we need to cache is the fact if user has or does not have an image because both path and extension are predefined.
+Extension is always png.
+Once image is uploaded we will update user object in cache with the knowledge "has image".
 And if user cache blob part is not laoded we will load it once user's image is requested.
 We will not store a separate cache of images for now.
 1. Every time user uploads the image we will cache the fact that user has an image.
@@ -44,3 +44,6 @@ return blob.Uri + sasBlobToken;
 http://stackoverflow.com/questions/30467013/how-to-download-a-file-to-browser-from-azure-blob-storage
 
 Problem is that it is not clear "when to regenerate the link?" all the time seems too much.
+
+Default url to images is stored in application settings.
+Avatar URL is azure url + container name + username + png

@@ -11,9 +11,9 @@ namespace BestFor.TestIntegration
         {
             //BlobTests.TestResizeUserFile();
             BlobTests.TestUploadUserFile();
-            //BlobTests.TestListAllBlobs();
+            BlobTests.TestListAllBlobs();
             // BlobTests.TestClearAllBlobs();
-            BlobTests.TestLoadUserFile();
+            // BlobTests.TestLoadUserFile();
             Console.WriteLine("Done.");
             Console.ReadLine();
         }

@@ -30,8 +30,10 @@ namespace BestFor.UnitTests.Services.Services
                 ResourceStringsRepository = new Repository<ResourceString>(dataContext);
                 CacheMock = new TestCacheManager().CacheMock;
                 ResourcesService = new ResourcesService(CacheMock.Object, ResourceStringsRepository);
-            }
+                TestLoggerFactory = null;
+
         }
+    }
 
         [Fact]
         public void ResourcesServiceTests_GetCommonStrings_ReturnsCommonStrings()

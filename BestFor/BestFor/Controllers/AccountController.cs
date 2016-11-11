@@ -1,6 +1,10 @@
-﻿using BestFor.Domain.Entities;
-using BestFor.Models;
+﻿using BestFor.Common;
+using BestFor.Domain.Entities;
+using BestFor.Dto;
 using BestFor.Dto.Account;
+using BestFor.Models;
+using BestFor.Services;
+using BestFor.Services.Blobs;
 using BestFor.Services.Messaging;
 using BestFor.Services.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,10 +37,11 @@ namespace BestFor.Controllers
         private readonly IUserService _userService;
         private IProfanityService _profanityService;
         private readonly IResourcesService _resourcesService;
+        private IBlobService _blobService;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender, ISmsSender smsSender, IUserService userService, IProfanityService profanityService,
-            ILoggerFactory loggerFactory, IResourcesService resourcesService)
+            ILoggerFactory loggerFactory, IResourcesService resourcesService, IBlobService blobService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,7 +51,7 @@ namespace BestFor.Controllers
             _userService = userService;
             _profanityService = profanityService;
             _resourcesService = resourcesService;
-
+            _blobService = blobService;
         }
 
         //
@@ -154,7 +160,7 @@ namespace BestFor.Controllers
             if (!ModelState.IsValid) return View(model);
 
             // Do profanity checks. We already validated the model.
-            if (!await IsProfanityCleanProfileCreate(model)) return View(model);
+            if (!IsProfanityCleanProfileCreate(model)) return View(model);
 
             // Check email is unique.
             if (!await IsEmailUnique(model.Email, null)) return View(model);
@@ -307,7 +313,7 @@ namespace BestFor.Controllers
         /// <returns></returns>
         /// <remarks>This is just a get to load current profile</remarks>
         [HttpGet]
-        public async Task<IActionResult> ViewProfile()
+        public IActionResult ViewProfile()
         {
             var currentUserId = _userManager.GetUserId(User);
 
@@ -326,6 +332,9 @@ namespace BestFor.Controllers
             model.UserName = user.UserName;
             model.DisplayName = user.DisplayName;
             model.NumberOfAnswers = user.NumberOfAnswers;
+
+            // Populate image, load users image if needed
+            model.UserImageUrl = _blobService.GetUserImagUrl(user);
 
             return View(model);
         }
@@ -392,7 +401,7 @@ namespace BestFor.Controllers
             }
 
             // Do profanity checks. We already validated the model.
-            if (!await IsProfanityCleanProfileUpdate(model)) return View(model);
+            if (!IsProfanityCleanProfileUpdate(model)) return View(model);
 
             // Verify password
             if (!await _userManager.CheckPasswordAsync(user, model.Password))
@@ -421,6 +430,75 @@ namespace BestFor.Controllers
             AddErrors(updateResult);
 
             return View(model);
+        }
+
+        /// <summary>
+        /// Render page for avatar upload
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult UploadAvatar()
+        {
+            var model = new AdminUploadImage();
+            model.ImageForUserName = _userManager.GetUserName(User);
+            return View(model);
+        }
+
+        /// <summary>
+        /// Image upload handling. This is not a full post/rerender page call.
+        /// Post happens throught javascript.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult UploadAvatar(AdminUploadImage model)
+        {
+            //todo this method is currently not quite protected 
+            // however controller itself is marked as Authorize.
+            if (model == null) return FormJsonResultError("empty model");
+            if (string.IsNullOrEmpty(model.ImageForUserName) || string.IsNullOrWhiteSpace(model.ImageForUserName))
+                return FormJsonResultError("empty user name");
+            if (model.TheImageToUpload == null)
+                return FormJsonResultError("empty upload file");
+            if (model.ImageForUserName != _userManager.GetUserName(User))
+                return FormJsonResultError("invalid user");
+
+            var blobData = new BlobDataDto()
+            {
+                FileName = model.TheImageToUpload.FileName,
+                Stream = model.TheImageToUpload.OpenReadStream()
+            };
+
+            try
+            {
+                // Save image into the blob storage.
+                _blobService.SaveUserProfilePicture(model.ImageForUserName, blobData);
+            }
+            catch (ServicesException ex)
+            {
+                return FormJsonResultError(ex.Message);
+            }
+
+            // cache the user
+            var user = _userService.FindAll().FirstOrDefault(x => x.UserName == model.ImageForUserName);
+            if (user != null) _blobService.SetUserImageCached(user, true);
+
+            return FormJsonResult("File " + blobData.FileName + " uploaded successfully.", "");
+        }
+
+        /// <summary>
+        /// Shortcut for creating small json object with a message
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private IActionResult FormJsonResultError(string error)
+        {
+            return FormJsonResult("", error);
+        }
+
+        private IActionResult FormJsonResult(string message, string error)
+        {
+            return Json(new { Message = message, Error = string.IsNullOrEmpty(error) ? "" : "Error: " + error });
         }
 
         [HttpGet]
@@ -524,7 +602,7 @@ namespace BestFor.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        private async Task<bool> IsProfanityCleanProfileUpdate(ProfileEditDto model)
+        private bool IsProfanityCleanProfileUpdate(ProfileEditDto model)
         {
             // Do profanity checks. We already validated the model.
             // we can only change a couple of fields.
@@ -542,7 +620,7 @@ namespace BestFor.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        private async Task<bool> IsProfanityCleanProfileCreate(RegisterViewModel model)
+        private bool IsProfanityCleanProfileCreate(RegisterViewModel model)
         {
             // Do profanity checks. We already validated the model.
             // we can only change a couple of fields.

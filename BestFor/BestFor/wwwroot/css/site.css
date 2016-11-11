@@ -256,3 +256,10 @@ div.best-search-result
 {
     font-size: 26px;
 }
+
+/* Extending bootstap a bit to have required fields */
+/* this will add red asterisc to all labels in the form groups marked as required */
+.form-group.required .control-label:after { 
+   content:"*";
+   color:red;
+}

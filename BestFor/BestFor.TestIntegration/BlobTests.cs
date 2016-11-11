@@ -20,7 +20,7 @@ namespace BestFor.TestIntegration
 
                 var blobData = new BlobDataDto() { FileName = "mister.jpg", Stream = fileStream };
 
-                blobService.SaveUserProfilePicture("Anatoli", blobData);
+                blobService.SaveUserProfilePicture("Anatoli1", blobData);
             }
         }
 
@@ -34,7 +34,7 @@ namespace BestFor.TestIntegration
 
                 var blobData = new BlobDataDto() { FileName = "mister.jpg", Stream = fileStream };
 
-                var stream1 = blobService.ResizeToAvatar(fileStream);
+                var stream1 = blobService.ResizeToAvatar(fileStream, 100, 100);
 
                 string path = @"C:\Temp\z1.jpg";
                 if (File.Exists(path)) File.Delete(path);
@@ -47,24 +47,24 @@ namespace BestFor.TestIntegration
             }
         }
 
-        public static void TestLoadUserFile()
-        {
-            var settings = Common.AppSettings.ReadSettings();
+        //public static void TestLoadUserFile()
+        //{
+        //    var settings = Common.AppSettings.ReadSettings();
 
-            var blobService = new BlobService(settings, null);
+        //    var blobService = new BlobService(settings, null);
 
-            string path = @"C:\Temp\z2.jpg";
-            if (File.Exists(path)) File.Delete(path);
+        //    string path = @"C:\Temp\z2.jpg";
+        //    if (File.Exists(path)) File.Delete(path);
 
-            var result = blobService.FindUserProfilePicture("Anatoli");
+        //    var result = blobService.FindUserProfilePicture("Anatoli");
 
  
-            using (var fileStream = File.OpenWrite(path))
-            {
-                result.Stream.Position = 0;
-                result.Stream.CopyTo(fileStream);
-            }
-        }
+        //    using (var fileStream = File.OpenWrite(path))
+        //    {
+        //        result.Stream.Position = 0;
+        //        result.Stream.CopyTo(fileStream);
+        //    }
+        //}
 
         public static void TestListAllBlobs()
         {
@@ -80,18 +80,18 @@ namespace BestFor.TestIntegration
             }
         }
 
-        public static void TestClearAllBlobs()
-        {
-            var settings = Common.AppSettings.ReadSettings();
+        //public static void TestClearAllBlobs()
+        //{
+        //    var settings = Common.AppSettings.ReadSettings();
 
-            var blobService = new BlobService(settings, null);
+        //    var blobService = new BlobService(settings, null);
 
-            var result = blobService.ClearAllBlobs();
+        //    var result = blobService.ClearAllBlobs();
 
-            foreach (var item in result)
-            {
-                Console.WriteLine(item);
-            }
-        }
+        //    foreach (var item in result)
+        //    {
+        //        Console.WriteLine(item);
+        //    }
+        //}
     }
 }

@@ -108,7 +108,7 @@ namespace BestFor.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> AddDescription(AnswerDescriptionDto answerDescription)
+        public IActionResult AddDescription(AnswerDescriptionDto answerDescription)
         {
             // Basic checks first
             if (answerDescription == null || answerDescription.AnswerId <= 0 ||

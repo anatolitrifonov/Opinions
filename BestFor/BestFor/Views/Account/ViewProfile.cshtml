@@ -6,7 +6,9 @@
     string stringEditProfile = resourcesService.GetString(ViewBag.BestForCulture, "edit_profile");
     string stringYourProfile = resourcesService.GetString(ViewBag.BestForCulture, "your_profile");
     string stringRemoveProfile = resourcesService.GetString(ViewBag.BestForCulture, "remove_profile");
-
+    string stringUploadAvatar = resourcesService.GetString(ViewBag.BestForCulture, "upload_avatar");
+    string stringChangePassword = resourcesService.GetString(ViewBag.BestForCulture, "change_password");
+    
     ViewData["Title"] = stringYourProfile;
 }
 <h2>@ViewData["Title"]</h2>
@@ -22,12 +24,29 @@
         <div class="row">
             <label asp-for="NumberOfAnswers" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfAnswers</span>
         </div>
+        <br />
+        @if (Model.UserImageUrl != null)
+        {
+            <img src="@Model.UserImageUrl" style="border: 3px solid green" />
+        }
+        else
+        {
+            <span>No Image</span>
+        }
         <br /><br />
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-9">
+            <div class="col-md-11">
                 <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="EditProfile"
                         y-class="btn btn-default btn-lg">
                     <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringEditProfile</span>
+                </yakor>
+                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="UploadAvatar"
+                       y-class="btn btn-default btn-lg">
+                    <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringUploadAvatar</span>
+                </yakor>            
+                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="ChangePassword"
+                       y-class="btn btn-default btn-lg">
+                    <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringChangePassword</span>
                 </yakor>
             </div>
             <div class="col-md-1">

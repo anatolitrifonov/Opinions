@@ -9,11 +9,12 @@ namespace BestFor.UnitTests.Testables
     {
         private object _scope;
         //private readonly ITestSink _sink;
-        private readonly string _name;
+        //private readonly string _name;
         private readonly bool _enabled;
 
         public TestLogger()
         {
+            _enabled = true;
         }
 
         //public TestLogger(string name, ITestSink sink, bool enabled)

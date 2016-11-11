@@ -20,10 +20,11 @@
             @Model.User.IsImageCached
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.User.ImagePath)
+            @Html.DisplayNameFor(model => model.User.ImageUrl)
         </dt>
-        <dd>@Model.User.ImagePath 
-            &nbsp;@Html.ActionLink("Upload", "UploadImage", new { userName = Model.User.UserName })
+        <dd>@Model.User.ImageUrl 
+            &nbsp;@Html.ActionLink("Upload", "UploadImage", new { userName = Model.User.UserName })<br />
+            <img src="@Model.User.ImageUrl" style="border: 3px solid green" />
         </dd>
     </dl>
     <table class="table">

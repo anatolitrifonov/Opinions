@@ -23,7 +23,6 @@ namespace BestFor.UnitTests.Services.Services
             public Mock<IResourcesService> ResourcesServiceMock;
             public Mock<ICacheManager> CacheMock;
             public Repository<BadWord> BadWordsRepository;
-            public TestLoggerFactory TestLoggerFactory;
             public const string ANY_RESOURCE_STRING = "a";
 
             public TestSetup()

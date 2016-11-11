@@ -55,7 +55,7 @@ namespace BestFor.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(ContactUsDto model)
+        public IActionResult Index(ContactUsDto model)
         {
             if (!ModelState.IsValid)
             {

@@ -1,9 +1,11 @@
-﻿using System;
-using BestFor.Services.Services;
-using BestFor.Services.Blobs;
+﻿using BestFor.Common;
+using BestFor.Dto;
 using BestFor.Models;
+using BestFor.Services.Blobs;
+using BestFor.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,15 +26,17 @@ namespace BestFor.Controllers
         private IAnswerDescriptionService _answerDescriptionService;
         private IUserService _userService;
         private IBlobService _blobService;
+        private readonly IOptions<AppSettings> _appSettings;
 
         public AdminController(IStatusService statusService, IAnswerService answerService, IAnswerDescriptionService answerDescriptionService,
-            IUserService userService, IBlobService blobService)
+            IUserService userService, IBlobService blobService, IOptions<AppSettings> appSettings)
         {
             _statusService = statusService;
             _userService = userService;
             _answerService = answerService;
             _answerDescriptionService = answerDescriptionService;
             _blobService = blobService;
+            _appSettings = appSettings;
         }
 
         // GET: /<controller>/
@@ -124,6 +128,9 @@ namespace BestFor.Controllers
         {
             var user = _userService.FindById(id);
 
+            // This will load user's image into user object
+            _blobService.GetUserImagUrl(user);
+
             var answers = await _answerService.FindDirectByUserId(id);
 
             var model = new AdminUserViewModel() { User = user, Answers = answers };
@@ -189,10 +196,20 @@ namespace BestFor.Controllers
             if (model.TheImageToUpload == null)
                 return FormJsonResult("empty upload file");
 
-            string fileName = model.TheImageToUpload.FileName;
+            var blobData = new BlobDataDto()
+            {
+                FileName = model.TheImageToUpload.FileName,
+                Stream = model.TheImageToUpload.OpenReadStream()
+            };
 
-            // _blobService 
-            return FormJsonResult("File " + fileName + " uploaded successfully.");
+            // upload the image into blob storage
+            _blobService.SaveUserProfilePicture(model.ImageForUserName, blobData);
+
+            // cache the user
+            var user = _userService.FindAll().FirstOrDefault(x => x.UserName == model.ImageForUserName);
+            if (user != null) _blobService.SetUserImageCached(user, true);
+
+            return FormJsonResult("File " + blobData.FileName + " uploaded successfully.");
         }
     }
 }

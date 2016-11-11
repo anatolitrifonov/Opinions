@@ -35,7 +35,7 @@ namespace BestFor.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VoteAnswer(int answerId = 0)
+        public IActionResult VoteAnswer(int answerId = 0)
         {
             _logger.LogDebug("VoteAnswer answerId = " + answerId);
 
@@ -53,7 +53,7 @@ namespace BestFor.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VoteAnswerDescription(int answerDescriptionId = 0)
+        public IActionResult VoteAnswerDescription(int answerDescriptionId = 0)
         {
             _logger.LogDebug("VoteAnswerDescription answerDescriptionId = " + answerDescriptionId);
 

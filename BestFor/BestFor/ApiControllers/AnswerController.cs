@@ -38,7 +38,7 @@ namespace BestFor.Controllers
 
         // GET: api/values
         [HttpGet]
-        public async Task<AnswersDto> Get()
+        public AnswersDto Get()
         {
             var result = new AnswersDto();
 
@@ -54,7 +54,7 @@ namespace BestFor.Controllers
 
             // Thread.Sleep(4000);
             // call the service
-            result.Answers = await _answerService.FindTopAnswers(leftWord, rightWord);
+            result.Answers = _answerService.FindTopAnswers(leftWord, rightWord);
 
             return result;
         }

@@ -600,5 +600,16 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'opinions_lower', N'мнений', getDate());
 GO
 
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'upload_avatar')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'upload_avatar', N'Upload Avatar', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'upload_avatar')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'upload_avatar', N'Загрузить Аватар', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'change_password')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'change_password', N'Change Password', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'change_password')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'change_password', N'Изменить Пароль', getDate());
+GO
 
 -- delete from ResourceStrings where [key] in ('help_others', 'add_your_opinion', 'if_search_is_not_sufficient')

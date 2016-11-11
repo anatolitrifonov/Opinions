@@ -54,10 +54,10 @@ namespace BestFor.Services.Services
         }
 
         #region IAnswerService implementation
-        public async Task<IEnumerable<AnswerDto>> FindAnswers(string leftWord, string rightWord)
+        public IEnumerable<AnswerDto> FindAnswers(string leftWord, string rightWord)
         {
             // Theoretically this shold never throw exception unless we got some timeout on initialization or something strange.
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             // This is just getting a list of answers with number of "votes" for each. Cache stored answers, not votes.
             // Each answer in cache has number of votes.
             var result = cachedData.Find(Answer.FormKey(leftWord, rightWord));
@@ -65,10 +65,10 @@ namespace BestFor.Services.Services
             return result.Select(x => x.ToDto());
         }
 
-        public async Task<IEnumerable<AnswerDto>> FindTopAnswers(string leftWord, string rightWord)
+        public IEnumerable<AnswerDto> FindTopAnswers(string leftWord, string rightWord)
         {
             // Theoretically this shold never throw exception unless we got some timeout on initialization or something strange.
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             // This is just getting a list of answers with number of "votes" for each. Cache stored answers, not votes.
             // Each answer in cache has number of votes.
             var result = cachedData.FindTopItems(Answer.FormKey(leftWord, rightWord));
@@ -79,7 +79,7 @@ namespace BestFor.Services.Services
         public async Task<AnswerDto> FindExact(string leftWord, string rightWord, string phrase)
         {
             // Theoretically this shold never throw exception unless we got some timeout on initialization or something strange.
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             // This is just getting a list of answers with number of "votes" for each. Cache stored answers, not votes.
             // Each answer in cache has number of votes.
             var result = await cachedData.FindExact(Answer.FormKey(leftWord, rightWord), phrase);
@@ -122,7 +122,7 @@ namespace BestFor.Services.Services
             var persistResult = await PersistAnswer(answerObject);
 
             // Add to cache.
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             cachedData.Insert(persistResult.Answer);
 
             // Add to left cache
@@ -164,7 +164,7 @@ namespace BestFor.Services.Services
             var persistResult = await PersistAnswer(answerObject);
 
             // Update object in cache.
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             var cachedAnswer = await cachedData.FindExactById(answerObject.Id);
             // This is all we are updating for now.
             cachedAnswer.Category = answerObject.Category;
@@ -186,7 +186,7 @@ namespace BestFor.Services.Services
 
         public async Task<AnswerDto> FindByAnswerId(int answerId)
         {
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             var answer = await cachedData.FindExactById(answerId);
             // Will be strange if not found ... but have to check.
             if (answer == null) return null;
@@ -228,7 +228,7 @@ namespace BestFor.Services.Services
             // Return if does not.
             if (existingAnswer == null) return answerId;
             // Remove from cache
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
             await cachedData.Delete(existingAnswer);
 
             // Update repo
@@ -409,7 +409,7 @@ namespace BestFor.Services.Services
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindAllAnswers");
 
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
 
             var allItems = await cachedData.All();
             if (allItems == null) return Enumerable.Empty<AnswerDto>();
@@ -438,7 +438,7 @@ namespace BestFor.Services.Services
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindLastAnswers");
 
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
 
             var allItems = await cachedData.All();
             if (allItems == null) return Enumerable.Empty<AnswerDto>();
@@ -469,7 +469,7 @@ namespace BestFor.Services.Services
             if (string.IsNullOrEmpty(searchPhrase) || string.IsNullOrWhiteSpace(searchPhrase))
                 throw new Exception("Invalid searchPhrase parameter passed to AnswerService.FindLastAnswers");
 
-            var cachedData = await GetCachedData();
+            var cachedData = GetCachedData();
 
             var allItems = await cachedData.All();
             if (allItems == null) return Enumerable.Empty<AnswerDto>();
@@ -646,7 +646,7 @@ namespace BestFor.Services.Services
             return new PersistAnswerResult() { Answer = existingAnswer, IsNew = isNew }; 
         }
 
-        private async Task<KeyIndexedDataSource<Answer>> GetCachedData()
+        private KeyIndexedDataSource<Answer> GetCachedData()
         {
             object data = _cacheManager.Get(CacheConstants.CACHE_KEY_ANSWERS_DATA);
             if (data == null)
@@ -671,7 +671,7 @@ namespace BestFor.Services.Services
             if (data == null)
             {
                 // Initialize from answers
-                var dataSource = await GetCachedData();
+                var dataSource = GetCachedData();
                 var allItems = await dataSource.All();
                 var leftDataSource = new KeyIndexedDataSource<AnswerLeftMask>();
                 leftDataSource.Initialize(allItems.Select(x => new AnswerLeftMask(x)));
@@ -693,7 +693,7 @@ namespace BestFor.Services.Services
             if (data == null)
             {
                 // Initialize from answers
-                var dataSource = await GetCachedData();
+                var dataSource = GetCachedData();
                 var allItems = await dataSource.All();
                 var rightDataSource = new KeyIndexedDataSource<AnswerRightMask>();
                 rightDataSource.Initialize(allItems.Select(x => new AnswerRightMask(x)));
@@ -716,7 +716,7 @@ namespace BestFor.Services.Services
             if (data == null)
             {
                 // Initialize from answers
-                var dataSource = await GetCachedData();
+                var dataSource = GetCachedData();
                 var allItems = await dataSource.All();
                 var userDataSource = new KeyIndexedDataSource<AnswerUserMask>();
                 userDataSource.Initialize(allItems

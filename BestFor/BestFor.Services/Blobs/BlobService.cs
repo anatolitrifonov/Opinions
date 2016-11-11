@@ -1,13 +1,14 @@
 ﻿using BestFor.Common;
+using BestFor.Domain.Entities;
 using BestFor.Dto;
 using BestFor.Services.Cache;
+using ImageResizer;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Blob; // Namespace for Blob storage types
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ImageResizer;
 
 namespace BestFor.Services.Blobs
 {
@@ -15,12 +16,15 @@ namespace BestFor.Services.Blobs
     /// Contains the code that saves the file to blob.
     /// Contains the logic that forms the path for files per entity type.
     /// Entity type is passed through the method name.
+    /// All images are stored as png.
     /// 
     /// All files are stored in one container until we know better.
     /// </summary>
     public class BlobService : IBlobService
     {
         private const string USER_IMAGES_PATH = "user_";
+        private const string USER_IMAGES_EXTENSION = ".png";
+        private const string USER_IMAGES_FORMAT = "png";
 
         /// <summary>
         /// Connection to blob storage from app settings
@@ -45,10 +49,13 @@ namespace BestFor.Services.Blobs
         /// </summary>
         private ICacheManager _cacheManager;
 
+        private string _blobServiceContainerUrl;
+
         public BlobService(IOptions<AppSettings> appSettings, ICacheManager cacheManager)
         {
             _blobServiceConnectionString = appSettings.Value.AzureBlobsConnectionString;
             _blobServiceContainerName = appSettings.Value.AzureBlobsContainerName;
+            _blobServiceContainerUrl = appSettings.Value.AzureBlobsContainerUrl;
             _avatarWidth = appSettings.Value.AvatarWidth;
             _avatarHeight = appSettings.Value.AvatarHeight;
             _cacheManager = cacheManager;
@@ -70,48 +77,107 @@ namespace BestFor.Services.Blobs
         /// FileName will be taken only for extension.
         /// </summary>
         /// <param name="userName"></param>
-        /// <param name="fileName"></param>
-        /// <param name="stream"></param>
+        /// <param name="blobData"></param>
         public void SaveUserProfilePicture(string userName, BlobDataDto blobData)
         {
             // Todo check username for slashes
 
             // Not sure how to save this just yet.
-            var path = USER_IMAGES_PATH + userName + "_" + blobData.FileName;
+            var path = USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
 
-            var resized = ResizeToAvatar(blobData.Stream);
-            resized.Position = 0;
+            // use image resizer to resize to a small avatar.
+            var resizedImageStream = ResizeToAvatar(blobData.Stream, _avatarWidth, _avatarHeight);
 
-            SaveFileToBlob(path, resized);
+            // just in case
+            resizedImageStream.Position = 0;
 
-            // SaveFileToBlob(path, blobData.Stream);
+            SaveFileToBlob(path, resizedImageStream);
+        }
+
+        public string GetUserProfilePictureName(string userName)
+        {
+            return USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
+        }
+
+        public bool DoesUserProfileHasPicture(string userName)
+        {
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrWhiteSpace(userName))
+                throw new ServicesException("Null or blank path parameter IsUserProfileHasPicture(userName)");
+            if (userName.Contains("\\"))
+                throw new ServicesException("Path parameter contains slash IsUserProfileHasPicture(userName)");
+
+            // Get a reference to our container.
+            var container = GetContainer();
+
+            // Verified that ListBlobs does not return null if not found
+            // There will be no null pointer exception here.
+            var blob = container.ListBlobs(USER_IMAGES_PATH + userName, false).FirstOrDefault();
+            return blob != null;
         }
 
         /// <summary>
-        /// Download user's avatar picture from blobs
+        /// Return user's umage url if it has one.
+        /// Methos also caches the image path in user object.
         /// </summary>
-        /// <param name="userName"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
-        public BlobDataDto FindUserProfilePicture(string userName)
+        /// <remarks>Images are sparate users. This service helps tying then together.</remarks>
+        public string GetUserImagUrl(ApplicationUser user)
         {
-            // Not sure how to save this just yet.
-            var path = USER_IMAGES_PATH + userName;
-            return FindBlob(path);
-        }        
+            // return data if already cached.
+            if (user.IsImageCached) return user.ImageUrl;
+
+            // Go to blob service and search
+            var hasImage = DoesUserProfileHasPicture(user.UserName);
+
+            // Populate the image url if foudn and mark user image as cached.
+            SetUserImageCached(user, hasImage);
+
+            return user.ImageUrl;
+        }
+
+        /// <summary>
+        /// Set the fact that we already checked user's image existence.
+        /// Set the expected url if user has an image.
+        /// User's image url is predefined.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="hasImage"></param>
+        public void SetUserImageCached(ApplicationUser user, bool hasImage)
+        {
+            // found or not it is cached.
+            user.IsImageCached = true;
+
+            // set the image url
+            user.ImageUrl = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureName(user.UserName) : null;
+
+        }
         #endregion
 
-        public Stream ResizeToAvatar(Stream input)
+        /// <summary>
+        /// Resize input image stream to width and height and to png format.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public Stream ResizeToAvatar(Stream input, int width, int height)
         {
+            // Instructions on how to resize.
             var settings = new Instructions()
             {
-                Width = 100,
-                Height = 100,
-                Format = "jpg"
+                Width = width,
+                Height = height,
+                Format = USER_IMAGES_FORMAT
             };
+            // Will return a memory stream
             var result = new MemoryStream();
+            // Define the "job" to do and run it.
             var job = new ImageJob(input, result, settings);
             ImageBuilder.Current.Build(job);
-
+            // Reset position to zero otherwise whoever is going to write it to disk or anywhere
+            // Will write zero bytes
+            result.Position = 0;
             return result;
         }
 

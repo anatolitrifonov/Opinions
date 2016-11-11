@@ -16,7 +16,7 @@ namespace BestFor.Services.Services
         /// <param name="leftWord"></param>
         /// <param name="rightWord"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindAnswers(string leftWord, string rightWord);
+        IEnumerable<AnswerDto> FindAnswers(string leftWord, string rightWord);
 
         /// <summary>
         /// Find the top N answers matching the left word
@@ -54,7 +54,7 @@ namespace BestFor.Services.Services
         /// <param name="leftWord"></param>
         /// <param name="rightWord"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindTopAnswers(string leftWord, string rightWord);
+        IEnumerable<AnswerDto> FindTopAnswers(string leftWord, string rightWord);
 
         /// <summary>
         /// Find answers trending today

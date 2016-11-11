@@ -40,28 +40,21 @@ namespace BestFor.Domain.Entities
 
         public bool IsCancelled { get; set; }
 
-
         [StringLength(1000, MinimumLength = 3)]
         public string CancellationReason { get; set; }
 
         /// <summary>
-        /// When this class is instatiated, this property is false.
+        /// When this class is instantiated, this property is false.
         /// It will be set to true once user's image url is requested for the first time.
         /// </summary>
         [NotMapped]
         public bool IsImageCached { get; set; }
 
         /// <summary>
-        /// User's avatar extension
-        /// </summary>
-        [NotMapped]
-        public string ImageExtension { get; set; }
-
-        /// <summary>
         /// Path to user's image
         /// </summary>
         [NotMapped]
-        public string ImagePath { get; set; }
+        public string ImageUrl { get; set; }
 
         #region IDtoConvertable implementation
         public ApplicationUserDto ToDto()

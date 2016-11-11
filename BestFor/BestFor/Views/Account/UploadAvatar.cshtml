@@ -1,0 +1,84 @@
+﻿@model BestFor.Models.AdminUploadImage
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@{
+    // Read localized strings
+    string stringUploadAvatar = resourcesService.GetString(ViewBag.BestForCulture, "upload_avatar");
+    string cancelString = resourcesService.GetString(this.ViewBag.BestForCulture, "cancel_capital");
+
+    ViewData["Title"] = stringUploadAvatar;
+}
+@* Add dropzonejs stylesheets because dropzonejs does not work without them *@
+@section CustomStyleSheet {
+    <link rel="stylesheet" href="~/lib/dropzonejs/dist/basic.css" asp-append-version="false" />
+    <link rel="stylesheet" href="~/lib/dropzonejs/dist/dropzone.css" asp-append-version="false" />
+}
+@* Add dropzonejs scripts *@
+@section TopScripts {
+    <script src="~/lib/dropzonejs/dist/dropzone.js" asp-append-version="true"></script>
+}
+<h2>@ViewData["Title"]</h2>
+@* dropzonejs upload handling script *@
+<script type="text/javascript">
+    // File Upload response from the server
+    Dropzone.options.dropzoneForm = {
+        maxFiles: 1, // Maximum number of files to upload
+        paramName: "TheImageToUpload", // form parameter name
+        maxFilesize: 0.3, // Max size of each file to upload in megabytes
+        uploadMultiple: false, // Can not upload multiple files
+        acceptedFiles: "image/jpeg,image/png,image/gif",
+        init: function () {
+            // Capture the Dropzone instance as closure.
+            var _this = this;
+            // Setup a button to clean control when clicked
+            //$("#uploadMessagesResetButton").click(function () {
+            //    _this.removeAllFiles();
+            //});
+            this.on("complete", function (data) {
+                //var res = eval('(' + data.xhr.responseText + ')');
+                // Complete fires all the time
+                // So we do need to check if we got something.
+                if (data == null) return;
+                if (data.xhr == null) return;
+                if (data.xhr.responseText == null || data.xhr.responseText == "") return;
+                var res = JSON.parse(data.xhr.responseText);
+                // Show upload result.
+                if (res.error != null && res.error != "") {
+                    $("#uploadMessagesSpan").text(res.error);
+                    this.removeFile(file);
+                } else {
+                    $("#uploadMessagesSpan").text(res.message);
+                    window.location.href = window.location.href.replace("UploadAvatar", "ViewProfile");
+                }
+            });
+            this.on("maxfilesreached", function (a, b, c) {
+                // Fires when control reaches max allowed files to upload.
+                // If multiple files dropped, only one will be uploaded
+                // And control shows the error saying you can not upload more.
+            });
+            this.on("error", function (file, message) {
+                // If error -> show error message and remove erroneous file.
+                $("#uploadMessagesSpan").text(message);
+                this.removeFile(file);
+            });
+        }
+    };
+</script>
+@* State message display. Errors or result. *@
+<span id="uploadMessagesSpan"></span><br />
+
+    <!-- style="width: 50px; background: none; border: none;" -->
+@*<!-- Keep reset button outside on the form so that it does not submit. Otherwise we will have to fiddle with event. -->
+<button id="uploadMessagesResetButton">Reset</button><br /> *@
+
+@* This form will render as dropzone upload control because the class is set to dropzone *@
+<form action="~/Account/UploadAvatar" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm"
+    style="width: 250px">
+    @* post back the user name *@
+    <input type="hidden" asp-for="ImageForUserName" />
+</form>
+<br /><br />
+<yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="ViewProfile"
+       y-class="btn btn-default btn-lg">
+    <span class="glyphicon glyphicon glyphicon glyphicon-remove" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@cancelString</span>
+</yakor>

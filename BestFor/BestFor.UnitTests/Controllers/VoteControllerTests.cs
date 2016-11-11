@@ -56,7 +56,7 @@ namespace BestFor.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task VoteController_VoteAnswer_AddsVote()
+        public void VoteController_VoteAnswer_AddsVote()
         {
             // Arrange
             var dataContext = new FakeDataContext();
@@ -85,7 +85,7 @@ namespace BestFor.UnitTests.Controllers
             };
 
             // Act
-            var result = await controller.VoteAnswer(vote.AnswerId);
+            var result = controller.VoteAnswer(vote.AnswerId);
 
             // Assert
             var viewResult = Assert.IsType<RedirectToActionResult>(result);

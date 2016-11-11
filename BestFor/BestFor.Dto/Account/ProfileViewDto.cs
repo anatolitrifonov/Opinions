@@ -32,5 +32,7 @@ namespace BestFor.Dto.Account
         public int NumberOfComments { get; set; }
 
         public DateTime JoinDate { get; set; }
+
+        public string UserImageUrl { get; set; }
     }
 }
