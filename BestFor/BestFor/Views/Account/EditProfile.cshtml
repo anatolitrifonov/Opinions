@@ -1,11 +1,24 @@
-﻿@model BestFor.Dto.Account.ProfileEditDto
+﻿@model BestFor.Models.ProfileEditViewModel
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @{
     // Read localized strings
-    string stringEditProfile = resourcesService.GetString(ViewBag.BestForCulture, "edit_profile");
-    string stringSave = resourcesService.GetString(ViewBag.BestForCulture, "save_capital");
-    string cancelString = resourcesService.GetString(this.ViewBag.BestForCulture, "cancel_capital");
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "edit_profile",
+        "save_capital",
+        "cancel_capital",
+        "public_data",
+        "if_marked_public_data",
+        "enter_current_password_for_additional_security",
+        "this_is_your_chance_to_tell"
+     });
+    string stringEditProfile = localStrings[0];
+    string stringSave = localStrings[1];
+    string stringCancel = localStrings[2];
+    string stringPublicData = localStrings[3];
+    string stringIfMarked = localStrings[4];
+    string stringEnterCurrent = localStrings[5];
+    string stringChance = localStrings[6];
 
     ViewData["Title"] = stringEditProfile;
 }
@@ -15,7 +28,8 @@
     <div class="col-md-offset-2 col-md-8">
         <section>
             <form asp-controller="Account" asp-action="EditProfile" method="post" class="form-horizontal" role="form">
-                <h4>Update profile settings.</h4>
+                <h4>@stringEditProfile</h4>
+                @stringIfMarked
                 <hr />
                 <div class="best-success">@Model.SuccessMessage</div>
                 <div asp-validation-summary="All" class="text-danger"></div>
@@ -28,20 +42,83 @@
                 <div class="form-group">
                     <label asp-for="DisplayName" class="col-md-2 control-label"></label>
                     <div class="col-md-6">
-                        <input asp-for="DisplayName" class="form-control" />
+                        <input asp-for="DisplayName" class="form-control" maxlength="100" />
                         <span asp-validation-for="DisplayName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="Email" class="col-md-2 control-label"></label>
                     <div class="col-md-6">
-                        <input asp-for="Email" class="form-control" />
+                        <input asp-for="Email" class="form-control" maxlength="100" />
                         <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <input asp-for="ShowEmail" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">@stringPublicData</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="col-md-2 control-label"></label>
+                    <div class="col-md-6">
+                        <input asp-for="PhoneNumber" class="form-control" maxlength="20" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <input asp-for="ShowPhoneNumber" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">@stringPublicData</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CompanyName" class="col-md-2 control-label"></label>
+                    <div class="col-md-6">
+                        <input asp-for="CompanyName" class="form-control" maxlength="100" />
+                        <span asp-validation-for="CompanyName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <input asp-for="ShowCompanyName" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">@stringPublicData</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="WebSite" class="col-md-2 control-label"></label>
+                    <div class="col-md-6">
+                        <input asp-for="WebSite" class="form-control" maxlength="100" />
+                        <span asp-validation-for="WebSite" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <input asp-for="ShowWebSite" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">@stringPublicData</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-8">
-                        Enter current password for additional security.
+                        @stringChance
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserDescription" class="col-md-2 control-label"></label>
+                    <div class="col-md-6">
+                        <textarea asp-for="UserDescription" class="form-control" maxlength="1000"></textarea>
+                        <span asp-validation-for="UserDescription" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <input asp-for="ShowUserDescription" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label">@stringPublicData</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-8">
+                        @stringEnterCurrent
                     </div>
                 </div>
                 <div class="form-group">
@@ -56,16 +133,15 @@
                         <button type="submit" class="btn btn-default btn-lg">@stringSave</button>
                         <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="ViewProfile"
                                y-class="btn btn-default btn-lg">
-                            <span class="glyphicon glyphicon glyphicon glyphicon-remove" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@cancelString</span>
+                            <span class="glyphicon glyphicon glyphicon glyphicon-remove" aria-hidden="true" />&nbsp;<span
+                                class="special_glyph_anchor">@stringCancel</span>
                         </yakor>
                     </div>
-
                 </div>
             </form>
         </section>
     </div>
 </div>
-
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

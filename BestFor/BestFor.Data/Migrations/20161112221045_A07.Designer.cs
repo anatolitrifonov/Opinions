@@ -8,9 +8,10 @@ using BestFor.Data;
 namespace BestFor.Data.Migrations
 {
     [DbContext(typeof(BestDataContext))]
-    partial class BestDataContextModelSnapshot : ModelSnapshot
+    [Migration("20161112221045_A07")]
+    partial class A07
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -177,6 +178,9 @@ namespace BestFor.Data.Migrations
 
                     b.Property<DateTime>("DateUpdated");
 
+                    b.Property<string>("Description")
+                        .HasAnnotation("MaxLength", 200);
+
                     b.Property<string>("DisplayName")
                         .HasAnnotation("MaxLength", 100);
 
@@ -221,18 +225,15 @@ namespace BestFor.Data.Migrations
 
                     b.Property<bool>("ShowCompanyName");
 
+                    b.Property<bool>("ShowDescription");
+
                     b.Property<bool>("ShowEmail");
 
                     b.Property<bool>("ShowPhoneNumber");
 
-                    b.Property<bool>("ShowUserDescription");
-
                     b.Property<bool>("ShowWebSite");
 
                     b.Property<bool>("TwoFactorEnabled");
-
-                    b.Property<string>("UserDescription")
-                        .HasAnnotation("MaxLength", 200);
 
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);

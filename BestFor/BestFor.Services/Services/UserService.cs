@@ -69,6 +69,20 @@ namespace BestFor.Services.Services
             return null;
         }
 
+        public ApplicationUser FindByUserName(string userName)
+        {
+            // Do not check nulls
+            if (string.IsNullOrEmpty(userName)) return null;
+            if (string.IsNullOrWhiteSpace(userName)) return null;
+
+            // Get cache ... might take long but is not null
+            var data = GetCachedData();
+
+            ApplicationUser user = data.FirstOrDefault(x => x.Value.UserName == userName).Value;
+
+            return user;
+        }
+
         /// <summary>
         /// Find users by a set of ids
         /// </summary>
@@ -96,7 +110,6 @@ namespace BestFor.Services.Services
             return result;
         }
 
-
         /// <summary>
         /// Cache user
         /// </summary>
@@ -109,7 +122,9 @@ namespace BestFor.Services.Services
             // Something went wrong if this is null.
             // if (data == null) return 0;
 
-            if (!data.ContainsKey(user.Id))
+            if (data.ContainsKey(user.Id))
+                data[user.Id] = user;
+            else
                 data.Add(user.Id, user);
 
             return 1;

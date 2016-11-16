@@ -94,27 +94,6 @@ namespace BestFor.Services.Blobs
             SaveFileToBlob(path, resizedImageStream);
         }
 
-        public string GetUserProfilePictureName(string userName)
-        {
-            return USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
-        }
-
-        public bool DoesUserProfileHasPicture(string userName)
-        {
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrWhiteSpace(userName))
-                throw new ServicesException("Null or blank path parameter IsUserProfileHasPicture(userName)");
-            if (userName.Contains("\\"))
-                throw new ServicesException("Path parameter contains slash IsUserProfileHasPicture(userName)");
-
-            // Get a reference to our container.
-            var container = GetContainer();
-
-            // Verified that ListBlobs does not return null if not found
-            // There will be no null pointer exception here.
-            var blob = container.ListBlobs(USER_IMAGES_PATH + userName, false).FirstOrDefault();
-            return blob != null;
-        }
-
         /// <summary>
         /// Return user's umage url if it has one.
         /// Methos also caches the image path in user object.
@@ -130,7 +109,7 @@ namespace BestFor.Services.Blobs
             // Go to blob service and search
             var hasImage = DoesUserProfileHasPicture(user.UserName);
 
-            // Populate the image url if foudn and mark user image as cached.
+            // Populate the image url if found and mark user image as cached.
             SetUserImageCached(user, hasImage);
 
             return user.ImageUrl;
@@ -152,7 +131,52 @@ namespace BestFor.Services.Blobs
             user.ImageUrl = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureName(user.UserName) : null;
 
         }
+
+        public void DeleteUserProfilePicture(string userName)
+        {
+            // Nothing to do -> exit.
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrWhiteSpace(userName)) return;
+
+            // Get a reference to our container.
+            var container = GetContainer();
+
+            // form the user image path
+            var path = GetUserProfilePictureName(userName);
+
+            // Verified that ListBlobs does not return null if not found
+            // There will be no null pointer exception here.
+            var blob = container.ListBlobs(path, false).FirstOrDefault();
+            if (blob == null) return;
+
+            if (blob.GetType() == typeof(CloudBlockBlob))
+            {
+                var item = (CloudBlockBlob)blob;
+                item.Delete();
+            }
+        }
         #endregion
+
+        public string GetUserProfilePictureName(string userName)
+        {
+            return USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
+        }
+
+        public bool DoesUserProfileHasPicture(string userName)
+        {
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrWhiteSpace(userName))
+                throw new ServicesException("Null or blank path parameter IsUserProfileHasPicture(userName)");
+            if (userName.Contains("\\"))
+                throw new ServicesException("Path parameter contains slash IsUserProfileHasPicture(userName)");
+
+            // Get a reference to our container.
+            var container = GetContainer();
+
+            // Verified that ListBlobs does not return null if not found
+            // There will be no null pointer exception here.
+            //var blob = container.ListBlobs(USER_IMAGES_PATH + userName, false).FirstOrDefault();
+            var blob = container.ListBlobs(GetUserProfilePictureName(userName), false).FirstOrDefault();
+            return blob != null;
+        }
 
         /// <summary>
         /// Resize input image stream to width and height and to png format.
@@ -247,9 +271,6 @@ namespace BestFor.Services.Blobs
                     throw new ServicesException("StorageException was thrown with message: " + ex.Message, ex);
                 }
             }
-
-            //container.SetPermissions(
-            //  new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
 
             // Retrieve reference to the blob
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(path);

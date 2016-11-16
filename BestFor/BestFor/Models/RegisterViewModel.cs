@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using R = BestFor.Resources.BestResourcer;
 
-
 namespace BestFor.Models
 {
     /// <summary>
@@ -28,11 +27,11 @@ namespace BestFor.Models
         [StringLength(100, MinimumLength = 6,
             ErrorMessageResourceName = "AnnotationErrorMessageStringLength100X6Password", ErrorMessageResourceType = typeof(R))]
         [DataType(DataType.Password)]
-        [Display(Name = "AnnotationDisplayNamePassword", ResourceType = typeof(R))]
+        [Display(Name = "AnnotationPassword", ResourceType = typeof(R))]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "AnnotationDisplayNameConfirmPassword", ResourceType = typeof(R))]
+        [Display(Name = "AnnotationConfirmPassword", ResourceType = typeof(R))]
         [Compare("Password", ErrorMessageResourceName = "AnnotationErrorMessageComparePassword", ErrorMessageResourceType = typeof(R))]
         public string ConfirmPassword { get; set; }
 

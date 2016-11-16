@@ -1,5 +1,4 @@
-﻿using BestFor.Common;
-using BestFor.Domain.Entities;
+﻿using BestFor.Domain.Entities;
 using BestFor.Dto;
 using BestFor.Dto.Account;
 using BestFor.Models;
@@ -12,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,9 +33,9 @@ namespace BestFor.Controllers
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
         private readonly IUserService _userService;
-        private IProfanityService _profanityService;
+        private readonly IProfanityService _profanityService;
         private readonly IResourcesService _resourcesService;
-        private IBlobService _blobService;
+        private readonly IBlobService _blobService;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender, ISmsSender smsSender, IUserService userService, IProfanityService profanityService,
@@ -249,8 +247,11 @@ namespace BestFor.Controllers
             return View(model);
         }
 
-        //
-        // GET: /Account/ForgotPasswordConfirmation
+        /// <summary>
+        /// Confirms that forgot password reset email was sent
+        /// GET: /Account/ForgotPasswordConfirmation
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ForgotPasswordConfirmation()
@@ -258,8 +259,14 @@ namespace BestFor.Controllers
             return View();
         }
 
-        //
-        // GET: /Account/ResetPassword
+        /// <summary>
+        /// This is a password reset from forgotten password link.
+        /// Shows the view for the link that was sent to the user by email
+        /// Link contains the code to reset the password.
+        /// GET: /Account/ResetPassword
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ResetPassword(string code = null)
@@ -267,8 +274,12 @@ namespace BestFor.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
-        // POST: /Account/ResetPassword
+        /// <summary>
+        /// Posts the new password and reset code
+        /// POST: /Account/ResetPassword
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -293,8 +304,11 @@ namespace BestFor.Controllers
             return View();
         }
 
-        //
-        // GET: /Account/ResetPasswordConfirmation
+        /// <summary>
+        /// Shows that account reset was done.
+        /// GET: /Account/ResetPasswordConfirmation
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ResetPasswordConfirmation()
@@ -303,9 +317,9 @@ namespace BestFor.Controllers
         }
 
         /// <summary>
-        /// GET: /Account/Profile
+        /// GET: /Account/ViewProfile
         /// Has to be logged in.
-        /// Can only change email and display name. Display name can be blank or unique.
+        /// Display name can be blank or unique.
         /// Can not change user name.
         /// Can not change password.
         /// Have to type password to confirm update.
@@ -321,17 +335,31 @@ namespace BestFor.Controllers
             // Let's go to cache.
             // we are authenticated so currentUserId will be there.
             var user = _userService.FindById(currentUserId);
-
-            // var user = await _userManager.FindByIdAsync(currentUserId);
             if (user == null)
             {
                 // Would be funny if this happens. Someone is hacking us I guess.
                 return View("Error");
             }
-            var model = new ProfileViewDto();
+            var model = new ProfileEditViewModel();
+            model.Email = user.Email;
             model.UserName = user.UserName;
             model.DisplayName = user.DisplayName;
             model.NumberOfAnswers = user.NumberOfAnswers;
+            model.NumberOfDescriptions = user.NumberOfDescriptions;
+            model.NumberOfVotes = user.NumberOfVotes;
+            model.NumberOfFlags = user.NumberOfFlags;
+            model.NumberOfComments = user.NumberOfComments;
+            model.JoinDate = user.DateAdded;
+            model.PhoneNumber = user.PhoneNumber;
+            model.CompanyName = user.CompanyName;
+            model.WebSite = user.WebSite;
+            model.UserDescription = user.UserDescription;
+            model.ShowEmail = user.ShowEmail;
+            model.ShowPhoneNumber = user.ShowPhoneNumber;
+            model.ShowCompanyName = user.ShowCompanyName;
+            model.ShowWebSite = user.ShowWebSite;
+            model.ShowUserDescription = user.ShowUserDescription;
+            model.ShowAvatar = user.ShowAvatar;
 
             // Populate image, load users image if needed
             model.UserImageUrl = _blobService.GetUserImagUrl(user);
@@ -340,7 +368,7 @@ namespace BestFor.Controllers
         }
 
         /// <summary>
-        /// GET: /Account/Profile
+        /// GET: /Account/EditProfile
         /// Has to be logged in.
         /// Can only change email and display name. Display name can be blank or unique.
         /// Can not change user name.
@@ -359,23 +387,39 @@ namespace BestFor.Controllers
                 // Would be funny if this happens. Someone is hacking us I guess.
                 return View("Error");
             }
-            var model = new ProfileEditDto();
+            var model = new ProfileEditViewModel();
             model.Email = user.Email;
             model.UserName = user.UserName;
             model.DisplayName = user.DisplayName;
+            model.NumberOfAnswers = user.NumberOfAnswers;
+            model.NumberOfDescriptions = user.NumberOfDescriptions;
+            model.NumberOfVotes = user.NumberOfVotes;
+            model.NumberOfFlags = user.NumberOfFlags;
+            model.NumberOfComments = user.NumberOfComments;
+            model.JoinDate = user.DateAdded;
+            model.PhoneNumber = user.PhoneNumber;
+            model.CompanyName = user.CompanyName;
+            model.WebSite = user.WebSite;
+            model.UserDescription = user.UserDescription;
+            model.ShowEmail = user.ShowEmail;
+            model.ShowPhoneNumber = user.ShowPhoneNumber;
+            model.ShowCompanyName = user.ShowCompanyName;
+            model.ShowWebSite = user.ShowWebSite;
+            model.ShowUserDescription = user.ShowUserDescription;
+            model.ShowAvatar = user.ShowAvatar;
 
             return View(model);
         }
 
         /// <summary>
-        /// POST: /Account/Profile
+        /// POST: /Account/EditProfile
         /// Update user's profile. Does not navigate away.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(ProfileEditDto model)
+        public async Task<IActionResult> EditProfile(ProfileEditViewModel model)
         {
             // Check the model first
             if (!ModelState.IsValid)
@@ -393,7 +437,7 @@ namespace BestFor.Controllers
             }
 
             // First check if there was any changes
-            if (model.DisplayName == user.DisplayName && user.Email == model.Email)
+            if (!IsChanged(model, user))
             {
                 // No changes
                 model.SuccessMessage = "Your profile was successfully updated.";
@@ -419,12 +463,102 @@ namespace BestFor.Controllers
             // Check display name is unique.
             if (!IsDisplayNameUnique(model.DisplayName, user.Id)) return View(model);
 
+            user.PhoneNumber = model.PhoneNumber;
+            user.CompanyName = model.CompanyName;
+            user.WebSite = model.WebSite;
+            user.UserDescription = model.UserDescription;
+            user.ShowEmail = model.ShowEmail;
+            user.ShowPhoneNumber = model.ShowPhoneNumber;
+            user.ShowCompanyName = model.ShowCompanyName;
+            user.ShowWebSite = model.ShowWebSite;
+            user.ShowUserDescription = model.ShowUserDescription;
+            user.ShowAvatar = model.ShowAvatar;
+
             var updateResult = await _userManager.UpdateAsync(user);
 
             // If all good we stay on the same page and display success message.
             if (updateResult.Succeeded)
             {
                 model.SuccessMessage = "Your profile was successfully updated.";
+            }
+
+            // Need to update cache .....
+            _userService.AddUserToCache(user);
+
+            AddErrors(updateResult);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Compares data in application user object and in edit user model to detect the change.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public bool IsChanged(ProfileEditViewModel model, ApplicationUser user)
+        {
+            bool same = model.DisplayName == user.DisplayName &&
+                user.Email == model.Email &&
+                user.PhoneNumber == model.PhoneNumber &&
+                user.CompanyName == model.CompanyName &&
+                user.WebSite == model.WebSite &&
+                user.UserDescription == model.UserDescription &&
+                user.ShowEmail == model.ShowEmail &&
+                user.ShowPhoneNumber == model.ShowPhoneNumber &&
+                user.ShowCompanyName == model.ShowCompanyName &&
+                user.ShowWebSite == model.ShowWebSite &&
+                user.ShowUserDescription == model.ShowUserDescription &&
+                user.ShowAvatar == model.ShowAvatar;
+
+            return !same;
+        }
+
+        /// <summary>
+        /// GET: /Account/ChangePassword
+        /// Has to be logged in.
+        /// Can only change password.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            // Nothing to show on this page user has to enter everything manually.
+            return View(new ChangePasswordViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            // Check the model first
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Find id
+            var currentUserId = _userManager.GetUserId(User);
+            // Find user
+            var user = await _userManager.FindByIdAsync(currentUserId);
+            if (user == null)
+            {
+                // Would be funny if this happens. Someone is hacking us I guess.
+                return View("Error");
+            }
+
+            // Verify password
+            if (!await _userManager.CheckPasswordAsync(user, model.OldPassword))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid password");
+                return View(model);
+            }
+
+            var updateResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+            // If all good we stay on the same page and display success message.
+            if (updateResult.Succeeded)
+            {
+                model.SuccessMessage = "Your password was successfully updated.";
             }
 
             AddErrors(updateResult);
@@ -453,7 +587,7 @@ namespace BestFor.Controllers
         [HttpPost]
         public IActionResult UploadAvatar(AdminUploadImage model)
         {
-            //todo this method is currently not quite protected 
+            // todo this method is currently not quite protected 
             // however controller itself is marked as Authorize.
             if (model == null) return FormJsonResultError("empty model");
             if (string.IsNullOrEmpty(model.ImageForUserName) || string.IsNullOrWhiteSpace(model.ImageForUserName))
@@ -487,18 +621,26 @@ namespace BestFor.Controllers
         }
 
         /// <summary>
-        /// Shortcut for creating small json object with a message
+        /// Deletes user's avatar.
         /// </summary>
-        /// <param name="message"></param>
         /// <returns></returns>
-        private IActionResult FormJsonResultError(string error)
+        [HttpGet]
+        public IActionResult DeleteAvatar()
         {
-            return FormJsonResult("", error);
-        }
+            // Get user
+            var user = _userService.FindByUserName(User.Identity.Name);
 
-        private IActionResult FormJsonResult(string message, string error)
-        {
-            return Json(new { Message = message, Error = string.IsNullOrEmpty(error) ? "" : "Error: " + error });
+            // Load blob info
+            _blobService.GetUserImagUrl(user);
+
+            // Delete only if there
+            if (user.ImageUrl != null)
+            {
+                _blobService.DeleteUserProfilePicture(user.UserName);
+                user.ImageUrl = null;
+            }
+
+            return RedirectToAction("ViewProfile");
         }
 
         [HttpGet]
@@ -602,7 +744,7 @@ namespace BestFor.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        private bool IsProfanityCleanProfileUpdate(ProfileEditDto model)
+        private bool IsProfanityCleanProfileUpdate(ProfileEditViewModel model)
         {
             // Do profanity checks. We already validated the model.
             // we can only change a couple of fields.
@@ -683,6 +825,21 @@ namespace BestFor.Controllers
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Shortcut for creating small json object with a message
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private IActionResult FormJsonResultError(string error)
+        {
+            return FormJsonResult("", error);
+        }
+
+        private IActionResult FormJsonResult(string message, string error)
+        {
+            return Json(new { Message = message, Error = string.IsNullOrEmpty(error) ? "" : "Error: " + error });
         }
         #endregion
     }

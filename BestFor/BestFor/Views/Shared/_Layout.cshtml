@@ -82,7 +82,8 @@
         @Html.Partial("TopMenu")
         @* This section is only filed in on the home page.*@
         @RenderSection("TopCenter", required: false)
-        @Html.Partial("CurrentUser")
+        @*Html.Partial("CurrentUser")*@
+        @await Component.InvokeAsync("CurrentUser")
     </div>
     @* Keep the amount of scripts loaded in this section to minimum *@
     @RenderSection("TopScripts", required: false)

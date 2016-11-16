@@ -7,9 +7,7 @@ namespace BestFor.Services.Blobs
     {
         void SaveUserProfilePicture(string userName, BlobDataDto blobData);
 
-        string GetUserProfilePictureName(string userName);
-
-        bool DoesUserProfileHasPicture(string userName);
+        void DeleteUserProfilePicture(string userName);
 
         /// <summary>
         /// Return user's umage url if it has one.

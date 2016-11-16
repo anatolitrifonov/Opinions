@@ -373,10 +373,10 @@ GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'your_profile')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'your_profile',
-		N'Your profile.', getDate());
+		N'Your profile', getDate());
 if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'your_profile')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'your_profile',
-		N'Ваш профиль.', getDate());
+		N'Ваш профиль', getDate());
 GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'cancel_capital')
@@ -610,6 +610,52 @@ if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'change_password', N'Change Password', getDate());
 if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'change_password')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'change_password', N'Изменить Пароль', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'delete_avatar')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'delete_avatar', N'Delete Avatar', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'delete_avatar')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'delete_avatar', N'Удалить Аватар', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'profile_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'profile_capital',
+		N'Profile', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'profile_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'profile_capital',
+		N'Профиль', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'public_data')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'public_data',
+		N'Public', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'public_data')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'public_data',
+		N'Доступно', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'if_marked_public_data')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'if_marked_public_data',
+		N'Marking item as Public will show it on your public profile.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'if_marked_public_data')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'if_marked_public_data',
+		N'Пометка Доступно сделает эти данными видимыми на Вашем профиле.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'enter_current_password_for_additional_security')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'enter_current_password_for_additional_security',
+		N'Enter current password for additional security.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'enter_current_password_for_additional_security')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'enter_current_password_for_additional_security',
+		N'Введите пароль для допольнительной безопасности.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'this_is_your_chance_to_tell')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'this_is_your_chance_to_tell',
+		N'Your chance to tell about yourself or your company.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'this_is_your_chance_to_tell')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'this_is_your_chance_to_tell',
+		N'Ваш шанс рассказать о себе или компании.', getDate());
 GO
 
 -- delete from ResourceStrings where [key] in ('help_others', 'add_your_opinion', 'if_search_is_not_sufficient')

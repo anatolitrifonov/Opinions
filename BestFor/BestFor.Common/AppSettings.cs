@@ -38,8 +38,6 @@ namespace BestFor.Common
 
         public string FullDomainAddress { get; set; }
 
-        public string DatabaseConnectionString { get; set; }
-
         /// <summary>
         /// Default container name on the azure
         /// </summary>

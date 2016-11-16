@@ -71,7 +71,6 @@ div.best-top-right-bar
     font-size:18px;
     float:right;
     text-align:right;
-    padding-top:20px;
 }
 
 /* sets the color for top bar right anchors. White :) */
@@ -262,4 +261,9 @@ div.best-search-result
 .form-group.required .control-label:after { 
    content:"*";
    color:red;
+}
+
+/* Make image a circle */
+.img-circle {
+    border-radius: 50%;
 }

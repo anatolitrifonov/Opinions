@@ -13,8 +13,12 @@
             }
             @foreach (var item in Model.Users)
             {
-                var show = @item.DisplayName + " (" + @item.NumberOfAnswers + " " + stringOpinions +")";
-                <span class="best-trending-overall">@show</span>
+                var show = @item.DisplayName + " (" + @item.NumberOfAnswers + " " + stringOpinions + ")";
+
+                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="PublicProfile" y-action="Index"
+                       y-querystring="@new { userName = item.UserName }">
+                    <span class="best-trending-overall">@show</span>
+                </yakor>
             }
         </div>
     </div>

@@ -56,6 +56,30 @@ namespace BestFor.Domain.Entities
         [NotMapped]
         public string ImageUrl { get; set; }
 
+        [StringLength(200, MinimumLength = 3)]
+        public string CompanyName { get; set; }
+
+        [StringLength(200, MinimumLength = 3)]
+        public string WebSite { get; set; }
+
+        /// <summary>
+        /// Personal or company description
+        /// </summary>
+        [StringLength(200, MinimumLength = 3)]
+        public string UserDescription { get; set; }
+
+        public bool ShowEmail { get; set; }
+
+        public bool ShowPhoneNumber { get; set; }
+
+        public bool ShowCompanyName { get; set; }
+
+        public bool ShowWebSite { get; set; }
+
+        public bool ShowUserDescription { get; set; }
+
+        public bool ShowAvatar { get; set; }
+
         #region IDtoConvertable implementation
         public ApplicationUserDto ToDto()
         {
@@ -64,7 +88,9 @@ namespace BestFor.Domain.Entities
                 UserId = Id,
                 UserName = UserName,
                 NumberOfAnswers = NumberOfAnswers,
-                DisplayName = DisplayName
+                DisplayName = DisplayName,
+                IsImageCached = IsImageCached,
+                ImageUrl = ImageUrl
             };
         }
 
@@ -73,6 +99,8 @@ namespace BestFor.Domain.Entities
             Id = dto.UserId;
             UserName = dto.UserName;
             NumberOfAnswers = dto.NumberOfAnswers;
+            IsImageCached = dto.IsImageCached;
+            ImageUrl = dto.ImageUrl;
 
             return 1;
         }

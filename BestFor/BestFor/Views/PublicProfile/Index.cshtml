@@ -1,0 +1,68 @@
+﻿@model BestFor.Models.ProfileEditViewModel
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@{
+    // Read localized strings
+    string stringProfile = resourcesService.GetString(ViewBag.BestForCulture, "profile_capital");
+
+    ViewData["Title"] = stringProfile + ": " + Model.DisplayName;
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-offset-2 col-md-8">
+        <div class="row">
+            <label asp-for="VisibleDisplayName" class="col-md-3"></label><span class="col-md-9">@Model.VisibleDisplayName</span>
+        </div>
+        <br />
+        @if (Model.UserImageUrl != null)
+        {
+            <img src="@Model.UserImageUrl" class="img-circle" />
+        }
+        @if (Model.ShowUserDescription)
+        {
+            <div class="row">
+                <label asp-for="UserDescription" class="col-md-3"></label><span class="col-md-9">@Model.UserDescription</span>
+            </div>
+        }
+        <div class="row">
+            <label asp-for="NumberOfAnswers" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfAnswers</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfDescriptions" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfDescriptions</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfVotes" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfVotes</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfFlags" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfFlags</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfComments" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfComments</span>
+        </div>
+        @if (Model.ShowEmail)
+        {
+            <div class="row">
+                <label asp-for="Email" class="col-md-3"></label><span class="col-md-9">@Model.Email</span>
+            </div>
+        }
+        @if (Model.ShowPhoneNumber)
+        {
+            <div class="row">
+                <label asp-for="PhoneNumber" class="col-md-3"></label><span class="col-md-9">@Model.PhoneNumber</span>
+            </div>
+        }
+        @if (Model.ShowCompanyName)
+        {
+            <div class="row">
+                <label asp-for="CompanyName" class="col-md-3"></label><span class="col-md-9">@Model.CompanyName</span>
+            </div>
+        }
+        @if (Model.ShowWebSite)
+        {
+            <div class="row">
+                <label asp-for="WebSite" class="col-md-3"></label><span class="col-md-9">@Model.WebSite</span>
+            </div>
+        }
+    </div>
+</div>

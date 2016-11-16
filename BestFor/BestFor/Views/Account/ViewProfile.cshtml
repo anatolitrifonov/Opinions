@@ -1,14 +1,28 @@
-﻿@model BestFor.Dto.Account.ProfileViewDto
+﻿@model BestFor.Models.ProfileEditViewModel
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @{
     // Read localized strings
-    string stringEditProfile = resourcesService.GetString(ViewBag.BestForCulture, "edit_profile");
-    string stringYourProfile = resourcesService.GetString(ViewBag.BestForCulture, "your_profile");
-    string stringRemoveProfile = resourcesService.GetString(ViewBag.BestForCulture, "remove_profile");
-    string stringUploadAvatar = resourcesService.GetString(ViewBag.BestForCulture, "upload_avatar");
-    string stringChangePassword = resourcesService.GetString(ViewBag.BestForCulture, "change_password");
-    
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "edit_profile",
+        "your_profile",
+        "remove_profile",
+        "upload_avatar",
+        "delete_avatar",
+        "change_password",
+        "public_data"
+    });
+
+    string stringEditProfile = localStrings[0];
+    string stringYourProfile = localStrings[1];
+    string stringRemoveProfile = localStrings[2];
+    string stringUploadAvatar = localStrings[3];
+    string stringDeleteAvatar = localStrings[4];
+    string stringChangePassword = localStrings[5];
+    string stringPublicData = localStrings[6];
+
+    string stringData = Model.ShowEmail ? Model.Email + " (" + stringPublicData + ")" : Model.Email;
+
     ViewData["Title"] = stringYourProfile;
 }
 <h2>@ViewData["Title"]</h2>
@@ -24,16 +38,67 @@
         <div class="row">
             <label asp-for="NumberOfAnswers" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfAnswers</span>
         </div>
+        <div class="row">
+            <label asp-for="NumberOfDescriptions" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfDescriptions</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfVotes" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfVotes</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfFlags" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfFlags</span>
+        </div>
+        <div class="row">
+            <label asp-for="NumberOfComments" class="col-md-3"></label><span class="col-md-9">@Model.NumberOfComments</span>
+        </div>
+        <div class="row">
+            <label asp-for="Email" class="col-md-3"></label><span class="col-md-9">@stringData</span>
+        </div>
+        <div class="row">
+            <label asp-for="JoinDate" class="col-md-3"></label><span class="col-md-9">@Model.JoinDate</span>
+        </div>
+        <div class="row">
+            @{ 
+                stringData = Model.ShowPhoneNumber ? Model.PhoneNumber + " (" + stringPublicData + ")" : Model.PhoneNumber;
+            }
+            <label asp-for="PhoneNumber" class="col-md-3"></label><span class="col-md-9">@stringData</span>
+        </div>
+        <div class="row">
+            @{
+                stringData = Model.ShowCompanyName ? Model.CompanyName + " (" + stringPublicData + ")" : Model.CompanyName;
+            }
+            <label asp-for="CompanyName" class="col-md-3"></label><span class="col-md-9">@stringData</span>
+        </div>
+        <div class="row">
+            @{
+                stringData = Model.ShowWebSite ? Model.WebSite + " (" + stringPublicData + ")" : Model.WebSite;
+            }
+            <label asp-for="WebSite" class="col-md-3"></label><span class="col-md-9">@stringData</span>
+        </div>
+        <div class="row">
+            @{
+                stringData = Model.ShowUserDescription ? Model.UserDescription + " (" + stringPublicData + ")" : Model.UserDescription;
+            }
+            <label asp-for="UserDescription" class="col-md-3"></label><span class="col-md-9">@stringData</span>
+        </div>
         <br />
-        @if (Model.UserImageUrl != null)
-        {
-            <img src="@Model.UserImageUrl" style="border: 3px solid green" />
-        }
-        else
-        {
-            <span>No Image</span>
-        }
-        <br /><br />
+        <div class="row">
+            @if (Model.UserImageUrl != null)
+            {
+                <div class="col-md-2">
+                    <img src="@Model.UserImageUrl" style="border: 3px solid green" />
+                </div>
+                <div class="col-md-4"><br /><br />Uploaded and resized</div>
+                <div class="col-md-2">
+                    <img src="@Model.UserImageUrl" class="img-circle" />
+                </div>
+                <div class="col-md-4"><br /><br />This is how it will be shown to others.</div>
+            }
+            else
+            {
+                <div class="col-md-12"><span>No Image</span></div>
+            }
+        </div>
+        <br />
         <div class="form-group">
             <div class="col-md-11">
                 <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="EditProfile"
@@ -41,17 +106,21 @@
                     <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringEditProfile</span>
                 </yakor>
                 <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="UploadAvatar"
-                       y-class="btn btn-default btn-lg">
+                        y-class="btn btn-default btn-lg">
                     <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringUploadAvatar</span>
-                </yakor>            
+                </yakor>
+                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="DeleteAvatar"
+                        y-class="btn btn-default btn-lg">
+                    <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringDeleteAvatar</span>
+                </yakor>
                 <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="ChangePassword"
-                       y-class="btn btn-default btn-lg">
+                        y-class="btn btn-default btn-lg">
                     <span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringChangePassword</span>
                 </yakor>
             </div>
             <div class="col-md-1">
                 <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="CancelProfile"
-                       y-class="btn btn-default btn-sm">
+                        y-class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon glyphicon-remove" aria-hidden="true" />&nbsp;<span class="special_glyph_anchor">@stringRemoveProfile</span>
                 </yakor>
             </div>

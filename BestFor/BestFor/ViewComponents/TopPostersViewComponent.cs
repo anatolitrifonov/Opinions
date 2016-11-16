@@ -1,14 +1,13 @@
 ﻿using BestFor.Dto.Account;
 using BestFor.Services.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace BestFor.ViewComponents
 {
     /// <summary>
     /// Shows all top posters.
+    /// The view for this view component in Views/Shared/TopPosters
     /// </summary>
     public class TopPostersViewComponent : ViewComponent
     {
@@ -16,13 +15,10 @@ namespace BestFor.ViewComponents
         /// Constructor injected answer service. Used for loading the answers.
         /// </summary>
         private IAnswerService _answerService;
-        private ILogger _logger;
 
-        public TopPostersViewComponent(IAnswerService answerService, ILoggerFactory loggerFactory)
+        public TopPostersViewComponent(IAnswerService answerService)
         {
             _answerService = answerService;
-            _logger = loggerFactory.CreateLogger<TrendingOverallOpinionViewComponent>();
-            _logger.LogInformation("created TrendingOverallOpinionViewComponent");
         }
 
         /// <summary>
@@ -31,9 +27,9 @@ namespace BestFor.ViewComponents
         /// <returns></returns>
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var data = new ApplicationUsersDto();
-            data.Users = await _answerService.FindTopPosterIds();
-            return View(data);
+            var model = new ApplicationUsersDto();
+            model.Users = await _answerService.FindTopPosterIds();
+            return View(model);
         }
     }
 }

@@ -48,5 +48,11 @@ namespace BestFor.Dto.Account
         public bool IsCancelled { get; set; }
 
         public string CancellationReason { get; set; }
+
+        public bool IsSignedIn { get; set; }
+
+        public bool IsImageCached { get; set; }
+
+        public string ImageUrl { get; set; }
     }
 }

@@ -19,6 +19,8 @@ namespace BestFor.Services.Services
 
         ApplicationUser FindById(string id);
 
+        ApplicationUser FindByUserName(string userName);
+
         /// <summary>
         /// Find users by a set of ids
         /// </summary>

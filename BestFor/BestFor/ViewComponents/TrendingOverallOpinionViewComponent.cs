@@ -1,24 +1,24 @@
 ﻿using BestFor.Dto;
 using BestFor.Services.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace BestFor.ViewComponents
 {
+    /// <summary>
+    /// Shows all top opinions.
+    /// The view for this view component in Views/Shared/TrendingOverall
+    /// </summary>
     public class TrendingOverallOpinionViewComponent : ViewComponent
     {
         /// <summary>
         /// Constructor injected answer service. Used for loading the answers.
         /// </summary>
         private IAnswerService _answerService;
-        private ILogger _logger;
 
-        public TrendingOverallOpinionViewComponent(IAnswerService answerService, ILoggerFactory loggerFactory)
+        public TrendingOverallOpinionViewComponent(IAnswerService answerService)
         {
             _answerService = answerService;
-            _logger = loggerFactory.CreateLogger<TrendingOverallOpinionViewComponent>();
-            _logger.LogInformation("created TrendingOverallOpinionViewComponent");
         }
 
         /// <summary>
@@ -27,10 +27,9 @@ namespace BestFor.ViewComponents
         /// <returns></returns>
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var data = new AnswersDto();
-            data.Answers = await _answerService.FindAnswersTrendingOverall();
-
-            return View(data);
+            var model = new AnswersDto();
+            model.Answers = await _answerService.FindAnswersTrendingOverall();
+            return View(model);
         }
     }
 }

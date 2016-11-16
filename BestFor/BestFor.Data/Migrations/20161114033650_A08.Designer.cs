@@ -8,9 +8,10 @@ using BestFor.Data;
 namespace BestFor.Data.Migrations
 {
     [DbContext(typeof(BestDataContext))]
-    partial class BestDataContextModelSnapshot : ModelSnapshot
+    [Migration("20161114033650_A08")]
+    partial class A08
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -221,11 +222,11 @@ namespace BestFor.Data.Migrations
 
                     b.Property<bool>("ShowCompanyName");
 
+                    b.Property<bool>("ShowDescription");
+
                     b.Property<bool>("ShowEmail");
 
                     b.Property<bool>("ShowPhoneNumber");
-
-                    b.Property<bool>("ShowUserDescription");
 
                     b.Property<bool>("ShowWebSite");
 

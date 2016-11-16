@@ -36,9 +36,11 @@ namespace BestFor.Resources
 
         public static string AnnotationErrorMessageStringLength100X6Password { get { return GetString("AnnotationErrorMessageStringLength100X6Password"); } }
 
-        public static string AnnotationDisplayNamePassword { get { return GetString("AnnotationDisplayNamePassword"); } }
+        public static string AnnotationPassword { get { return GetString("AnnotationPassword"); } }
 
-        public static string AnnotationDisplayNameConfirmPassword { get { return GetString("AnnotationDisplayNameConfirmPassword"); } }
+        public static string AnnotationConfirmPassword { get { return GetString("AnnotationConfirmPassword"); } }
+
+        public static string AnnotationOldPassword { get { return GetString("AnnotationOldPassword"); } }
 
         public static string AnnotationErrorMessageRequiredUserName { get { return GetString("AnnotationErrorMessageRequiredUserName"); } }
 
@@ -68,6 +70,36 @@ namespace BestFor.Resources
         public static string AnnotationErrorMessageStringLength100X4UserName { get { return GetString("AnnotationErrorMessageStringLength100X4UserName"); } }
 
         public static string AnnotationErrorMessageStringLength100X3DisplayName { get { return GetString("AnnotationErrorMessageStringLength100X3DisplayName"); } }
+
+        public static string AnnotationDisplayNameNumberOfAnswers { get { return GetString("AnnotationDisplayNameNumberOfAnswers"); } }
+
+        public static string AnnotationDisplayNameNumberOfDescriptions { get { return GetString("AnnotationDisplayNameNumberOfDescriptions"); } }
+
+        public static string AnnotationDisplayNameNumberOfVotes { get { return GetString("AnnotationDisplayNameNumberOfVotes"); } }
+
+        public static string AnnotationDisplayNameNumberOfFlags { get { return GetString("AnnotationDisplayNameNumberOfFlags"); } }
+
+        public static string AnnotationDisplayNameNumberOfComments { get { return GetString("AnnotationDisplayNameNumberOfComments"); } }
+
+        public static string AnnotationDisplayNameJoinDate { get { return GetString("AnnotationDisplayNameJoinDate"); } }
+
+        public static string AnnotationDisplayNamePhoneNumber { get { return GetString("AnnotationDisplayNamePhoneNumber"); } }
+
+        public static string AnnotationDisplayNameCompanyName { get { return GetString("AnnotationDisplayNameCompanyName"); } }
+
+        public static string AnnotationDisplayNameWebSite { get { return GetString("AnnotationDisplayNameWebSite"); } }
+
+        public static string AnnotationDisplayNameUserDescription { get { return GetString("AnnotationDisplayNameUserDescription"); } }
+
+        public static string AnnotationValidationMessagePhoneNumber { get { return GetString("AnnotationValidationMessagePhoneNumber"); } }
+
+        public static string AnnotationErrorMessageStringLength100X4CompanyName { get { return GetString("AnnotationErrorMessageStringLength100X4CompanyName"); } }
+
+        public static string AnnotationErrorMessageStringLength100X4WebSite { get { return GetString("AnnotationErrorMessageStringLength100X4WebSite"); } }
+
+        public static string AnnotationErrorMessageStringLength1000X20UserDescription { get { return GetString("AnnotationErrorMessageStringLength1000X20UserDescription"); } }
+
+        public static string AnnotationValidationMessageUrl { get { return GetString("AnnotationValidationMessageUrl"); } }
 
         private static string GetString(string key)
         {
