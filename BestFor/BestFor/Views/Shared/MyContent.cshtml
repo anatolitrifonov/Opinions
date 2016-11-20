@@ -40,7 +40,15 @@
 }
 <br />
 @* Who added it originally *@
-Added by @Model.UserDisplayName.
+Added by @if (Model.Answer.UserId == null)
+{
+    @Model.Answer.User.DisplayName
+}
+else
+{
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="PublicProfile" y-action="Index"
+        y-querystring="@new { userName = Model.Answer.User.UserName }">@Model.Answer.User.DisplayName</yakor>
+}
 @* How many times this opinion was repeated *@
 Repeated @Model.Answer.Count times.
 @* How many people voted for this *@

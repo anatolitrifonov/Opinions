@@ -19,14 +19,20 @@ namespace BestFor.Controllers
     public class HomeController : BaseApiController
     {
         /// <summary>
-        /// Constructor injected answer service. Used for loading the answers.
+        /// Constructor injected answer services.
         /// </summary>
         private readonly IAnswerService _answerService;
         private readonly IAnswerDescriptionService _answerDescriptionService;
         private readonly IResourcesService _resourcesService;
-        private readonly ILogger _logger;
         private readonly IUserService _userService;
         private readonly IVoteService _voteService;
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private readonly ILogger _logger;
+        /// <summary>
+        /// Application settings
+        /// </summary>
         private readonly IOptions<AppSettings> _appSettings;
 
         public HomeController(IAnswerService answerService, IAnswerDescriptionService answerDescriptionService,
@@ -48,21 +54,21 @@ namespace BestFor.Controllers
         /// </summary>
         /// <returns></returns>
         // GET: /<controller>/
-        public async Task<IActionResult> Index(string reason = null, string searchPhrase = null)
+        public IActionResult Index(string reason = null, string searchPhrase = null)
         {
             var model = new HomePageDto();
 
             // Use the search service if search phrase is passed
             if (!string.IsNullOrEmpty(searchPhrase) && !string.IsNullOrWhiteSpace(searchPhrase))
             {
-                model.TopToday.Answers = await _answerService.FindLastAnswers(searchPhrase);
+                model.TopToday.Answers = _answerService.FindLastAnswers(searchPhrase);
                 model.Keyword = searchPhrase;
                 model.HeaderText = _resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR) +
                     ": " + searchPhrase;
             }
             else
             {
-                model.TopToday.Answers = await _answerService.FindAnswersTrendingToday();
+                model.TopToday.Answers = _answerService.FindAnswersTrendingToday();
                 model.HeaderText = _resourcesService.GetString(this.Culture, Lines.TRENDING_TODAY);
             }
 
@@ -147,7 +153,7 @@ namespace BestFor.Controllers
             {
                 foreach (var description in descriptions)
                 {
-                    description.UserDisplayName = GetUserDisplayName(description.UserId, userService);
+                    GetUserDisplayName(description, userService);
                 }
             }
 
@@ -157,9 +163,10 @@ namespace BestFor.Controllers
                 Answer = answer,
                 CommonStrings = resourcesService.GetCommonStrings(culture),
                 Descriptions = descriptions,
-                UserDisplayName = GetUserDisplayName(answer.UserId, userService),
                 NumberVotes = voteService.CountAnswerVotes(answer.Id)
             };
+
+            GetUserDisplayName(data.Answer, userService);
 
             // Fill in link to this page and other usefull data.
             data.ThisAnswerLink = LinkingHelper.ConvertAnswerToUrlWithCulture(culture, data.CommonStrings, answer);
@@ -176,19 +183,30 @@ namespace BestFor.Controllers
         /// <param name="userId"></param>
         /// <param name="userService"></param>
         /// <returns></returns>
-        private static string GetUserDisplayName(string userId, IUserService userService)
+        private static void GetUserDisplayName(UserBaseDto answerDescription, IUserService userService)
         {
-            var result = "Anonymous";
-            if (userId == null || userService == null) return result;
-            if (string.IsNullOrEmpty(userId)) return result;
-            if (string.IsNullOrWhiteSpace(userId)) return result;
+            answerDescription.User.DisplayName = "Anonymous";
+
+            if (answerDescription.UserId == null || userService == null) return;
+
+            if (string.IsNullOrEmpty(answerDescription.UserId) || string.IsNullOrWhiteSpace(answerDescription.UserId))
+            {
+                // Cleanup
+                answerDescription.UserId = null;
+                return;
+            }
             // Get user details.
-            var user = userService.FindById(userId);
-            if (user == null) return result;
-            if (user.DisplayName == null) return user.UserName;
-            if (user.DisplayName == string.Empty) return user.UserName;
-            if (user.IsCancelled) return result; // <-- Anonymous if user is cancelled.
-            return user.DisplayName;
+            var user = userService.FindById(answerDescription.UserId);
+            if (user == null) return;
+
+            if (user.IsCancelled) // <-- Anonymous if user is cancelled.
+            {
+                // Cleanup
+                answerDescription.UserId = null;
+                return;
+            }
+
+            answerDescription.User = user.ToDto();
         }
     }
 }

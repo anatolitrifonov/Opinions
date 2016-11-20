@@ -111,6 +111,22 @@ namespace BestFor.Services.DataSources
             return _data[key].Values.AsEnumerable();
         }
 
+        /// <summary>
+        /// Get count of items for a given key.
+        /// Returns count of the first level key items.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public int Count(string key)
+        {
+            if (_data == null) return 0;
+
+            if (!_data.ContainsKey(key)) return 0;
+
+            // Get all items for the key
+            return _data[key].Values.Count;
+        }
+
         public IEnumerable<TEntity> FindTopItems(string key)
         {
             if (_data == null) return null;
@@ -235,11 +251,11 @@ namespace BestFor.Services.DataSources
         /// Return all items indexed by IIdIndex.Id
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<TEntity>> All()
+        public IEnumerable<TEntity> All()
         {
             if (_iddata == null) return null;
 
-            return await Task.FromResult(_iddata.Values.AsEnumerable<TEntity>());
+            return _iddata.Values.AsEnumerable();
         }
 
         #region Private Methods

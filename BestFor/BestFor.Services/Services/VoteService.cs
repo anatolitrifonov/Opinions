@@ -5,7 +5,6 @@ using BestFor.Services.Cache;
 using BestFor.Services.DataSources;
 using Microsoft.Extensions.Logging;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
@@ -37,6 +36,7 @@ namespace BestFor.Services.Services
             _logger = loggerFactory.CreateLogger<VoteService>();
         }
 
+        #region IVoteService implementation
         /// <summary>
         /// Save answer vote
         /// </summary>
@@ -70,6 +70,13 @@ namespace BestFor.Services.Services
             // Add to cache.
             var cachedData = GetVotesCachedData();
             cachedData.Insert(answerVoteObject);
+
+            // Add to user cache if there is a user
+            if (answerVoteObject.UserId != null)
+            {
+                var userCachedData = GetUserVotesCachedData();
+                userCachedData.Insert(new AnswerVoteUserMask(answerVoteObject));
+            }
 
             return answerVoteObject.AnswerId;
         }
@@ -131,6 +138,20 @@ namespace BestFor.Services.Services
             // return await Task.FromResult<int>(count);
         }
 
+        /// <summary>
+        /// Count votes for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public int CountByUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(userId)) return 0;
+            var cachedData = GetUserVotesCachedData();
+            int result = cachedData.Count(userId);
+            return result;
+        }
+        #endregion
+
         #region Private Methods
         /// <summary>
         /// Get votes data from cache or initialize if empty
@@ -164,6 +185,32 @@ namespace BestFor.Services.Services
                 return dataSource;
             }
             return (KeyIndexedDataSource<AnswerDescriptionVote>)data;
+        }
+
+        /// <summary>
+        /// We are doubling the data to give ability to index answer description in a different way.
+        /// Main index in on answers.
+        /// This will allow us to also index answer descriptions by user.
+        /// 
+        /// Load from normally cached data if empty.
+        /// </summary>
+        /// <returns></returns>
+        private KeyIndexedDataSource<AnswerVoteUserMask> GetUserVotesCachedData()
+        {
+            object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USER_VOTES_DATA);
+            if (data == null)
+            {
+                // Initialize from answer descriptions
+                var dataSource = GetVotesCachedData();
+                var allItems = dataSource.All();
+                var userDataSource = new KeyIndexedDataSource<AnswerVoteUserMask>();
+                userDataSource.Initialize(allItems
+                    .Where(x => x.UserId != null)
+                    .Select(x => new AnswerVoteUserMask(x)));
+                _cacheManager.Add(CacheConstants.CACHE_KEY_USER_VOTES_DATA, userDataSource);
+                return userDataSource;
+            }
+            return (KeyIndexedDataSource<AnswerVoteUserMask>)data;
         }
         #endregion
     }

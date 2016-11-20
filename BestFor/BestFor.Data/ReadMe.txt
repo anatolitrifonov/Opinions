@@ -38,5 +38,6 @@ dotnet ef --configuration Debug --build-base-path .\bin\ database update --verbo
 
 Add-Migration MyFirstMigration -Project BestFor.Data -Verbose
 Add-Migration A03 -Project BestFor.Data -Verbose
+Add-Migration A10 -Project BestFor.Data -Verbose
 
 update-database -Project BestFor.Data -Verbose

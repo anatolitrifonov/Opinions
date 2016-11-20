@@ -10,13 +10,15 @@ namespace BestFor.Domain.Entities
     /// Flag for answer and flag for answer description are separate to avoid funny database manipulations.
     /// We may end up storing cache of flags but for sure different tables.
     /// </summary>
-    public class AnswerFlag : EntityBase, IDtoConvertable<AnswerFlagDto>
+    public class AnswerFlag : EntityBase, IFirstIndex, ISecondIndex, IDtoConvertable<AnswerFlagDto>, IIdIndex
     {
+        #region IIdIndex implementation
         /// <summary>
         /// Identity ...
         /// </summary>
         [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public override int Id { get; set; }
+        #endregion
 
         /// <summary>
         /// Reason for flagging
@@ -47,6 +49,20 @@ namespace BestFor.Domain.Entities
         /// </summary>
         [ForeignKey("UserId")]
         public ApplicationUser ApplicationUser { get; set; }
+
+        #region IFirstIndex implementation
+        // We do not care about number of flags per answer. Only per user at the moment.
+        [NotMapped]
+        public string IndexKey { get { return UserId; } }
+        #endregion
+
+        #region ISecondIndex implementation
+        [NotMapped]
+        public string SecondIndexKey { get { return Id.ToString(); } }
+
+        [NotMapped]
+        public int NumberOfEntries { get { return 1; } set { return; } }
+        #endregion
 
         #region IDtoConvertable implementation
         public AnswerFlagDto ToDto()

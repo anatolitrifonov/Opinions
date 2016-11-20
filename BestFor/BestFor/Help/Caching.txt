@@ -1,0 +1,62 @@
+﻿Caches
+1. List of users -> Contains entities (not dtos) -> Basically list of users by unique userId -> accessibly through UserService
+Question comes ... do we wnat to update the count of ansers, votes, descriptions when users are loaded.
+Current answer is no because if users cache expires and we need to reload it we need to load all the counts at this time.
+
+Let's try another approach ...
+
+2. Answers cache -> cached by left word + right word -> used for adding answers (answer service)
+3. Answers trending today -> trending today (answer service)
+4. Answers by left word cache -> search on left word (answer service)
+5. Answers by right word cache -> search on right word (answer service)
+6. Answers by user id -> how many answers each user has -> indexed by userid (answer service)
+7. Votes (votes service)
+8. Descriptions (answer description service)
+9. Flags (flags service)
+
+Task 1
+
+Given a list of answers find a user.displayname for each answer
+Solution
+	get userIds from answers, load users from users cache, put user dto into each answer
+	operation of stitching user info into answer
+
+Task 2
+
+Given a user load the counts of answers, votes, descriptions, etc
+Solution
+	ping each service separately for count of answers per user, count of votes per user, count of descriptions per user, etc.
+
+Task 3
+
+When answer is added -> update user's count of answers 
+Solution
+	update "answers by user id" cache
+	may be update the user in cache
+		this raises the question of how do we get the count into user to begin with
+
+Task 4
+
+Given a list of answers find a user.NumberOfVotes and user.NumberOfDescriptions for each answer
+This is needed only when we need to show not just answer's user display name but also the user's stats.
+
+Do we need this?
+
+Which operations will happen more often?
+
+How often do we need to show the page with stats for more that one user?
+We can store user's level with usre object.
+But probably not the list of voted, list of answers, and list of achievements.
+
+Basically for not let's not store user stats in user's object because we are not planning to show 
+answers + users + stats on one page.
+not even users + stats
+only users + levels
+
+user + stats
+user + achievements will be on separate pages.
+
+
+
+
+

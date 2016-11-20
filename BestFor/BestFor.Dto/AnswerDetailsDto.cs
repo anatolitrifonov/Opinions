@@ -18,11 +18,6 @@ namespace BestFor.Dto
         public CommonStringsDto CommonStrings { get; set; }
 
         /// <summary>
-        /// Display Name of the user that added the answer
-        /// </summary>
-        public string UserDisplayName { get; set; }
-
-        /// <summary>
         /// Number of votes that this answer got.
         /// </summary>
         public int NumberVotes { get; set; }

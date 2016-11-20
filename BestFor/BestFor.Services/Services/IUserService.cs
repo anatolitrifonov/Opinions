@@ -26,7 +26,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        List<ApplicationUserDto> FindByIds(List<string> ids);
+        Dictionary<string, ApplicationUserDto> FindByIds(List<string> ids);
 
         int AddUserToCache(ApplicationUser user);
 

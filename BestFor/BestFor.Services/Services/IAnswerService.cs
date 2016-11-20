@@ -23,7 +23,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="leftWord"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindLeftAnswers(string leftWord);
+        IEnumerable<AnswerDto> FindLeftAnswers(string leftWord);
 
         /// <summary>
         /// Find top <paramref name="count"/> answers matching the left word
@@ -31,14 +31,14 @@ namespace BestFor.Services.Services
         /// <param name="leftWord"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindLeftAnswers(string leftWord, int count);
+        IEnumerable<AnswerDto> FindLeftAnswers(string leftWord, int count);
 
         /// <summary>
         /// Find the top N answers matching the right word
         /// </summary>
         /// <param name="rightWord"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindRightAnswers(string rightWord);
+        IEnumerable<AnswerDto> FindRightAnswers(string rightWord);
 
         /// <summary>
         /// Find top <paramref name="count"/> answers matching the right word
@@ -46,7 +46,7 @@ namespace BestFor.Services.Services
         /// <param name="rightWord"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindRightAnswers(string rightWord, int count);
+        IEnumerable<AnswerDto> FindRightAnswers(string rightWord, int count);
 
         /// <summary>
         /// Find the last ten answers for the pair of suggestions.
@@ -60,7 +60,7 @@ namespace BestFor.Services.Services
         /// Find answers trending today
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindAnswersTrendingToday();
+        IEnumerable<AnswerDto> FindAnswersTrendingToday();
 
         /// <summary>
         /// Find answers trending overall
@@ -130,26 +130,26 @@ namespace BestFor.Services.Services
         /// Return top N of Last answers ordered by date
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindLastAnswers();
+        IEnumerable<AnswerDto> FindLastAnswers();
 
         /// <summary>
         /// Find top <paramref name="count"/> answers sorted by date
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindLastAnswers(int count);
+        IEnumerable<AnswerDto> FindLastAnswers(int count);
 
         /// <summary>
         /// Return top N of Last answers ordered by date desc by keyword
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindLastAnswers(string searchPhrase);
+        IEnumerable<AnswerDto> FindLastAnswers(string searchPhrase);
 
         /// <summary>
         /// Return top N of Last answers ordered by date desc by keyword
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindLastAnswers(int count, string searchPhrase);
+        IEnumerable<AnswerDto> FindLastAnswers(int count, string searchPhrase);
 
         /// <summary>
         /// Find top N users answer posters
@@ -157,5 +157,11 @@ namespace BestFor.Services.Services
         /// <returns></returns>
         Task<List<ApplicationUserDto>> FindTopPosterIds();
 
+        /// <summary>
+        /// Count answers for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        int CountByUserId(string userId);
     }
 }

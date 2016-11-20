@@ -37,7 +37,7 @@ namespace BestFor.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Left()
+        public IActionResult Left()
         {
             _logger.LogDebug("SearchController Left");
 
@@ -48,7 +48,7 @@ namespace BestFor.Controllers
 
             var result = new AnswersDto();
 
-            result.Answers = await _answerService.FindLeftAnswers(data);
+            result.Answers = _answerService.FindLeftAnswers(data);
             result.SearchKeyword = data;
 
             return View("Result", result);
@@ -59,7 +59,7 @@ namespace BestFor.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Right()
+        public IActionResult Right()
         {
             _logger.LogDebug("SearchController Right");
 
@@ -70,7 +70,7 @@ namespace BestFor.Controllers
 
             var result = new AnswersDto();
 
-            result.Answers = await _answerService.FindRightAnswers(data);
+            result.Answers = _answerService.FindRightAnswers(data);
             result.IsLeft = false;
             result.SearchKeyword = data;
 
@@ -82,12 +82,12 @@ namespace BestFor.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Everything()
+        public IActionResult Everything()
         {
             _logger.LogDebug("SearchController Everything");
 
             var result = new AnswersDto();
-            result.Answers = await _answerService.FindLastAnswers();
+            result.Answers = _answerService.FindLastAnswers();
 
             return View(result);
         }
@@ -97,12 +97,12 @@ namespace BestFor.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Everything(string searchPhrase)
+        public IActionResult Everything(string searchPhrase)
         {
             _logger.LogDebug("SearchController Everything(" + searchPhrase + ")");
 
             var result = new AnswersDto();
-            result.Answers = await _answerService.FindLastAnswers(searchPhrase);
+            result.Answers = _answerService.FindLastAnswers(searchPhrase);
 
             return View(result);
         }

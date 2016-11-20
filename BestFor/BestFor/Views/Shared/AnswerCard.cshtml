@@ -1,5 +1,6 @@
 ﻿@model BestFor.Dto.AnswerDto
 @using BestFor.Services
+@using BestFor.Dto
 @* Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
 @*
@@ -12,53 +13,67 @@
 @{
     if (Model != null)
     {
-        // Link to flagging.TODO how to do this in tag helpers?
-        // Get the localized word flag
-        var strings = resourcesService.GetCommonStrings(this.ViewBag.BestForCulture);
+        CommonStringsDto strings = resourcesService.GetCommonStrings(this.ViewBag.BestForCulture);
         string flagString = strings.FlagUpper;
         string voteString = strings.VoteUpper;
         string describeString = strings.DescribeUpper;
         string moreString = strings.MoreUpper;
+        string guestString = strings.GuestUpper;
         string linkToAnswer = LinkingHelper.ConvertAnswerToUrlWithCulture(this.ViewBag.BestForCulture, strings, Model);
-        // TODO make this into something beautiful *@
         @* Panel best-panel-shadow is our style *@
         <div class="panel panel-default best-panel-shadow">
             @* Header *@
-            <div class="panel-heading best-card-links text-center">
-                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="AddDescription"
-                       y-querystring="@new { answerId = Model.Id }"><span class="glyphicon glyphicon-book" aria-hidden="true" /></yakor>
-                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="AddDescription"
-                       y-querystring="@new { answerId = Model.Id }">@describeString</yakor> &nbsp;&nbsp;
-                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Vote" y-action="VoteAnswer"
-                       y-querystring="@new { answerId = Model.Id }"><span class="glyphicon glyphicon-ok" aria-hidden="true" /></yakor>
-                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Vote" y-action="VoteAnswer"
-                       y-querystring="@new { answerId = Model.Id }">@voteString</yakor> &nbsp;&nbsp;
-                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Flag" y-action="FlagAnswer"
-                       y-querystring="@new { answerId = Model.Id }"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true" /></yakor>
-                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Flag" y-action="FlagAnswer"
-                       y-querystring="@new { answerId = Model.Id }">@flagString</yakor>
+            <div class="panel-heading best-card-links">
+                @if (Model.UserId == null)
+                {
+                    <span>@guestString</span>
+                }
+                else
+                {
+                    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="PublicProfile" y-action="Index"
+                           y-querystring="@new { userName = Model.User.UserName }">
+                        <span>@Model.User.DisplayName</span>
+                    </yakor>
+                }
             </div>
             @* Content *@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-2 best-card-label">@strings.Best</div>
+                    @* Search on the left word *@
                     <div class="col-md-10 best-card-detail"><yakor y-culture="@this.ViewBag.BestForCulture"
                         y-controller="Left" y-action="@Model.LeftWord" y-class="best-card-dark-links">@Model.LeftWord</yakor></div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 best-card-label">@strings.For</div>
+                    @* Search on the right word *@
                     <div class="col-md-10 best-card-detail"><yakor y-culture="@this.ViewBag.BestForCulture"
                         y-controller="Right" y-action="@Model.RightWord" y-class="best-card-dark-links">@Model.RightWord</yakor></div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 best-card-label">@strings.Is</div>
+                    @* Straight to the answer itself *@
                     <div class="col-md-10 best-card-detail"><a class="best-card-dark-links" href="@linkToAnswer">@Model.Phrase</a></div>
                 </div>
             </div>
             <div class="panel-footer">
                 @* This is an attempt to move the link to the right from center. Can not quite right align. *@
                 <div class="row">
-                    <div class="col-md-offset-8 col-md-4">
+                    <div class="col-md-8 best-card-links text-center">
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="AddDescription"
+                               y-querystring="@new { answerId = Model.Id }"><span class="glyphicon glyphicon-book" aria-hidden="true" /></yakor>
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="AddDescription"
+                               y-querystring="@new { answerId = Model.Id }">@describeString</yakor> &nbsp;&nbsp;
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Vote" y-action="VoteAnswer"
+                                y-querystring="@new { answerId = Model.Id }"><span class="glyphicon glyphicon-ok" aria-hidden="true" /></yakor>
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Vote" y-action="VoteAnswer"
+                                y-querystring="@new { answerId = Model.Id }">@voteString</yakor> &nbsp;&nbsp;
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Flag" y-action="FlagAnswer"
+                                y-querystring="@new { answerId = Model.Id }"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true" /></yakor>
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Flag" y-action="FlagAnswer"
+                                y-querystring="@new { answerId = Model.Id }">@flagString</yakor>
+                    </div>
+                    <div class="col-md-4">
                         <a class="best-card-links" href="@linkToAnswer">@moreString</a>
                         <a class="best-card-link-icon" href="@linkToAnswer"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true" /></a>
                     </div>

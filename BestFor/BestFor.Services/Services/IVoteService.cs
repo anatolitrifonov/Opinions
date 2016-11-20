@@ -10,5 +10,12 @@ namespace BestFor.Services.Services
         int VoteAnswerDescription(AnswerDescriptionVoteDto answerVote);
 
         int CountAnswerVotes(int answerId);
+
+        /// <summary>
+        /// Count votes for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        int CountByUserId(string userId);
     }
 }

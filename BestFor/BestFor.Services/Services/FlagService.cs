@@ -2,8 +2,8 @@
 using BestFor.Domain.Entities;
 using BestFor.Dto;
 using BestFor.Services.Cache;
+using BestFor.Services.DataSources;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
@@ -30,6 +30,7 @@ namespace BestFor.Services.Services
             _logger = loggerFactory.CreateLogger<FlagService>();
         }
 
+        #region IFlagService implementation
         /// <summary>
         /// Save answer flag
         /// </summary>
@@ -53,6 +54,13 @@ namespace BestFor.Services.Services
 
             var task = _answerFlagRepository.SaveChangesAsync();
             task.Wait();
+
+            // Add to user cache if there is a user
+            if (answerFlagObject.UserId != null)
+            {
+                var userCachedData = GetUserFlagsCachedData();
+                userCachedData.Insert(answerFlagObject);
+            }
 
             return answerFlagObject.Id;
         }
@@ -84,5 +92,38 @@ namespace BestFor.Services.Services
 
             return answerDescriptionFlagObject.Id;
         }
+
+        /// <summary>
+        /// Count flags for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public int CountByUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(userId)) return 0;
+            var cachedData = GetUserFlagsCachedData();
+            int result = cachedData.Count(userId);
+            return result;
+        }
+        #endregion
+
+        #region Private Methods
+        /// <summary>
+        /// Get flags data from cache or initialize if empty
+        /// </summary>
+        /// <returns></returns>
+        private KeyIndexedDataSource<AnswerFlag> GetUserFlagsCachedData()
+        {
+            object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USER_FLAGS_DATA);
+            if (data == null)
+            {
+                var dataSource = new KeyIndexedDataSource<AnswerFlag>();
+                dataSource.Initialize(_answerFlagRepository.Active());
+                _cacheManager.Add(CacheConstants.CACHE_KEY_USER_FLAGS_DATA, dataSource);
+                return dataSource;
+            }
+            return (KeyIndexedDataSource<AnswerFlag>)data;
+        }
+        #endregion
     }
 }

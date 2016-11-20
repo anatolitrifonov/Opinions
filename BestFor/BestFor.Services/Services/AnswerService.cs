@@ -1,4 +1,5 @@
-﻿using BestFor.Data;
+﻿using BestFor.Domain.Interfaces;
+using BestFor.Data;
 using BestFor.Domain.Entities;
 using BestFor.Domain.Masks;
 using BestFor.Dto;
@@ -126,17 +127,17 @@ namespace BestFor.Services.Services
             cachedData.Insert(persistResult.Answer);
 
             // Add to left cache
-            var leftCachedData = await GetLeftCachedData();
+            var leftCachedData = GetLeftCachedData();
             leftCachedData.Insert(new AnswerLeftMask(persistResult.Answer));
 
             // Add to right cache
-            var rightCachedData = await GetRightCachedData();
+            var rightCachedData = GetRightCachedData();
             rightCachedData.Insert(new AnswerRightMask(persistResult.Answer));
 
             // Add to user cache if there is a user
             if (persistResult.Answer.UserId != null)
             {
-                var userCachedData = await GetUserCachedData();
+                var userCachedData = GetUserCachedData();
                 userCachedData.Insert(new AnswerUserMask(persistResult.Answer));
             }
 
@@ -172,10 +173,15 @@ namespace BestFor.Services.Services
             return answer;
         }
 
-        public async Task<IEnumerable<AnswerDto>> FindAnswersTrendingToday()
+        public IEnumerable<AnswerDto> FindAnswersTrendingToday()
         {
             var data = GetTodayTrendingCachedData();
-            return await Task.FromResult(data.Select(x => x.ToDto()));
+            // Get all userIds (as list)
+            var userIds = data.Where(x => x.UserId != null).Select(x => x.UserId).Distinct().ToList();
+
+            // Let the stitcher stitch data and users and return data as dto with users
+            // we basically want answers with all the related user data.
+            return Stitcher<AnswerDto>.Stitch(data.ToList<IDtoConvertable<AnswerDto>>(), userIds, _userService);
         }
 
         public async Task<IEnumerable<AnswerDto>> FindAnswersTrendingOverall()
@@ -246,9 +252,9 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="leftWord"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindLeftAnswers(string leftWord)
+        public IEnumerable<AnswerDto> FindLeftAnswers(string leftWord)
         {
-            return await FindLeftAnswers(leftWord, DEFAULT_SEARCH_RESULT_COUNT);
+            return FindLeftAnswers(leftWord, DEFAULT_SEARCH_RESULT_COUNT);
         }
 
         /// <summary>
@@ -257,14 +263,14 @@ namespace BestFor.Services.Services
         /// <param name="leftWord"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindLeftAnswers(string leftWord, int count)
+        public IEnumerable<AnswerDto> FindLeftAnswers(string leftWord, int count)
         {
             if (string.IsNullOrEmpty(leftWord) || string.IsNullOrWhiteSpace(leftWord))
                 throw new Exception("Invalid leftWord parameter passed to AnswerService.FindLeftAnswers");
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindLeftAnswers");
 
-            var cachedData = await GetLeftCachedData();
+            var cachedData = GetLeftCachedData();
 
             var result = cachedData.Find(leftWord);
 
@@ -279,9 +285,9 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="rightWord"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindRightAnswers(string rightWord)
+        public IEnumerable<AnswerDto> FindRightAnswers(string rightWord)
         {
-            return await FindRightAnswers(rightWord, DEFAULT_SEARCH_RESULT_COUNT);
+            return FindRightAnswers(rightWord, DEFAULT_SEARCH_RESULT_COUNT);
         }
 
         /// <summary>
@@ -290,14 +296,14 @@ namespace BestFor.Services.Services
         /// <param name="rightWord"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindRightAnswers(string rightWord, int count)
+        public IEnumerable<AnswerDto> FindRightAnswers(string rightWord, int count)
         {
             if (string.IsNullOrEmpty(rightWord) || string.IsNullOrWhiteSpace(rightWord))
                 throw new Exception("Invalid rightWord parameter passed to AnswerService.FindRightAnswers");
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindRightAnswers");
 
-            var cachedData = await GetRightCachedData();
+            var cachedData = GetRightCachedData();
 
             var result = cachedData.Find(rightWord);
 
@@ -312,9 +318,9 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindUserAnswers(string userId)
+        public IEnumerable<AnswerDto> FindUserAnswers(string userId)
         {
-            return await FindUserAnswers(userId, DEFAULT_SEARCH_RESULT_COUNT);
+            return FindUserAnswers(userId, DEFAULT_SEARCH_RESULT_COUNT);
         }
 
         /// <summary>
@@ -323,14 +329,14 @@ namespace BestFor.Services.Services
         /// <param name="userId"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindUserAnswers(string userId, int count)
+        public IEnumerable<AnswerDto> FindUserAnswers(string userId, int count)
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(userId))
                 throw new Exception("Invalid userId parameter passed to AnswerService.FindUserAnswers");
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindUserAnswers");
 
-            var cachedData = await GetUserCachedData();
+            var cachedData = GetUserCachedData();
 
             var result = cachedData.Find(userId);
 
@@ -346,7 +352,8 @@ namespace BestFor.Services.Services
         /// <returns></returns>
         public async Task<List<ApplicationUserDto>> FindTopPosterIds()
         {
-            var cachedData = await GetUserCachedData();
+            // This gives the index of users!
+            var cachedData = GetUserCachedData();
 
             // I know this whole thing is a bit twisted but the main idea is to rely
             // on the index in answers cache, not on cache of users, and not to count answers in user service
@@ -364,9 +371,9 @@ namespace BestFor.Services.Services
 
             // Put in counts
             foreach (var user in users)
-                user.NumberOfAnswers = result.First(x => x.Key == user.UserId).Count;
+                user.Value.NumberOfAnswers = result.First(x => x.Key == user.Value.UserId).Count;
 
-            return users;
+            return users.Values.ToList();
         }
 
 
@@ -375,19 +382,16 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<int> CountUserAnswers(string userId)
+        public int CountByUserId(string userId)
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(userId))
                 throw new Exception("Invalid userId parameter passed to AnswerService.FindUserAnswers");
 
-            var cachedData = await GetUserCachedData();
+            var cachedData = GetUserCachedData();
 
-            var result = cachedData.Find(userId);
+            var result = cachedData.Count(userId);
 
-            // This is just getting a list of answers with number of "votes" for each. Cache stored answers, not votes.
-            // Each answer in cache has number of votes.
-            if (result == null) return 0;
-            return result.Count();
+            return result;
         }
 
         /// <summary>
@@ -411,7 +415,7 @@ namespace BestFor.Services.Services
 
             var cachedData = GetCachedData();
 
-            var allItems = await cachedData.All();
+            var allItems = cachedData.All();
             if (allItems == null) return Enumerable.Empty<AnswerDto>();
 
             // take top n latest items.
@@ -423,9 +427,9 @@ namespace BestFor.Services.Services
         /// Return top N of last answers by date
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindLastAnswers()
+        public IEnumerable<AnswerDto> FindLastAnswers()
         {
-            return await FindLastAnswers(DEFAULT_SEARCH_RESULT_FOR_EVERYTHING);
+            return FindLastAnswers(DEFAULT_SEARCH_RESULT_FOR_EVERYTHING);
         }
 
         /// <summary>
@@ -433,14 +437,14 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindLastAnswers(int count)
+        public IEnumerable<AnswerDto> FindLastAnswers(int count)
         {
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindLastAnswers");
 
             var cachedData = GetCachedData();
 
-            var allItems = await cachedData.All();
+            var allItems = cachedData.All();
             if (allItems == null) return Enumerable.Empty<AnswerDto>();
 
             // take top n latest items.
@@ -452,9 +456,9 @@ namespace BestFor.Services.Services
         /// Return top N of Last answers ordered by date desc by keyword
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindLastAnswers(string searchPhrase)
+        public IEnumerable<AnswerDto> FindLastAnswers(string searchPhrase)
         {
-            return await FindLastAnswers(DEFAULT_SEARCH_RESULT_FOR_EVERYTHING, searchPhrase);
+            return FindLastAnswers(DEFAULT_SEARCH_RESULT_FOR_EVERYTHING, searchPhrase);
         }
 
         /// <summary>
@@ -462,7 +466,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindLastAnswers(int count, string searchPhrase)
+        public IEnumerable<AnswerDto> FindLastAnswers(int count, string searchPhrase)
         {
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindAllAnswers");
@@ -471,17 +475,28 @@ namespace BestFor.Services.Services
 
             var cachedData = GetCachedData();
 
-            var allItems = await cachedData.All();
+            var allItems = cachedData.All();
             if (allItems == null) return Enumerable.Empty<AnswerDto>();
 
             var keyword = searchPhrase.Trim().ToLower();
 
             // take top n latest items searching by keyword.
+            //var result = allItems.Where(
+            //    x => x.LeftWord.ToLower().Contains(keyword) || x.RightWord.ToLower().Contains(keyword) ||
+            //    x.Phrase.ToLower().Contains(keyword))
+            //    .OrderByDescending(x => x.DateAdded).Take(count).Select(x => x.ToDto());
+
             var result = allItems.Where(
                 x => x.LeftWord.ToLower().Contains(keyword) || x.RightWord.ToLower().Contains(keyword) ||
                 x.Phrase.ToLower().Contains(keyword))
-                .OrderByDescending(x => x.DateAdded).Take(count).Select(x => x.ToDto());
-            return result;
+                .OrderByDescending(x => x.DateAdded).Take(count);
+
+            // Add user's info
+            var userIds = result.Where(x => x.UserId != null).Select(x => x.UserId).Distinct().ToList();
+
+            // Let the stitcher stitch data and users and return data as dto with users
+            // we basically want answers with all the related user data.
+            return Stitcher<AnswerDto>.Stitch(result.ToList<IDtoConvertable<AnswerDto>>(), userIds, _userService);
         }
         #endregion
 
@@ -665,14 +680,14 @@ namespace BestFor.Services.Services
         /// Load from normally cached data if empty.
         /// </summary>
         /// <returns></returns>
-        private async Task<KeyIndexedDataSource<AnswerLeftMask>> GetLeftCachedData()
+        private KeyIndexedDataSource<AnswerLeftMask> GetLeftCachedData()
         {
             object data = _cacheManager.Get(CacheConstants.CACHE_KEY_LEFT_ANSWERS_DATA);
             if (data == null)
             {
                 // Initialize from answers
                 var dataSource = GetCachedData();
-                var allItems = await dataSource.All();
+                var allItems = dataSource.All();
                 var leftDataSource = new KeyIndexedDataSource<AnswerLeftMask>();
                 leftDataSource.Initialize(allItems.Select(x => new AnswerLeftMask(x)));
                 _cacheManager.Add(CacheConstants.CACHE_KEY_LEFT_ANSWERS_DATA, leftDataSource);
@@ -687,14 +702,14 @@ namespace BestFor.Services.Services
         /// Load from normally cached data if empty.
         /// </summary>
         /// <returns></returns>
-        private async Task<KeyIndexedDataSource<AnswerRightMask>> GetRightCachedData()
+        private KeyIndexedDataSource<AnswerRightMask> GetRightCachedData()
         {
             object data = _cacheManager.Get(CacheConstants.CACHE_KEY_RIGHT_ANSWERS_DATA);
             if (data == null)
             {
                 // Initialize from answers
                 var dataSource = GetCachedData();
-                var allItems = await dataSource.All();
+                var allItems = dataSource.All();
                 var rightDataSource = new KeyIndexedDataSource<AnswerRightMask>();
                 rightDataSource.Initialize(allItems.Select(x => new AnswerRightMask(x)));
                 _cacheManager.Add(CacheConstants.CACHE_KEY_RIGHT_ANSWERS_DATA, rightDataSource);
@@ -710,14 +725,14 @@ namespace BestFor.Services.Services
         /// Load from normally cached data if empty.
         /// </summary>
         /// <returns></returns>
-        private async Task<KeyIndexedDataSource<AnswerUserMask>> GetUserCachedData()
+        private KeyIndexedDataSource<AnswerUserMask> GetUserCachedData()
         {
             object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USER_ANSWERS_DATA);
             if (data == null)
             {
                 // Initialize from answers
                 var dataSource = GetCachedData();
-                var allItems = await dataSource.All();
+                var allItems = dataSource.All();
                 var userDataSource = new KeyIndexedDataSource<AnswerUserMask>();
                 userDataSource.Initialize(allItems
                     .Where(x => x.UserId != null)

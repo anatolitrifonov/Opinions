@@ -80,6 +80,11 @@ namespace BestFor.Domain.Entities
 
         public bool ShowAvatar { get; set; }
 
+        /// <summary>
+        /// User's level 1 to N
+        /// </summary>
+        public int Level { get; set; }
+
         #region IDtoConvertable implementation
         public ApplicationUserDto ToDto()
         {

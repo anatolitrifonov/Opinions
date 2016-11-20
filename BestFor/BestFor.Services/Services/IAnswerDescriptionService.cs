@@ -10,6 +10,14 @@ namespace BestFor.Services.Services
     /// </summary>
     public interface IAnswerDescriptionService
     {
+
+        /// <summary>
+        /// Add AnswerDescription
+        /// </summary>
+        /// <param name="answerDescription"></param>
+        /// <returns></returns>
+        AnswerDescription AddAnswerDescription(AnswerDescriptionDto answerDescription);
+        
         /// <summary>
         /// Find all descriptions of a given answer
         /// </summary>
@@ -18,18 +26,18 @@ namespace BestFor.Services.Services
         IEnumerable<AnswerDescriptionDto> FindByAnswerId(int answerId);
 
         /// <summary>
-        /// Add AnswerDescription
-        /// </summary>
-        /// <param name="answerDescription"></param>
-        /// <returns></returns>
-        AnswerDescription AddAnswerDescription(AnswerDescriptionDto answerDescription);
-
-        /// <summary>
         /// Find a given description from its id.
         /// </summary>
         /// <param name="answerDescriptionId"></param>
         /// <returns></returns>
         AnswerDescriptionDto FindByAnswerDescriptionId(int answerDescriptionId);
+
+        /// <summary>
+        /// Count descriptions for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        int CountByUserId(string userId);
 
         /// <summary>
         /// Find all answers descriptions with no user going directly to the database

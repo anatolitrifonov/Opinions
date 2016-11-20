@@ -1,12 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace BestFor.Dto
+﻿namespace BestFor.Dto
 {
     /// <summary>
     /// Represents flag for the answer description
     /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class AnswerDescriptionFlagDto : BaseDto
+    public class AnswerDescriptionFlagDto : UserBaseDto
     {
         public AnswerDescriptionFlagDto()
         {
@@ -15,7 +12,5 @@ namespace BestFor.Dto
         public int AnswerDescriptionId { get; set; }
 
         public string Reason { get; set; }
-
-        public string UserId { get; set; }
     }
 }

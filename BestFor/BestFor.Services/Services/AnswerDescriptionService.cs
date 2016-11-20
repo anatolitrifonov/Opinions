@@ -1,5 +1,6 @@
 ﻿using BestFor.Data;
 using BestFor.Domain.Entities;
+using BestFor.Domain.Masks;
 using BestFor.Dto;
 using BestFor.Services.Cache;
 using BestFor.Services.DataSources;
@@ -55,6 +56,13 @@ namespace BestFor.Services.Services
             var cachedData = GetCachedData();
             cachedData.Insert(answerDescriptionObject);
 
+            // Add to user cache if there is a user
+            if (answerDescriptionObject.UserId != null)
+            {
+                var userCachedData = GetUserCachedData();
+                userCachedData.Insert(new AnswerDescriptionUserMask(answerDescriptionObject));
+            }
+
             return answerDescriptionObject;
         }
 
@@ -81,22 +89,6 @@ namespace BestFor.Services.Services
         }
 
         /// <summary>
-        /// Load answer descriptions for a given answer.
-        /// </summary>
-        /// <param name="answerId"></param>
-        /// <returns></returns>
-        public IEnumerable<AnswerDescriptionDto> FindDirectByAnswerId(int answerId)
-        {
-            // return blank list if invalid answerId
-            if (answerId == 0) return Enumerable.Empty<AnswerDescriptionDto>();
-
-            var data = _repository.FindByAnswerId(answerId);
-
-            // Return data
-            return data.Select(x => x.ToDto());
-        }
-
-        /// <summary>
         /// Find answer descriptions by answer description id
         /// </summary>
         /// <param name="answerDescriptionId"></param>
@@ -115,6 +107,35 @@ namespace BestFor.Services.Services
 
             // Return data
             return data.ToDto();
+        }
+
+        /// <summary>
+        /// Count all answer descriptions for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public int CountByUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrWhiteSpace(userId)) return 0;
+            var cachedData = GetUserCachedData();
+            int result = cachedData.Count(userId);
+            return result;
+        }
+
+        /// <summary>
+        /// Load answer descriptions for a given answer.
+        /// </summary>
+        /// <param name="answerId"></param>
+        /// <returns></returns>
+        public IEnumerable<AnswerDescriptionDto> FindDirectByAnswerId(int answerId)
+        {
+            // return blank list if invalid answerId
+            if (answerId == 0) return Enumerable.Empty<AnswerDescriptionDto>();
+
+            var data = _repository.FindByAnswerId(answerId);
+
+            // Return data
+            return data.Select(x => x.ToDto());
         }
 
         /// <summary>
@@ -155,6 +176,32 @@ namespace BestFor.Services.Services
                 return dataSource;
             }
             return (KeyIndexedDataSource<AnswerDescription>)data;
+        }
+
+        /// <summary>
+        /// We are doubling the data to give ability to index answer description in a different way.
+        /// Main index in on answers.
+        /// This will allow us to also index answer descriptions by user.
+        /// 
+        /// Load from normally cached data if empty.
+        /// </summary>
+        /// <returns></returns>
+        private KeyIndexedDataSource<AnswerDescriptionUserMask> GetUserCachedData()
+        {
+            object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USER_ANSWER_DESCRIPTIONS_DATA);
+            if (data == null)
+            {
+                // Initialize from answer descriptions
+                var dataSource = GetCachedData();
+                var allItems = dataSource.All();
+                var userDataSource = new KeyIndexedDataSource<AnswerDescriptionUserMask>();
+                userDataSource.Initialize(allItems
+                    .Where(x => x.UserId != null)
+                    .Select(x => new AnswerDescriptionUserMask(x)));
+                _cacheManager.Add(CacheConstants.CACHE_KEY_USER_ANSWER_DESCRIPTIONS_DATA, userDataSource);
+                return userDataSource;
+            }
+            return (KeyIndexedDataSource<AnswerDescriptionUserMask>)data;
         }
         #endregion
     }

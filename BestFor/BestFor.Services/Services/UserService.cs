@@ -88,15 +88,18 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public List<ApplicationUserDto> FindByIds(List<string> ids)
+        public Dictionary<string, ApplicationUserDto> FindByIds(List<string> ids)
         {
+            // Assume that ids list is distinct. We are not going to do distinct on it.
+            // if we run into issues because of that we will add distinct.
+
             // Do check nulls
             if (ids == null) return null;
 
             // Get cache ... might take long but is not null
             var data = GetCachedData();
 
-            var result = new List<ApplicationUserDto>();
+            var result = new Dictionary<string, ApplicationUserDto>();
 
             // Build a list of users from ids.
             ApplicationUser user;
@@ -104,7 +107,8 @@ namespace BestFor.Services.Services
             {
                 if (data.TryGetValue(id, out user))
                 {
-                    result.Add(user.ToDto());
+                    if (!result.ContainsKey(id))
+                        result.Add(id, user.ToDto());
                 }
             }
             return result;

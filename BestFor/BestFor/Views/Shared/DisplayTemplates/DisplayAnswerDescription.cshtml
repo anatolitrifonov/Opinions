@@ -1,5 +1,15 @@
 ﻿@model BestFor.Dto.AnswerDescriptionDto
 @* This will show linebreaks as line breaks in html.*@
-<div style="white-space: pre-line">
-    @Model.Description by @Model.UserDisplayName
-</div>
+@if (Model.UserId == null)
+{
+    <div style="white-space: pre-line">
+        @Model.Description by @Model.User.DisplayName
+    </div>
+}
+else
+{
+    <div style="white-space: pre-line">
+        @Model.Description by <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="PublicProfile" y-action="Index"
+                                     y-querystring="@new { userName = Model.User.UserName }">@Model.User.DisplayName</yakor>
+    </div>
+}

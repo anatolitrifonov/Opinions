@@ -230,35 +230,50 @@ namespace BestFor.Services.Services
             return (List<ResourceString>)data;
         }
 
+        /// <summary>
+        /// Load common strings for the current culture.
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <param name="resourceStrings"></param>
+        /// <returns></returns>
         private CommonStrings LoadCommonStrings(string culture, List<ResourceString> resourceStrings)
         {
             var result = new CommonStrings();
+            //TODO 
             result.Strings = new CommonStringsDto();
+            //TODO
             result.Translations = new Dictionary<string, string>();
-            result.Strings.Best = FindOneString(culture, "best_start_capital", resourceStrings);
-            result.Translations.Add("best_start_capital", result.Strings.Best);
-            result.Strings.For = FindOneString(culture, "for_lower", resourceStrings);
-            result.Translations.Add("for_lower", result.Strings.For);
-            result.Strings.Is = FindOneString(culture, "is_lower", resourceStrings);
-            result.Translations.Add("is_lower", result.Strings.Is);
-            result.Strings.FlagLower = FindOneString(culture, "flag_lower", resourceStrings);
-            result.Translations.Add("flag_lower", result.Strings.FlagLower);
-            result.Strings.FlagUpper = FindOneString(culture, "flag_upper", resourceStrings);
-            result.Translations.Add("flag_upper", result.Strings.FlagUpper);
-            result.Strings.VoteLower = FindOneString(culture, "vote_lower", resourceStrings);
-            result.Translations.Add("vote_lower", result.Strings.VoteLower);
-            result.Strings.VoteUpper = FindOneString(culture, "vote_upper", resourceStrings);
-            result.Translations.Add("vote_upper", result.Strings.VoteUpper);
-            result.Strings.DescribeLower = FindOneString(culture, "describe_lower", resourceStrings);
-            result.Translations.Add("describe_lower", result.Strings.DescribeLower);
-            result.Strings.DescribeUpper = FindOneString(culture, "describe_upper", resourceStrings);
-            result.Translations.Add("describe_upper", result.Strings.DescribeUpper);
-            result.Strings.MoreLower = FindOneString(culture, "more_lower", resourceStrings);
-            result.Translations.Add("more_lower", result.Strings.MoreLower);
-            result.Strings.MoreUpper = FindOneString(culture, "more_upper", resourceStrings);
-            result.Translations.Add("more_upper", result.Strings.MoreUpper);
-            result.Strings.PostersUpper = FindOneString(culture, "posters_capital", resourceStrings);
-            result.Translations.Add("posters_capital", result.Strings.PostersUpper);
+
+            result.Strings.Best = LoadOneCommonString(culture, "best_start_capital", resourceStrings, result.Translations);
+            result.Strings.For = LoadOneCommonString(culture, "for_lower", resourceStrings, result.Translations);
+            result.Strings.Is = LoadOneCommonString(culture, "is_lower", resourceStrings, result.Translations);
+            result.Strings.FlagLower = LoadOneCommonString(culture, "flag_lower", resourceStrings, result.Translations);
+            result.Strings.FlagUpper = LoadOneCommonString(culture, "flag_upper", resourceStrings, result.Translations);
+            result.Strings.VoteLower = LoadOneCommonString(culture, "vote_lower", resourceStrings, result.Translations);
+            result.Strings.VoteUpper = LoadOneCommonString(culture, "vote_upper", resourceStrings, result.Translations);
+            result.Strings.DescribeLower = LoadOneCommonString(culture, "describe_lower", resourceStrings, result.Translations);
+            result.Strings.DescribeUpper = LoadOneCommonString(culture, "describe_upper", resourceStrings, result.Translations);
+            result.Strings.MoreLower = LoadOneCommonString(culture, "more_lower", resourceStrings, result.Translations);
+            result.Strings.MoreUpper = LoadOneCommonString(culture, "more_upper", resourceStrings, result.Translations);
+            result.Strings.PostersUpper = LoadOneCommonString(culture, "posters_capital", resourceStrings, result.Translations);
+            result.Strings.GuestUpper = LoadOneCommonString(culture, "guest_capital", resourceStrings, result.Translations);
+            return result;
+        }
+
+        /// <summary>
+        /// Given a resource string key find it in resource strings for a given culture.
+        /// Also add it to translations dictionary.
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <param name="key"></param>
+        /// <param name="resourceStrings"></param>
+        /// <param name="translations"></param>
+        /// <returns></returns>
+        private string LoadOneCommonString(string culture, string key, List<ResourceString> resourceStrings,
+            Dictionary<string, string> translations)
+        {
+            var result = FindOneString(culture, key, resourceStrings);
+            translations.Add(key, result);
             return result;
         }
         #endregion

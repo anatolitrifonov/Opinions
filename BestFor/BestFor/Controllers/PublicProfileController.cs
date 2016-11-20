@@ -20,15 +20,24 @@ namespace BestFor.Controllers
         private readonly ILogger _logger;
         private readonly IResourcesService _resourcesService;
         private readonly IBlobService _blobService;
+        private readonly IAnswerDescriptionService _answerDescriptionService;
+        private readonly IVoteService _voteService;
+        private readonly IAnswerService _answerService;
+        private readonly IFlagService _flagService;
 
         public PublicProfileController(IUserService userService, IResourcesService resourcesService, ILoggerFactory loggerFactory,
-            IBlobService blobService)
+            IBlobService blobService, IAnswerDescriptionService answerDescriptionService, IVoteService voteService,
+            IAnswerService answerService, IFlagService flagService)
         {
             _userService = userService;
             _resourcesService = resourcesService;
+            _answerDescriptionService = answerDescriptionService;
             _logger = loggerFactory.CreateLogger<VoteController>();
             _logger.LogInformation("created VoteController");
             _blobService = blobService;
+            _voteService = voteService;
+            _answerService = answerService;
+            _flagService = flagService;
         }
 
         [HttpGet]
@@ -58,11 +67,13 @@ namespace BestFor.Controllers
             // Fill in the model. Cache is hopefully up to date.
             model.Email = user.Email;
             model.DisplayName = user.DisplayName;
-            model.NumberOfAnswers = user.NumberOfAnswers;
-            model.NumberOfDescriptions = user.NumberOfDescriptions;
-            model.NumberOfVotes = user.NumberOfVotes;
-            model.NumberOfFlags = user.NumberOfFlags;
+
+            model.NumberOfAnswers = _answerService.CountByUserId(user.Id); // user.NumberOfAnswers;
+            model.NumberOfDescriptions = _answerDescriptionService.CountByUserId(user.Id); // user.NumberOfDescriptions;
+            model.NumberOfVotes = _voteService.CountByUserId(user.Id); // user.NumberOfVotes;
+            model.NumberOfFlags = _flagService.CountByUserId(user.Id); // user.NumberOfFlags;
             model.NumberOfComments = user.NumberOfComments;
+
             model.JoinDate = user.DateAdded;
             model.PhoneNumber = user.PhoneNumber;
             model.CompanyName = user.CompanyName;

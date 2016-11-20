@@ -24,7 +24,7 @@ namespace BestFor.UnitTests.AppSettings
             settings.Value.FullDomainAddress = "a";
             Assert.Equal(settings.Value.FullDomainAddress, "a");
             Assert.Equal(settings.Value.AzureBlobsConnectionString, "UseDevelopmentStorage=true;");
-            Assert.Equal(settings.Value.AzureBlobsContainerName, "opinioner_images");
+            Assert.Equal(settings.Value.AzureBlobsContainerName, "apinionerimages");
         }
     }
 }
