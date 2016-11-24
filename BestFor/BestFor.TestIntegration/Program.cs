@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BestFor.TestIntegration.Users;
+using System;
 using System.Threading.Tasks;
 
 namespace BestFor.TestIntegration
@@ -9,9 +8,14 @@ namespace BestFor.TestIntegration
     {
         public static void Main(string[] args)
         {
+            UsersHelper usersHelper = new UsersHelper();
+            Task t = usersHelper.AddTwentyUsers();
+            t.Wait();
+
+
             //BlobTests.TestResizeUserFile();
-            BlobTests.TestUploadUserFile();
-            BlobTests.TestListAllBlobs();
+            //BlobTests.TestUploadUserFile();
+            //BlobTests.TestListAllBlobs();
             // BlobTests.TestClearAllBlobs();
             // BlobTests.TestLoadUserFile();
             Console.WriteLine("Done.");

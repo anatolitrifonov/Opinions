@@ -1,5 +1,8 @@
 ﻿namespace BestFor.Services.Services
 {
+    /// <summary>
+    /// General list of resource string names.
+    /// </summary>
     public class Lines
     {
         public static readonly string DESCRIPTION_WAS_ADDED_SUCCESSFULLY = "description_was_added_successfully";

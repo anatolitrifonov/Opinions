@@ -17,6 +17,13 @@ namespace BestFor.Domain.Entities
     /// </summary>
     public class AnswerDescriptionVoteUserMask : EntityBase, IFirstIndex, ISecondIndex, IDtoConvertable<AnswerDescriptionVoteDto>, IIdIndex
     {
+        public AnswerDescriptionVoteUserMask(AnswerDescriptionVote answerDescriptionVote)
+        {
+            Id = answerDescriptionVote.Id;
+            AnswerDescriptionId = answerDescriptionVote.AnswerDescriptionId;
+            UserId = answerDescriptionVote.UserId;
+        }
+
         #region IIdIndex implementation
         /// <summary>
         /// Identity ...

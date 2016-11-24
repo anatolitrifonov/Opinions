@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using Xunit;
 
 namespace BestFor.UnitTests.Data
 {
@@ -17,8 +16,6 @@ namespace BestFor.UnitTests.Data
         /// <summary>
         /// Load Profanity data
         /// </summary>
-        [Trait("Data Tests", "Load Profanity")]
-        [Fact]
         public void LoadInitialData_Profanity()
         {
             // Uncomment this to actually run.
@@ -53,13 +50,11 @@ namespace BestFor.UnitTests.Data
                     context.SaveChanges();
                 }
             }
-            Assert.True(true);
         }
 
         /// <summary>
         /// Load Resources data
         /// </summary>
-        [Fact]
         public void LoadInitialData_Resources()
         {
             // Uncomment this to actually run.
@@ -80,14 +75,11 @@ namespace BestFor.UnitTests.Data
             connection.Open();
             command.ExecuteNonQuery();
             connection.Close();
-
-            Assert.True(true);
         }
 
         /// <summary>
         /// Load Resources data
         /// </summary>
-        [Fact]
         public void LoadInitialData_DataAnnotations()
         {
             // Uncomment this to actually run.
@@ -108,14 +100,11 @@ namespace BestFor.UnitTests.Data
             connection.Open();
             command.ExecuteNonQuery();
             connection.Close();
-
-            Assert.True(true);
         }
 
         /// <summary>
         /// Load Suggestions data
         /// </summary>
-        [Fact]
         public void LoadInitialData_Suggestions()
         {
             // Uncomment this to actually run.

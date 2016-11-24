@@ -20,8 +20,10 @@
         public const string CACHE_KEY_USER_VOTES_DATA = "Votes User Cache";
 
         public const string CACHE_KEY_DESCRIPTION_VOTES_DATA = "Description Votes Cache";
+        public const string CACHE_KEY_USER_DESCRIPTION_VOTES_DATA = "Description User Votes Cache";
 
         public const string CACHE_KEY_USER_FLAGS_DATA = "Flags User Cache";
+        public const string CACHE_KEY_USER_DESCRIPTION_FLAGS_DATA = "Description Flags User Cache";
 
         public const string CACHE_KEY_USERS_DATA = "Users Cache";
     }

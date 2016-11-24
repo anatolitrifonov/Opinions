@@ -134,7 +134,7 @@ namespace BestFor.Services.Services
             var rightCachedData = GetRightCachedData();
             rightCachedData.Insert(new AnswerRightMask(persistResult.Answer));
 
-            // Add to user cache if there is a user
+            // Add to "answer by user" cache if there is a user
             if (persistResult.Answer.UserId != null)
             {
                 var userCachedData = GetUserCachedData();
@@ -147,10 +147,11 @@ namespace BestFor.Services.Services
             // Add to thrending overall
             AddToTrendingOverall(persistResult.Answer);
 
-            // Update User if new answer
-            if (persistResult.IsNew) _userService.UpdateUserFromAnswer(answerObject);
-
             var result = new AddedAnswerDto() { Answer = persistResult.Answer.ToDto() };
+
+            // Make sure we let the caller know that data is new.
+            // We can not update user statistics here.
+            result.IsNew = persistResult.IsNew;
 
             return result;
         }
@@ -398,9 +399,9 @@ namespace BestFor.Services.Services
         /// Return top N of all answers
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindAllAnswers()
+        public IEnumerable<AnswerDto> FindAllAnswers()
         {
-            return await FindAllAnswers(DEFAULT_SEARCH_RESULT_FOR_EVERYTHING);
+            return FindAllAnswers(DEFAULT_SEARCH_RESULT_FOR_EVERYTHING);
         }
 
         /// <summary>
@@ -408,7 +409,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnswerDto>> FindAllAnswers(int count)
+        public IEnumerable<AnswerDto> FindAllAnswers(int count)
         {
             if (count < 1)
                 throw new Exception("Invalid count parameter passed to AnswerService.FindAllAnswers");

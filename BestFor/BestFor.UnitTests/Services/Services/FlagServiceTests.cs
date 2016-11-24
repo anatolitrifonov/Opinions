@@ -36,6 +36,7 @@ namespace BestFor.UnitTests.Services.Services
                 CacheMock = new TestCacheManager().CacheMock;
                 TestLoggerFactory = new TestLoggerFactory();
                 FlagService = new FlagService(
+                    null,
                     CacheMock.Object,
                     AnswerFlagsRepository,
                     AnswerDescriptionFlagRepository,
@@ -93,7 +94,7 @@ namespace BestFor.UnitTests.Services.Services
             var result = setup.FlagService.FlagAnswer(answerFlagDto);
 
             // Check that same Phrase is returned
-            Assert.Equal(result, answerFlagDto.Id);
+            Assert.Equal(result.IntId, answerFlagDto.Id);
 
             // Verify repository has the item
             Assert.NotNull(setup.AnswerFlagsRepository.Queryable()

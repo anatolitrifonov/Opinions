@@ -1,5 +1,4 @@
 ﻿using BestFor.Dto;
-using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
@@ -8,9 +7,9 @@ namespace BestFor.Services.Services
     /// </summary>
     public interface IFlagService
     {
-        int FlagAnswer(AnswerFlagDto answerFlag);
+        DataOperationResult FlagAnswer(AnswerFlagDto answerFlag);
 
-        int FlagAnswerDescription(AnswerDescriptionFlagDto answerFlag);
+        DataOperationResult FlagAnswerDescription(AnswerDescriptionFlagDto answerFlag);
 
         /// <summary>
         /// Count flags for a given user

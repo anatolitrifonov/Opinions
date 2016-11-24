@@ -3,9 +3,9 @@ using BestFor.Domain;
 using BestFor.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace BestFor.UnitTests.Data
 {
@@ -16,7 +16,6 @@ namespace BestFor.UnitTests.Data
         /// This test will add admin roles and user if they are missing in the database.
         /// </summary>
         /// <returns></returns>
-        [Fact]
         public async Task AddAdminUserTests_AddAdminUser_AddsAdminUser()
         {
             // Uncomment this to actually run.
@@ -36,7 +35,8 @@ namespace BestFor.UnitTests.Data
             {
                 adminRole = new IdentityRole(Roles.Admin.ToString());
                 identityResult = await roleManager.CreateAsync(adminRole);
-                Assert.True(identityResult.Succeeded);
+                if (!identityResult.Succeeded)
+                    throw new Exception("Could not create role");
             }
 
             // Create password hasher
@@ -53,8 +53,9 @@ namespace BestFor.UnitTests.Data
                 // adminUser.NormalizedEmail = adminUser.Email.ToUpper();
                 adminUser.UserName = "admin@bestfor.com";
                 // adminUser.NormalizedUserName = adminUser.Email.ToUpper();
-                identityResult = await userManager.CreateAsync(adminUser, "1Helllo_Boom");
-                Assert.True(identityResult.Succeeded);
+                identityResult = await userManager.CreateAsync(adminUser, "1zzzelllo_Boom");
+                if (!identityResult.Succeeded)
+                    throw new Exception("Could add admin user");
             }
 
             // Add user to role or role to user. Variable is for debugging.
@@ -63,7 +64,8 @@ namespace BestFor.UnitTests.Data
             if (!isInRole)
             {
                 identityResult = await userManager.AddToRoleAsync(adminUser, Roles.Admin.ToString());
-                Assert.True(identityResult.Succeeded);
+                if (!identityResult.Succeeded)
+                    throw new Exception("Could not add person to role");
             }
 
         }

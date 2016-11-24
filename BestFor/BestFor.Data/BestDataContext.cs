@@ -20,6 +20,8 @@ namespace BestFor.Data
         public DbSet<AnswerDescriptionFlag> AnswerDescriptionFlags { get; set; }
         public DbSet<AnswerVote> AnswerVotes { get; set; }
         public DbSet<AnswerDescriptionVote> AnswerDescriptionVotes { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
+        public DbSet<UserAchievement> UserAchievements { get; set; }
 
         public BestDataContext(DbContextOptions<BestDataContext> options)
             : base(options)

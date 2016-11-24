@@ -102,7 +102,7 @@ namespace BestFor.UnitTests.Services.Services
             var result = setup.VoteService.VoteAnswer(answerVoteDto);
 
             // Check that same Phrase is returned
-            Assert.Equal(result, answerVoteDto.AnswerId);
+            Assert.Equal(result.IntId, answerVoteDto.AnswerId);
 
             // Verify cache get was called only once
             setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_VOTES_DATA), Times.Once());
@@ -165,7 +165,7 @@ namespace BestFor.UnitTests.Services.Services
             var result = setup.VoteService.VoteAnswerDescription(answerDescriptionVoteDto);
 
             // Check that same Phrase is returned
-            Assert.Equal(result, 15);
+            Assert.Equal(result.IntId, 15);
 
             // Verify cache get was called only once
             setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA), Times.Once());

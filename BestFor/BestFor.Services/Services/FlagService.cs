@@ -13,17 +13,20 @@ namespace BestFor.Services.Services
     /// </summary>
     public class FlagService : IFlagService
     {
-        private ICacheManager _cacheManager;
-        private IRepository<AnswerFlag> _answerFlagRepository;
-        private IRepository<AnswerDescriptionFlag> _answerDescriptionFlagRepository;
-        private ILogger _logger;
+        private readonly IAnswerDescriptionService _answerDescriptionService;
+        private readonly ICacheManager _cacheManager;
+        private readonly IRepository<AnswerFlag> _answerFlagRepository;
+        private readonly IRepository<AnswerDescriptionFlag> _answerDescriptionFlagRepository;
+        private readonly ILogger _logger;
 
         public FlagService(
+            IAnswerDescriptionService answerDescriptionService,
             ICacheManager cacheManager, 
             IRepository<AnswerFlag> answerFlagRepository,
             IRepository<AnswerDescriptionFlag> answerDescriptionFlagRepository, 
             ILoggerFactory loggerFactory)
         {
+            _answerDescriptionService = answerDescriptionService;
             _cacheManager = cacheManager;
             _answerFlagRepository = answerFlagRepository;
             _answerDescriptionFlagRepository = answerDescriptionFlagRepository;
@@ -36,7 +39,8 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerFlag"></param>
         /// <returns></returns>
-        public int FlagAnswer(AnswerFlagDto answerFlag)
+        /// <remarks>Flag is always considered new</remarks>
+        public DataOperationResult FlagAnswer(AnswerFlagDto answerFlag)
         {
             if (answerFlag == null)
                 throw new ServicesException("Null parameter FlagService.FlagAnswer(answerFlag)");
@@ -62,7 +66,7 @@ namespace BestFor.Services.Services
                 userCachedData.Insert(answerFlagObject);
             }
 
-            return answerFlagObject.Id;
+            return new DataOperationResult() { IntId = answerFlagObject.Id, IsNew = true };
         }
 
         /// <summary>
@@ -70,7 +74,8 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerFlag"></param>
         /// <returns></returns>
-        public int FlagAnswerDescription(AnswerDescriptionFlagDto answerDescriptionFlag)
+        /// <remarks>Flag is always considered new</remarks>
+        public DataOperationResult FlagAnswerDescription(AnswerDescriptionFlagDto answerDescriptionFlag)
         {
             if (answerDescriptionFlag == null)
                 throw new ServicesException("Null parameter FlagService.FlagAnswerDescription(answerDescriptionFlag)");
@@ -90,7 +95,22 @@ namespace BestFor.Services.Services
             var task = _answerDescriptionFlagRepository.SaveChangesAsync();
             task.Wait();
 
-            return answerDescriptionFlagObject.Id;
+            // Add to user cache if there is a user
+            if (answerDescriptionFlagObject.UserId != null)
+            {
+                var userCachedData = GetUserDescriptionFlagsCachedData();
+                userCachedData.Insert(answerDescriptionFlagObject);
+            }
+
+            // Find the id of the answer whos description was flagged
+            // We need to give it caller so that caller can redirect to answer page
+            var answerDescriptionDto = _answerDescriptionService
+                .FindByAnswerDescriptionId(answerDescriptionFlag.AnswerDescriptionId);
+
+            var result = new DataOperationResult();
+            result.IntId = answerDescriptionDto.AnswerId;
+            result.IsNew = true;
+            return result;
         }
 
         /// <summary>
@@ -109,7 +129,7 @@ namespace BestFor.Services.Services
 
         #region Private Methods
         /// <summary>
-        /// Get flags data from cache or initialize if empty
+        /// Get answer flags data from cache or initialize if empty
         /// </summary>
         /// <returns></returns>
         private KeyIndexedDataSource<AnswerFlag> GetUserFlagsCachedData()
@@ -123,6 +143,23 @@ namespace BestFor.Services.Services
                 return dataSource;
             }
             return (KeyIndexedDataSource<AnswerFlag>)data;
+        }
+
+        /// <summary>
+        /// Get answer description flags data from cache or initialize if empty
+        /// </summary>
+        /// <returns></returns>
+        private KeyIndexedDataSource<AnswerDescriptionFlag> GetUserDescriptionFlagsCachedData()
+        {
+            object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USER_DESCRIPTION_FLAGS_DATA);
+            if (data == null)
+            {
+                var dataSource = new KeyIndexedDataSource<AnswerDescriptionFlag>();
+                dataSource.Initialize(_answerDescriptionFlagRepository.Active());
+                _cacheManager.Add(CacheConstants.CACHE_KEY_USER_DESCRIPTION_FLAGS_DATA, dataSource);
+                return dataSource;
+            }
+            return (KeyIndexedDataSource<AnswerDescriptionFlag>)data;
         }
         #endregion
     }

@@ -5,9 +5,9 @@ namespace BestFor.Services.Services
 {
     public interface IVoteService
     {
-        int VoteAnswer(AnswerVoteDto answerVote);
+        DataOperationResult VoteAnswer(AnswerVoteDto answerVote);
 
-        int VoteAnswerDescription(AnswerDescriptionVoteDto answerVote);
+        DataOperationResult VoteAnswerDescription(AnswerDescriptionVoteDto answerVote);
 
         int CountAnswerVotes(int answerId);
 

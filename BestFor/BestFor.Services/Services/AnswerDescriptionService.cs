@@ -43,7 +43,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerDescription"></param>
         /// <returns></returns>
-        public AnswerDescription AddAnswerDescription(AnswerDescriptionDto answerDescription)
+        public DataOperationResult AddAnswerDescription(AnswerDescriptionDto answerDescription)
         {
             var answerDescriptionObject = new AnswerDescription();
             answerDescriptionObject.FromDto(answerDescription);
@@ -63,7 +63,7 @@ namespace BestFor.Services.Services
                 userCachedData.Insert(new AnswerDescriptionUserMask(answerDescriptionObject));
             }
 
-            return answerDescriptionObject;
+            return new DataOperationResult() { IsNew = true, IntId = answerDescriptionObject.AnswerId };
         }
 
         /// <summary>

@@ -17,6 +17,13 @@ namespace BestFor.Domain.Entities
         [StringLength(100, ErrorMessage = "*", MinimumLength = 6)] // The {0} must be at least {2} characters long.
         public string DisplayName { get; set; }
 
+        /// <summary>
+        /// When ApplicationUser class is instantiated, IsStatisticsCached property is false by defaul.
+        /// It will be set to true once user's statistics is cached which is usually when it is requested for the first time.
+        /// </summary>        
+        [NotMapped]
+        public bool IsStatisticsCached { get; set; }
+
         public int NumberOfAnswers { get; set; }
 
         public int NumberOfDescriptions { get; set; }

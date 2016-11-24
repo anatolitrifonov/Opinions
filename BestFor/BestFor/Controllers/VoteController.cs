@@ -19,19 +19,21 @@ namespace BestFor.Controllers
     [Authorize]
     public class VoteController : BaseApiController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
         private IVoteService _voteService;
         private readonly ILogger _logger;
         private readonly IResourcesService _resourcesService;
+        private readonly IStatisticsService _statisticsService;
 
-        public VoteController(UserManager<ApplicationUser> userManager, IVoteService voteService, IResourcesService resourcesService,
-            ILoggerFactory loggerFactory)
+        public VoteController(IUserService userService, IVoteService voteService, IResourcesService resourcesService,
+            ILoggerFactory loggerFactory, IStatisticsService statisticsService)
         {
-            _userManager = userManager;
+            _userService = userService;
             _voteService = voteService;
             _resourcesService = resourcesService;
             _logger = loggerFactory.CreateLogger<VoteController>();
             _logger.LogInformation("created VoteController");
+            _statisticsService = statisticsService;
         }
 
         [HttpGet]
@@ -40,10 +42,21 @@ namespace BestFor.Controllers
             _logger.LogDebug("VoteAnswer answerId = " + answerId);
 
             // Only do something is answer id is not zero
-            if (answerId != 0)
+            if (answerId <= 0)
+                // Redirect to some random answer that might even not exist
+                return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId });
+
+            var user = _userService.FindByUserName(User.Identity.Name);
+            // Check if user statistics is loaded
+            _statisticsService.LoadUserStatictics(user);
+            var voteResult = _voteService.VoteAnswer(
+                new AnswerVoteDto() { AnswerId = answerId, UserId = user.Id }
+            );
+
+            if (voteResult.IsNew)
             {
-                var userId = _userManager.GetUserId(User);
-                _voteService.VoteAnswer(new AnswerVoteDto() { AnswerId = answerId, UserId = _userManager.GetUserId(User) } );
+                user.NumberOfVotes++;
+                //TODO Check for achievements.
             }
 
             // Read the reason
@@ -57,21 +70,29 @@ namespace BestFor.Controllers
         {
             _logger.LogDebug("VoteAnswerDescription answerDescriptionId = " + answerDescriptionId);
 
-            var answerId = answerDescriptionId; // <- not good
-
             // Only do something is answer id is not zero
             if (answerDescriptionId != 0)
+                // Redirect to some random answer that might even not exist
+                return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerDescriptionId });
+
+            // this does return answerId
+            var user = _userService.FindByUserName(User.Identity.Name);
+            // Check if user statistics is loaded
+            _statisticsService.LoadUserStatictics(user);
+            var voteResult = _voteService.VoteAnswerDescription(
+                new AnswerDescriptionVoteDto() { AnswerDescriptionId = answerDescriptionId, UserId = user.Id }
+            );
+
+            if (voteResult.IsNew)
             {
-                // this does return answerId
-                answerId = _voteService.VoteAnswerDescription(
-                    new AnswerDescriptionVoteDto() { AnswerDescriptionId = answerDescriptionId, UserId = _userManager.GetUserId(User) }
-                    );
+                user.NumberOfVotes++;
+                //TODO Check for achievements.
             }
 
             // Read the reason
             var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
 
-            return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId, reason = reason });
+            return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = voteResult.IntId, reason = reason });
         }
     }
 }

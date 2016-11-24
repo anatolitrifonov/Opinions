@@ -10,24 +10,24 @@ using System.Threading.Tasks;
 namespace BestFor.Services.Services
 {
     /// <summary>
-    /// Implements additional operations with users. This service helps.
+    /// Implements additional operations with users. This service helps keeping user stats up to date
+    /// and returns achivement notification on any stats related updates.
     /// </summary>
     public class UserService : IUserService
     {
-        // Our path to users.
-        //private IdentityDbContext<ApplicationUser> _userContext;
         private ILogger _logger;
         private UserManager<ApplicationUser> _userManager;
         private ICacheManager _cacheManager;
+        //private readonly IStatisticsService _statisticsService;
 
-        public UserService(ICacheManager cacheManager, UserManager<ApplicationUser> userManager, ILoggerFactory loggerFactory)
+        public UserService(UserManager<ApplicationUser> userManager, ILoggerFactory loggerFactory, ICacheManager cacheManager)//,
+            //IStatisticsService statisticsService)
         {
-            _cacheManager = cacheManager;
+            _userManager = userManager;
             _logger = loggerFactory.CreateLogger<VoteService>();
             _logger.LogInformation("created UserService");
-            // This is a pure hack of course.
-            //_userContext = context as IdentityDbContext<ApplicationUser>;
-            _userManager = userManager;
+            _cacheManager = cacheManager;
+            //_statisticsService = statisticsService;
         }
 
         #region IUserService implementation
@@ -135,32 +135,6 @@ namespace BestFor.Services.Services
         }
 
         /// <summary>
-        /// Update user from answer.
-        /// 
-        /// Increase countes.
-        /// </summary>
-        /// <param name="answer"></param>
-        /// <returns></returns>
-        public int UpdateUserFromAnswer(Answer answer)
-        {
-            if (answer.UserId == null) return 0;
-
-            // load cache
-            Dictionary<string, ApplicationUser> data = GetCachedData();
-            // Something went wrong if this is null.
-            // if (data == null) return 0;
-
-            ApplicationUser user;
-            if (!data.TryGetValue(answer.UserId, out user)) return 0;
-
-            // If user is in cache -> increase the count of added answers
-            // This is cool but we are not going to rely on this number. See the load below.
-            user.NumberOfAnswers++;
-
-            return 1;
-        }
-
-        /// <summary>
         /// Find all users
         /// </summary>
         /// <returns></returns>
@@ -172,7 +146,6 @@ namespace BestFor.Services.Services
 
             return result;
         }
-
         #endregion
 
         #region Private Methods

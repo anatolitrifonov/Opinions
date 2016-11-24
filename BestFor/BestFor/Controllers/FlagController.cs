@@ -21,20 +21,21 @@ namespace BestFor.Controllers
     [Authorize]
     public class FlagController : BaseApiController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
         private IFlagService _flagService;
         private readonly ILogger _logger;
         private readonly IResourcesService _resourcesService;
+        private readonly IStatisticsService _statisticsService;
 
-        public FlagController(UserManager<ApplicationUser> userManager, IFlagService flagService, IResourcesService resourcesService,
-            ILoggerFactory loggerFactory)
+        public FlagController(IUserService userService, IFlagService flagService, IResourcesService resourcesService,
+            ILoggerFactory loggerFactory, IStatisticsService statisticsService)
         {
-            _userManager = userManager;
             _flagService = flagService;
             _resourcesService = resourcesService;
             _logger = loggerFactory.CreateLogger<FlagController>();
-            _userManager = userManager;
+            _userService = userService;
             _logger.LogInformation("created FlagController");
+            _statisticsService = statisticsService;
         }
 
         [HttpGet]
@@ -42,10 +43,23 @@ namespace BestFor.Controllers
         {
             _logger.LogDebug("FlagAnswer answerId = " + answerId);
 
-            // Only do something is answer id is not zero
-            if (answerId != 0)
+            // Only do something if answer id is not zero
+            if (answerId <= 0)
+                // Redirect to some random answer that might even not exist
+                return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId });
+
+            var user = _userService.FindByUserName(User.Identity.Name);
+            // Check if user statistics is loaded
+            _statisticsService.LoadUserStatictics(user);
+
+            var result = _flagService.FlagAnswer(
+                new AnswerFlagDto() { AnswerId = answerId, UserId = user.Id } 
+            );
+
+            if (result.IsNew)
             {
-                _flagService.FlagAnswer(new AnswerFlagDto() { AnswerId = answerId, UserId = _userManager.GetUserId(User) } );
+                user.NumberOfFlags++;
+                //TODO Check for achievements.
             }
 
             // Read the reason
@@ -59,21 +73,30 @@ namespace BestFor.Controllers
         {
             _logger.LogDebug("FlagAnswerDescription answerDescriptionId = " + answerDescriptionId);
 
-            var answerId = answerDescriptionId; // <- not good
-
             // Only do something is answer id is not zero
-            if (answerDescriptionId != 0)
+            if (answerDescriptionId <= 0)
+                // Redirect to some random answer that might even not exist
+                return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerDescriptionId });
+
+            var user = _userService.FindByUserName(User.Identity.Name);
+            // Check if user statistics is loaded
+            _statisticsService.LoadUserStatictics(user);
+            
+            // this does return answerId
+            var result = _flagService.FlagAnswerDescription(
+                new AnswerDescriptionFlagDto() { AnswerDescriptionId = answerDescriptionId, UserId = user.Id }
+            );
+
+            if (result.IsNew)
             {
-                // this does return answerId
-                answerId = _flagService.FlagAnswerDescription(
-                    new AnswerDescriptionFlagDto() { AnswerDescriptionId = answerDescriptionId, UserId = _userManager.GetUserId(User) }
-                    );
+                user.NumberOfFlags++;
+                //TODO Check for achievements.
             }
 
             // Read the reason
             var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_FLAGING);
 
-            return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId, reason = reason });
+            return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = result.IntId, reason = reason });
         }
     }
 }

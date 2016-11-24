@@ -1,10 +1,7 @@
-﻿using System;
-using System.IO;
-using BestFor.Dto;
+﻿using BestFor.Dto;
 using BestFor.Services.Blobs;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
+using System.IO;
 
 namespace BestFor.TestIntegration
 {

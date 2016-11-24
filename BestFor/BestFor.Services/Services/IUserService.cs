@@ -31,17 +31,9 @@ namespace BestFor.Services.Services
         int AddUserToCache(ApplicationUser user);
 
         /// <summary>
-        /// Increase the answer count in user's cache.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        int UpdateUserFromAnswer(Answer answer);
-
-        /// <summary>
         /// List all users
         /// </summary>
         /// <returns></returns>
         IEnumerable<ApplicationUser> FindAll();
-
     }
 }

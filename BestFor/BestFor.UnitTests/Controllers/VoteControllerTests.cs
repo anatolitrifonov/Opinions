@@ -71,15 +71,19 @@ namespace BestFor.UnitTests.Controllers
             // Setup test data
             var vote = new AnswerVoteDto() { AnswerId = 1 };
 
+            // Setup user service
+            var userServiceMock = new Mock<IUserService>();
+            // userServiceMock.Setup(x => x.VoteAnswer(vote)).Returns(new DataOperationResult());
+
             // Setup vote service
             var voteServiceMock = new Mock<IVoteService>();
-            voteServiceMock.Setup(x => x.VoteAnswer(vote)).Returns(1);
+            voteServiceMock.Setup(x => x.VoteAnswer(vote)).Returns(new DataOperationResult());
 
             // Setup resource service
             var resourceServiceMock = new Mock<IResourcesService>();
             resourceServiceMock.Setup(x => x.GetString(It.IsAny<string>(), It.IsAny<string>())).Returns("A");
 
-            var controller = new VoteController(userManager, voteServiceMock.Object, resourceServiceMock.Object, testLoggerFactory)
+            var controller = new VoteController(userServiceMock.Object, voteServiceMock.Object, resourceServiceMock.Object, testLoggerFactory, null)
             {
                 ControllerContext = controllerContext
             };

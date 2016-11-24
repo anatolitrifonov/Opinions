@@ -20,20 +20,22 @@ namespace BestFor.Controllers
         private const string QUERY_STRING_PARAMETER_RIGHT_WORD = "rightWord";
         private const int MINIMAL_WORD_LENGTH = 2;
 
-        private readonly UserManager<ApplicationUser> _userManager;
-        private IAnswerService _answerService;
-        private IProfanityService _profanityService;
-        private ISuggestionService _suggestionService;
-        private IAntiforgery _antiforgery;
+        private readonly IUserService _userService;
+        private readonly IAnswerService _answerService;
+        private readonly IProfanityService _profanityService;
+        private readonly ISuggestionService _suggestionService;
+        private readonly IAntiforgery _antiforgery;
+        private readonly IStatisticsService _statisticsService;
 
         public AnswerController(IAnswerService answerService, IProfanityService profanityService, ISuggestionService suggestionService,
-            UserManager<ApplicationUser> userManager, IAntiforgery antiforgery)
+            IUserService userService, IAntiforgery antiforgery, IStatisticsService statisticsService)
         {
             _answerService = answerService;
             _profanityService = profanityService;
             _suggestionService = suggestionService;
-            _userManager = userManager;
+            _userService = userService;
             _antiforgery = antiforgery;
+            _statisticsService = statisticsService;
         }
 
         // GET: api/values
@@ -85,14 +87,30 @@ namespace BestFor.Controllers
             if (answer.LeftWord != answer.RightWord)
                 addedSuggestion = _suggestionService.AddSuggestion(new SuggestionDto() { Phrase = answer.RightWord });
 
-            // If user is logged in let's add him to the object
-            // This will return null if user is not logged in and this is OK.
-            // ClaimsPrincipal z = User;
+            // Save the user in case we need statistics update
+            ApplicationUser user = null;
+            // Load user if he is logged in
+            if (User.Identity.IsAuthenticated && User.Identity.Name != null)
+            {
+                user = _userService.FindByUserName(User.Identity.Name);
+            }
+            // Set the user id in the answer if user is found
+            if (user != null)
+            {
+                answer.UserId = user.Id;
+                // Check if user statistics is loaded
+                _statisticsService.LoadUserStatictics(user);
+            }
 
-            answer.UserId = _userManager.GetUserId(User);
-
-            // Add answer
+            // Add answer. This will not touch user's cache or user service.
             result = await _answerService.AddAnswer(answer);
+
+            // Need to update user stats if new answer was added
+            if (result.IsNew && user != null)
+            {
+                user.NumberOfAnswers++;
+                //TODO Check for achievements.
+            }
 
             return result;
         }

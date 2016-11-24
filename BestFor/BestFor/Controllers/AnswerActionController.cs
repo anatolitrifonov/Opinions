@@ -22,21 +22,20 @@ namespace BestFor.Controllers
     [Authorize]
     public class AnswerActionController : BaseApiController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserService _userService;
         private readonly IAnswerDescriptionService _answerDescriptionService;
         private readonly IAnswerService _answerService;
         private readonly IProfanityService _profanityService;
         private readonly IResourcesService _resourcesService;
         private readonly ILogger _logger;
-        private readonly IUserService _userService;
         private readonly IVoteService _voteService;
         private readonly IOptions<AppSettings> _appSettings;
+        private readonly IStatisticsService _statisticsService;
 
-        public AnswerActionController(UserManager<ApplicationUser> userManager, IAnswerDescriptionService answerDescriptionService,
+        public AnswerActionController(IAnswerDescriptionService answerDescriptionService,
             IProfanityService profanityService, IAnswerService answerService, IResourcesService resourcesService, IUserService userService,
-            IVoteService voteService, ILoggerFactory loggerFactory, IOptions<AppSettings> appSettings)
+            IVoteService voteService, ILoggerFactory loggerFactory, IOptions<AppSettings> appSettings, IStatisticsService statisticsService)
         {
-            _userManager = userManager;
             _userService = userService;
             _answerDescriptionService = answerDescriptionService;
             _profanityService = profanityService;
@@ -44,6 +43,7 @@ namespace BestFor.Controllers
             _resourcesService = resourcesService;
             _voteService = voteService;
             _appSettings = appSettings;
+            _statisticsService = statisticsService;
             _logger = loggerFactory.CreateLogger<HomeController>();
             _logger.LogInformation("created AnswerActionController");
         }
@@ -137,12 +137,30 @@ namespace BestFor.Controllers
                 return View("Error", errorData);
             }
 
-            // If user is logged in let's add him to the object
-            // This will return null if user is not logged in and this is OK.
-            answerDescription.UserId = _userManager.GetUserId(User);
+            // Save the user in case we need statistics update
+            ApplicationUser user = null;
+            // Load user if he is logged in
+            if (User.Identity.IsAuthenticated && User.Identity.Name != null)
+            {
+                user = _userService.FindByUserName(User.Identity.Name);
+            }
+            // Set the user id in the answer if user is found
+            if (user != null)
+            {
+                answerDescription.UserId = user.Id;
+                // Check if user statistics is loaded
+                _statisticsService.LoadUserStatictics(user);
+            }
 
             // Add answer description
-            var addedAnswerDescription = _answerDescriptionService.AddAnswerDescription(answerDescription);
+            var operationResult = _answerDescriptionService.AddAnswerDescription(answerDescription);
+
+            // Need to update user stats if new answer was added
+            if (operationResult.IsNew && user != null)
+            {
+                user.NumberOfDescriptions++;
+                //TODO Check for achievements.
+            }
 
             // Read the reason to return it to UI.
             var reason = _resourcesService.GetString(this.Culture, Lines.DESCRIPTION_WAS_ADDED_SUCCESSFULLY);
@@ -161,14 +179,32 @@ namespace BestFor.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id = 0)
         {
+            if (id <= 0)
+                return RedirectToAction("ShowAnswer", new { answerId = id });
+
             // Let's load the answer.
             // The hope is that service will not have to go to the database and load answer from cache.
             // But please look at the servise implementation for details.
             var answer = await _answerService.FindByAnswerId(id);
 
-            // Kick them if answer was andded not by the current user
+            // No user, no reason to edit.
+            if (answer.UserId == null)
+                return RedirectToAction("ShowAnswer", new { answerId = id });
+
+            // Not logged in, can not edit
+            // Save the user in case we need statistics update
+            ApplicationUser user = null;
+            // Load user if he is logged in
+            if (User.Identity.IsAuthenticated && User.Identity.Name != null)
+            {
+                user = _userService.FindByUserName(User.Identity.Name);
+            }
+            if (user == null)
+                return RedirectToAction("ShowAnswer", new { answerId = id });
+
+            // Kick them if answer was added not by the current user
             // This prevents going directly to the answer
-            if (answer.UserId != _userManager.GetUserId(User))
+            if (answer.UserId != user.Id)
                 return RedirectToAction("ShowAnswer", new { answerId = id });
 
             return View(answer);
@@ -195,9 +231,24 @@ namespace BestFor.Controllers
             // Find the answer that needs changes
             var answerToModify = await _answerService.FindByAnswerId(answer.Id);
 
+            // No user, no reason to edit.
+            if (answer.UserId == null)
+                return RedirectToAction("ShowAnswer", new { answerId = answer.Id });
+
+            // Not logged in, can not edit
+            // Save the user in case we need statistics update
+            ApplicationUser user = null;
+            // Load user if he is logged in
+            if (User.Identity.IsAuthenticated && User.Identity.Name != null)
+            {
+                user = _userService.FindByUserName(User.Identity.Name);
+            }
+            if (user == null)
+                return RedirectToAction("ShowAnswer", new { answerId = answer.Id });
+
             // Kick them if answer was andded not by the current user
             // This prevents going directly to the answer
-            if (answerToModify.UserId != _userManager.GetUserId(User))
+            if (answerToModify.UserId != user.Id)
                 return RedirectToAction("ShowAnswer", new { answerId = answerToModify.Id });
 
             // Compare the categories because so far this is all we can edit.

@@ -1,6 +1,4 @@
-﻿using BestFor.Domain.Entities;
-using BestFor.Dto;
-using System.Threading.Tasks;
+﻿using BestFor.Dto;
 using System.Collections.Generic;
 
 namespace BestFor.Services.Services
@@ -16,7 +14,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerDescription"></param>
         /// <returns></returns>
-        AnswerDescription AddAnswerDescription(AnswerDescriptionDto answerDescription);
+        DataOperationResult AddAnswerDescription(AnswerDescriptionDto answerDescription);
         
         /// <summary>
         /// Find all descriptions of a given answer
@@ -31,13 +29,6 @@ namespace BestFor.Services.Services
         /// <param name="answerDescriptionId"></param>
         /// <returns></returns>
         AnswerDescriptionDto FindByAnswerDescriptionId(int answerDescriptionId);
-
-        /// <summary>
-        /// Count descriptions for a given user
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        int CountByUserId(string userId);
 
         /// <summary>
         /// Find all answers descriptions with no user going directly to the database
@@ -58,5 +49,13 @@ namespace BestFor.Services.Services
         /// <param name="userId"></param>
         /// <returns></returns>
         IEnumerable<AnswerDescriptionDto> FindDirectByUserId(string userId);
+
+
+        /// <summary>
+        /// Count descriptions for a given user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        int CountByUserId(string userId);
     }
 }

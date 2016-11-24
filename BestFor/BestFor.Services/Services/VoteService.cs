@@ -17,10 +17,10 @@ namespace BestFor.Services.Services
     public class VoteService : IVoteService
     {
         private readonly IAnswerDescriptionService _answerDescriptionService;
-        private ICacheManager _cacheManager;
-        private IRepository<AnswerVote> _answerVoteRepository;
-        private IRepository<AnswerDescriptionVote> _answerDescriptionVoteRepository;
-        private ILogger _logger;
+        private readonly ICacheManager _cacheManager;
+        private readonly IRepository<AnswerVote> _answerVoteRepository;
+        private readonly IRepository<AnswerDescriptionVote> _answerDescriptionVoteRepository;
+        private readonly ILogger _logger;
 
         public VoteService(
             IAnswerDescriptionService answerDescriptionService,
@@ -42,7 +42,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="voteVote"></param>
         /// <returns>Id of the answer whos description was voted.</returns>
-        public int VoteAnswer(AnswerVoteDto answerVote)
+        public DataOperationResult VoteAnswer(AnswerVoteDto answerVote)
         {
             if (answerVote == null)
                 throw new ServicesException("Null parameter VoteService.VoteAnswer(answerVote)");
@@ -53,13 +53,19 @@ namespace BestFor.Services.Services
             if (answerVote.UserId == null)
                 throw new ServicesException("Unexpected UserId in VoteService.VoteAnswer(answerVote)");
 
+            var result = new DataOperationResult();
+
             // Find if vote is already there.
             var existingVote = _answerVoteRepository.Queryable()
                 .FirstOrDefault(x => x.UserId == answerVote.UserId && x.AnswerId == answerVote.AnswerId);
             // Do not re-add existing vote.
-            if (existingVote != null) return existingVote.AnswerId;
+            if (existingVote != null)
+            {
+                result.IntId = existingVote.AnswerId;
+                return result;
+            }
 
-            // Add new vote
+            // Add new answer vote
             var answerVoteObject = new AnswerVote();
             answerVoteObject.FromDto(answerVote);
 
@@ -78,7 +84,9 @@ namespace BestFor.Services.Services
                 userCachedData.Insert(new AnswerVoteUserMask(answerVoteObject));
             }
 
-            return answerVoteObject.AnswerId;
+            result.IntId = answerVoteObject.AnswerId;
+            result.IsNew = true;
+            return result;
         }
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="answerVote"></param>
         /// <returns>Id of the answer whos description was voted.</returns>
-        public int VoteAnswerDescription(AnswerDescriptionVoteDto answerDescriptionVote)
+        public DataOperationResult VoteAnswerDescription(AnswerDescriptionVoteDto answerDescriptionVote)
         {
             if (answerDescriptionVote == null)
                 throw new ServicesException("Null parameter VoteService.VoteAnswerDescription(answerDescriptionVote)");
@@ -97,29 +105,45 @@ namespace BestFor.Services.Services
             if (answerDescriptionVote.UserId == null)
                 throw new ServicesException("Unexpected UserId in VoteService.VoteAnswerDescription(answerDescriptionVote)");
 
+            var result = new DataOperationResult();
+
             // Find if vote is already there.
             var existingVote = _answerDescriptionVoteRepository.Queryable()
                 .FirstOrDefault(x => x.UserId == answerDescriptionVote.UserId && x.AnswerDescriptionId == answerDescriptionVote.AnswerDescriptionId);
             // Do not re-add existing vote.
-            if (existingVote != null) return existingVote.Id;
+            if (existingVote != null)
+            {
+                result.IntId = existingVote.Id;
+                return result;
+            }
 
-            // Add new vote
+            // Add new description vote
             var answerDescriptionVoteObject = new AnswerDescriptionVote();
             answerDescriptionVoteObject.FromDto(answerDescriptionVote);
 
             // Insert
             _answerDescriptionVoteRepository.Insert(answerDescriptionVoteObject);
-            _answerDescriptionVoteRepository.SaveChangesAsync();
+            var task = _answerDescriptionVoteRepository.SaveChangesAsync();
+            task.Wait();
 
             // Add to cache.
             var cachedData = GetVoteDescriptionsCachedData();
             cachedData.Insert(answerDescriptionVoteObject);
 
+            // Add to user cache if there is a user
+            if (answerDescriptionVoteObject.UserId != null)
+            {
+                var userCachedData = GetUserVoteDescriptionsCachedData();
+                userCachedData.Insert(new AnswerDescriptionVoteUserMask(answerDescriptionVoteObject));
+            }
+
             // Find the id of the answer whos description was voted for
             var answerDescriptionDto = _answerDescriptionService
-                .FindByAnswerDescriptionId(answerDescriptionVote.AnswerDescriptionId); 
+                .FindByAnswerDescriptionId(answerDescriptionVote.AnswerDescriptionId);
 
-            return answerDescriptionDto.AnswerId;
+            result.IntId = answerDescriptionDto.AnswerId;
+            result.IsNew = true;
+            return result;
         }
 
         public int CountAnswerVotes(int answerId)
@@ -211,6 +235,32 @@ namespace BestFor.Services.Services
                 return userDataSource;
             }
             return (KeyIndexedDataSource<AnswerVoteUserMask>)data;
+        }
+
+        /// <summary>
+        /// We are doubling the data to give ability to index answer description in a different way.
+        /// Main index in on answers.
+        /// This will allow us to also index answer descriptions by user.
+        /// 
+        /// Load from normally cached data if empty.
+        /// </summary>
+        /// <returns></returns>
+        private KeyIndexedDataSource<AnswerDescriptionVoteUserMask> GetUserVoteDescriptionsCachedData()
+        {
+            object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USER_DESCRIPTION_VOTES_DATA);
+            if (data == null)
+            {
+                // Initialize from answer descriptions
+                var dataSource = GetVoteDescriptionsCachedData();
+                var allItems = dataSource.All();
+                var userDataSource = new KeyIndexedDataSource<AnswerDescriptionVoteUserMask>();
+                userDataSource.Initialize(allItems
+                    .Where(x => x.UserId != null)
+                    .Select(x => new AnswerDescriptionVoteUserMask(x)));
+                _cacheManager.Add(CacheConstants.CACHE_KEY_USER_DESCRIPTION_VOTES_DATA, userDataSource);
+                return userDataSource;
+            }
+            return (KeyIndexedDataSource<AnswerDescriptionVoteUserMask>)data;
         }
         #endregion
     }

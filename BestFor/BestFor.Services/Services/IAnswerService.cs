@@ -117,14 +117,14 @@ namespace BestFor.Services.Services
         /// Return top N of all answers
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindAllAnswers();
+        IEnumerable<AnswerDto> FindAllAnswers();
 
         /// <summary>
         /// Find top <paramref name="count"/> answers
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        Task<IEnumerable<AnswerDto>> FindAllAnswers(int count);
+        IEnumerable<AnswerDto> FindAllAnswers(int count);
 
         /// <summary>
         /// Return top N of Last answers ordered by date

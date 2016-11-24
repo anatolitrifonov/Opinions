@@ -1,7 +1,6 @@
 ﻿using BestFor.Models;
 using BestFor.Services.Blobs;
 using BestFor.Services.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -18,26 +17,17 @@ namespace BestFor.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogger _logger;
-        private readonly IResourcesService _resourcesService;
+        private readonly IStatisticsService _statisticsService;
         private readonly IBlobService _blobService;
-        private readonly IAnswerDescriptionService _answerDescriptionService;
-        private readonly IVoteService _voteService;
-        private readonly IAnswerService _answerService;
-        private readonly IFlagService _flagService;
 
-        public PublicProfileController(IUserService userService, IResourcesService resourcesService, ILoggerFactory loggerFactory,
-            IBlobService blobService, IAnswerDescriptionService answerDescriptionService, IVoteService voteService,
-            IAnswerService answerService, IFlagService flagService)
+        public PublicProfileController(IUserService userService, IStatisticsService statisticsService, ILoggerFactory loggerFactory,
+            IBlobService blobService)
         {
             _userService = userService;
-            _resourcesService = resourcesService;
-            _answerDescriptionService = answerDescriptionService;
+            _statisticsService = statisticsService;
             _logger = loggerFactory.CreateLogger<VoteController>();
             _logger.LogInformation("created VoteController");
             _blobService = blobService;
-            _voteService = voteService;
-            _answerService = answerService;
-            _flagService = flagService;
         }
 
         [HttpGet]
@@ -68,12 +58,6 @@ namespace BestFor.Controllers
             model.Email = user.Email;
             model.DisplayName = user.DisplayName;
 
-            model.NumberOfAnswers = _answerService.CountByUserId(user.Id); // user.NumberOfAnswers;
-            model.NumberOfDescriptions = _answerDescriptionService.CountByUserId(user.Id); // user.NumberOfDescriptions;
-            model.NumberOfVotes = _voteService.CountByUserId(user.Id); // user.NumberOfVotes;
-            model.NumberOfFlags = _flagService.CountByUserId(user.Id); // user.NumberOfFlags;
-            model.NumberOfComments = user.NumberOfComments;
-
             model.JoinDate = user.DateAdded;
             model.PhoneNumber = user.PhoneNumber;
             model.CompanyName = user.CompanyName;
@@ -85,6 +69,16 @@ namespace BestFor.Controllers
             model.ShowWebSite = user.ShowWebSite;
             model.ShowUserDescription = user.ShowUserDescription;
             model.ShowAvatar = user.ShowAvatar;
+            
+            // Check and update stats
+            _statisticsService.LoadUserStatictics(user);
+
+            model.NumberOfAnswers = user.NumberOfAnswers;
+            model.NumberOfDescriptions = user.NumberOfDescriptions;
+            model.NumberOfVotes = user.NumberOfVotes;
+            model.NumberOfFlags = user.NumberOfFlags;
+
+            model.NumberOfComments = user.NumberOfComments;
 
             return View(model);
         }
