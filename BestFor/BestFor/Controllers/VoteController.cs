@@ -41,14 +41,19 @@ namespace BestFor.Controllers
         {
             _logger.LogDebug("VoteAnswer answerId = " + answerId);
 
+            // Create the object for passing data between controllers.
+            var navigationData = new NavigationDataDto();
+            navigationData.AnswerId = answerId;
+
             // Only do something is answer id is not zero
             if (answerId <= 0)
                 // Redirect to some random answer that might even not exist
-                return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId });
+                return RedirectToAction("ShowAnswer", "AnswerAction", new { data = NavigationHelper.Encode(navigationData) });
 
             var user = _userService.FindByUserName(User.Identity.Name);
             // Check if user statistics is loaded
             _statisticsService.LoadUserStatictics(user);
+
             var voteResult = _voteService.VoteAnswer(
                 new AnswerVoteDto() { AnswerId = answerId, UserId = user.Id }
             );
@@ -56,13 +61,13 @@ namespace BestFor.Controllers
             if (voteResult.IsNew)
             {
                 user.NumberOfVotes++;
-                //TODO Check for achievements.
+                navigationData.UserLevelingResult = _userService.LevelUser(user, EventType.AnswerVoteAdded);
             }
 
             // Read the reason
-            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
+            navigationData.Reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_VOTING);
 
-            return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId, reason = reason });
+            return RedirectToAction("ShowAnswer", "AnswerAction", new { data = NavigationHelper.Encode(navigationData) });
         }
 
         [HttpGet]
@@ -86,7 +91,7 @@ namespace BestFor.Controllers
             if (voteResult.IsNew)
             {
                 user.NumberOfVotes++;
-                //TODO Check for achievements.
+                _userService.LevelUser(user, EventType.AnswerDescriptionVoteAdded);
             }
 
             // Read the reason

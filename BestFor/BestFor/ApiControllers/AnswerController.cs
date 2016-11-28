@@ -109,7 +109,7 @@ namespace BestFor.Controllers
             if (result.IsNew && user != null)
             {
                 user.NumberOfAnswers++;
-                //TODO Check for achievements.
+                result.UserLevelingResult = _userService.LevelUser(user, EventType.AnswerAdded);
             }
 
             return result;

@@ -1,5 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using BestFor.Dto;
+﻿using BestFor.Dto;
+using System.Text.RegularExpressions;
 
 namespace BestFor.Services
 {

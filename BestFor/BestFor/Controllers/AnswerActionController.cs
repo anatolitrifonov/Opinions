@@ -62,18 +62,26 @@ namespace BestFor.Controllers
         /// </remarks>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ShowAnswer(int answerId = 0, string reason = null)
+        public async Task<IActionResult> ShowAnswer(string data = null)
         {
+            // Data can't be null because at least answer id is there.
+            var navigationData = NavigationHelper.Decode(data);
+            if (navigationData == null) return RedirectToAction("Index", "Home");
+
             var culture = this.Culture;
             // Load the answer.
-            var answer = await _answerService.FindByAnswerId(answerId);
+            var answer = await _answerService.FindByAnswerId(navigationData.AnswerId);
             // Go home is not found
             if (answer == null) return RedirectToAction("Index", "Home");
 
             var answerDetailsDto = HomeController.FillInDetails(answer, _answerDescriptionService, _userService, _voteService,
                 _resourcesService, culture, _appSettings.Value.FullDomainAddress);
+
             // Set the reason to be shown on the page in case someone sent it
-            answerDetailsDto.Reason = reason;
+            answerDetailsDto.Reason = navigationData.Reason;
+
+            // Set the user leveling data in case we need to show level or achievement.
+            answerDetailsDto.UserLevelingResult = navigationData.UserLevelingResult;
 
             return View("MyContent", answerDetailsDto);
         }
@@ -155,18 +163,22 @@ namespace BestFor.Controllers
             // Add answer description
             var operationResult = _answerDescriptionService.AddAnswerDescription(answerDescription);
 
+            // Create the object for passing data between controllers.
+            var navigationData = new NavigationDataDto();
+
             // Need to update user stats if new answer was added
             if (operationResult.IsNew && user != null)
             {
                 user.NumberOfDescriptions++;
-                //TODO Check for achievements.
+                navigationData.UserLevelingResult = _userService.LevelUser(user, EventType.AnswerDescriptionAdded);
             }
 
             // Read the reason to return it to UI.
-            var reason = _resourcesService.GetString(this.Culture, Lines.DESCRIPTION_WAS_ADDED_SUCCESSFULLY);
+            navigationData.Reason = _resourcesService.GetString(this.Culture, Lines.DESCRIPTION_WAS_ADDED_SUCCESSFULLY);
+            navigationData.AnswerId = answerDescription.AnswerId;
 
             // Redirect to show the answer. This will prevent user refreshing the page.
-            return RedirectToAction("ShowAnswer", new { answerId = answerDescription.AnswerId, reason = reason });
+            return RedirectToAction("ShowAnswer", new { data = NavigationHelper.Encode(navigationData) });
         }
         #endregion
 
@@ -179,8 +191,13 @@ namespace BestFor.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id = 0)
         {
+            // Create the object for passing data between controllers.
+            var navigationData = new NavigationDataDto();
+            navigationData.AnswerId = id;
+            var nav = new { data = NavigationHelper.Encode(navigationData) };
+
             if (id <= 0)
-                return RedirectToAction("ShowAnswer", new { answerId = id });
+                return RedirectToAction("ShowAnswer", nav);
 
             // Let's load the answer.
             // The hope is that service will not have to go to the database and load answer from cache.
@@ -189,7 +206,7 @@ namespace BestFor.Controllers
 
             // No user, no reason to edit.
             if (answer.UserId == null)
-                return RedirectToAction("ShowAnswer", new { answerId = id });
+                return RedirectToAction("ShowAnswer", nav);
 
             // Not logged in, can not edit
             // Save the user in case we need statistics update
@@ -200,12 +217,12 @@ namespace BestFor.Controllers
                 user = _userService.FindByUserName(User.Identity.Name);
             }
             if (user == null)
-                return RedirectToAction("ShowAnswer", new { answerId = id });
+                return RedirectToAction("ShowAnswer", nav);
 
             // Kick them if answer was added not by the current user
             // This prevents going directly to the answer
             if (answer.UserId != user.Id)
-                return RedirectToAction("ShowAnswer", new { answerId = id });
+                return RedirectToAction("ShowAnswer", nav);
 
             return View(answer);
         }
@@ -223,17 +240,22 @@ namespace BestFor.Controllers
             // Basic checks first
             if (answer == null || answer.Id <= 0) return View("Error");
 
+            // Create the object for passing data between controllers.
+            var navigationData = new NavigationDataDto();
+            navigationData.AnswerId = answer.Id;
+            var nav = new { data = NavigationHelper.Encode(navigationData) };
+
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("ShowAnswer", new { answerId = answer.Id });
+                return RedirectToAction("ShowAnswer", nav);
             }
 
             // Find the answer that needs changes
             var answerToModify = await _answerService.FindByAnswerId(answer.Id);
 
             // No user, no reason to edit.
-            if (answer.UserId == null)
-                return RedirectToAction("ShowAnswer", new { answerId = answer.Id });
+            if (answerToModify.UserId == null)
+                return RedirectToAction("ShowAnswer", nav);
 
             // Not logged in, can not edit
             // Save the user in case we need statistics update
@@ -244,12 +266,16 @@ namespace BestFor.Controllers
                 user = _userService.FindByUserName(User.Identity.Name);
             }
             if (user == null)
-                return RedirectToAction("ShowAnswer", new { answerId = answer.Id });
+                return RedirectToAction("ShowAnswer", nav);
 
-            // Kick them if answer was andded not by the current user
+            // Kick them if answer was added not by the current user
             // This prevents going directly to the answer
             if (answerToModify.UserId != user.Id)
-                return RedirectToAction("ShowAnswer", new { answerId = answerToModify.Id });
+            {
+                navigationData.AnswerId = answerToModify.Id;
+                nav = new { data = NavigationHelper.Encode(navigationData) };
+                return RedirectToAction("ShowAnswer", nav);
+            }
 
             // Compare the categories because so far this is all we can edit.
             string newCategory = (answer.Category + "").ToLower();
@@ -263,11 +289,12 @@ namespace BestFor.Controllers
                 // Update answer
                 var updatedAnswer = await _answerService.UpdateAnswer(answerToModify);
             }
+
             // Read the reason
-            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_IMPROVING);
+            navigationData.Reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_IMPROVING);
 
             // Redirect to show the answer. This will prevent user refreshing the page.
-            return RedirectToAction("ShowAnswer", new { answerId = answer.Id, reason = reason });
+            return RedirectToAction("ShowAnswer", new { data = NavigationHelper.Encode(navigationData) });
         }
         #endregion
 

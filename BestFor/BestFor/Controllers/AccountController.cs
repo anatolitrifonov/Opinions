@@ -36,10 +36,12 @@ namespace BestFor.Controllers
         private readonly IProfanityService _profanityService;
         private readonly IResourcesService _resourcesService;
         private readonly IBlobService _blobService;
+        private readonly IStatisticsService _statisticsService;
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender, ISmsSender smsSender, IUserService userService, IProfanityService profanityService,
-            ILoggerFactory loggerFactory, IResourcesService resourcesService, IBlobService blobService)
+            ILoggerFactory loggerFactory, IResourcesService resourcesService, IBlobService blobService,
+            IStatisticsService statisticsService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -50,6 +52,7 @@ namespace BestFor.Controllers
             _profanityService = profanityService;
             _resourcesService = resourcesService;
             _blobService = blobService;
+            _statisticsService = statisticsService;
         }
 
         //
@@ -344,11 +347,7 @@ namespace BestFor.Controllers
             model.Email = user.Email;
             model.UserName = user.UserName;
             model.DisplayName = user.DisplayName;
-            model.NumberOfAnswers = user.NumberOfAnswers;
-            model.NumberOfDescriptions = user.NumberOfDescriptions;
-            model.NumberOfVotes = user.NumberOfVotes;
-            model.NumberOfFlags = user.NumberOfFlags;
-            model.NumberOfComments = user.NumberOfComments;
+
             model.JoinDate = user.DateAdded;
             model.PhoneNumber = user.PhoneNumber;
             model.CompanyName = user.CompanyName;
@@ -360,6 +359,17 @@ namespace BestFor.Controllers
             model.ShowWebSite = user.ShowWebSite;
             model.ShowUserDescription = user.ShowUserDescription;
             model.ShowAvatar = user.ShowAvatar;
+            model.Level = user.Level;
+
+            // Check and update stats
+            _statisticsService.LoadUserStatictics(user);
+
+            model.NumberOfAnswers = user.NumberOfAnswers;
+            model.NumberOfDescriptions = user.NumberOfDescriptions;
+            model.NumberOfVotes = user.NumberOfVotes;
+            model.NumberOfFlags = user.NumberOfFlags;
+
+            model.NumberOfComments = user.NumberOfComments;
 
             // Populate image, load users image if needed
             model.UserImageUrl = _blobService.GetUserImagUrl(user);

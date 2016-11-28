@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System;
+﻿using BestFor.Dto;
 using BestFor.Services.Services;
-using BestFor.Dto;
-using BestFor.Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BestFor.Controllers
@@ -43,10 +38,14 @@ namespace BestFor.Controllers
         {
             _logger.LogDebug("FlagAnswer answerId = " + answerId);
 
+            // Create the object for passing data between controllers.
+            var navigationData = new NavigationDataDto();
+            navigationData.AnswerId = answerId;
+
             // Only do something if answer id is not zero
             if (answerId <= 0)
                 // Redirect to some random answer that might even not exist
-                return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId });
+                return RedirectToAction("ShowAnswer", "AnswerAction", new { data = NavigationHelper.Encode(navigationData) });
 
             var user = _userService.FindByUserName(User.Identity.Name);
             // Check if user statistics is loaded
@@ -59,13 +58,13 @@ namespace BestFor.Controllers
             if (result.IsNew)
             {
                 user.NumberOfFlags++;
-                //TODO Check for achievements.
+                navigationData.UserLevelingResult = _userService.LevelUser(user, EventType.AnswerFlagAdded);
             }
 
             // Read the reason
-            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_FLAGING);
+            navigationData.Reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_FLAGING);
 
-            return RedirectToAction("ShowAnswer", "AnswerAction", new { answerId = answerId, reason = reason });
+            return RedirectToAction("ShowAnswer", "AnswerAction", new { data = NavigationHelper.Encode(navigationData) });
         }
 
         [HttpGet]
@@ -90,7 +89,7 @@ namespace BestFor.Controllers
             if (result.IsNew)
             {
                 user.NumberOfFlags++;
-                //TODO Check for achievements.
+                _userService.LevelUser(user, EventType.AnswerDescriptionFlagAdded);
             }
 
             // Read the reason

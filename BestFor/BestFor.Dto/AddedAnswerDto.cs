@@ -5,5 +5,7 @@
         public AnswerDto Answer { get; set; }
 
         public bool IsNew { get; set; }
+
+        public UserLevelingResultDto UserLevelingResult { get; set; }
     }
 }

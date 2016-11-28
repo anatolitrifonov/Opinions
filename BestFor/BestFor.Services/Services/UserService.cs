@@ -1,11 +1,11 @@
 ﻿using BestFor.Domain.Entities;
+using BestFor.Dto;
 using BestFor.Dto.Account;
 using BestFor.Services.Cache;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
@@ -115,6 +115,19 @@ namespace BestFor.Services.Services
         }
 
         /// <summary>
+        /// Find all users
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ApplicationUser> FindAll()
+        {
+            var data = GetCachedData();
+
+            var result = data.Values.AsEnumerable<ApplicationUser>();
+
+            return result;
+        }
+
+        /// <summary>
         /// Cache user
         /// </summary>
         /// <param name="user"></param>
@@ -134,21 +147,97 @@ namespace BestFor.Services.Services
             return 1;
         }
 
-        /// <summary>
-        /// Find all users
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<ApplicationUser> FindAll()
+        private enum UserLevels: int
         {
-            var data = GetCachedData();
+            Level1 = 10,
+            Level2 = 20,
+            Level3 = 50,
+            Level4 = 100,
+            Level5 = 500,
+            Level6 = 2000,
+            Level7 = 5000,
+            Level8 = 10000,
+            Level9 = 20000,
+            Level10 = 50000,
+            Level11 = 100000
+        }
 
-            var result = data.Values.AsEnumerable<ApplicationUser>();
-
+        /// <summary>
+        /// Simple implementation of user's leveling.
+        /// </summary>
+        /// <param name="user"></param>
+        public UserLevelingResultDto LevelUser(ApplicationUser user, EventType eventType)
+        {
+            var result = new UserLevelingResultDto();
+            // Let's do levels as UserLevels 10, 100, 200, 500, 1000, 2000, 
+            // Collect all combines stats
+            int totalStats = user.NumberOfAnswers + user.NumberOfDescriptions + user.NumberOfVotes + user.NumberOfFlags;
+            // Check if user's stats are up to date. Would be crazy if they are not.
+            if (!user.IsStatisticsCached)
+                throw new ServicesException("Can not level user without updated statistics");
+            // Check if user's level corresponds to where he is at
+            var levels = GetLevels();
+            int newLevel = 0;
+            for (int i = 0; i < levels.Length - 1; i++)
+            {
+                if (totalStats < levels[i])
+                {
+                    newLevel = i;
+                    break;
+                }
+            }
+            if (newLevel > user.Level)
+            {
+                // User's level changed.
+                user.Level = newLevel;
+                result.GainedLevel = true;
+                result.Level = newLevel;
+                UpdateUserLevel(user);
+            }
             return result;
         }
         #endregion
 
         #region Private Methods
+        private void UpdateUserLevel(ApplicationUser user)
+        {
+            // Load user to update
+            var taskToLoadUser = _userManager.FindByIdAsync(user.Id);
+            taskToLoadUser.Wait();
+            var userToUpdate = taskToLoadUser.Result;
+
+            userToUpdate.Level = user.Level;
+
+            var taskToUpdateUser = _userManager.UpdateAsync(userToUpdate);
+            taskToUpdateUser.Wait();
+            var identityResult = taskToUpdateUser.Result;
+            
+            //TODO check update result.
+            //TODO Redo caching into user dto
+        }
+
+        /// <summary>
+        /// Do not want to unstantiate this unless an event it happening that is worth instantiating this array.
+        /// </summary>
+        /// <returns></returns>
+        private int[] GetLevels()
+        {
+            return new int[]
+            {
+                (int)UserLevels.Level1,
+                (int)UserLevels.Level2,
+                (int)UserLevels.Level3,
+                (int)UserLevels.Level4,
+                (int)UserLevels.Level5,
+                (int)UserLevels.Level6,
+                (int)UserLevels.Level7,
+                (int)UserLevels.Level8,
+                (int)UserLevels.Level9,
+                (int)UserLevels.Level10,
+                (int)UserLevels.Level11
+            };
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -165,7 +254,7 @@ namespace BestFor.Services.Services
                 // We are not going to load the number of answers per user.
                 // We will let answer service to deal with this.
                 // We will store index of all user answers there. Not here.
-                // We  can theoretically do this hear too but let all the answers cache be deal with by answer service.
+                // We can theoretically do this hear too but let all the answers cache be deal with by answer service.
                 foreach (var user in _userManager.Users)
                     dataSource.Add(user.Id, user);
 

@@ -3,7 +3,8 @@
 namespace BestFor.Dto
 {
     /// <summary>
-    /// Used to ensure that DtoConvertable interface returns dto objects from this library
+    /// Dtos inheriting from this class have UserId property and User object.
+    /// Allows helperclassed to work with Dto's exposing thes properties.
     /// </summary>
     public abstract class UserBaseDto : BaseDto
     {

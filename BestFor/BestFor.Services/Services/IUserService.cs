@@ -1,7 +1,7 @@
 ﻿using BestFor.Domain.Entities;
+using BestFor.Dto;
 using BestFor.Dto.Account;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
@@ -22,18 +22,28 @@ namespace BestFor.Services.Services
         ApplicationUser FindByUserName(string userName);
 
         /// <summary>
-        /// Find users by a set of ids
+        /// Find users by a set of ids.
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
         Dictionary<string, ApplicationUserDto> FindByIds(List<string> ids);
-
-        int AddUserToCache(ApplicationUser user);
 
         /// <summary>
         /// List all users
         /// </summary>
         /// <returns></returns>
         IEnumerable<ApplicationUser> FindAll();
+
+        int AddUserToCache(ApplicationUser user);
+
+        /// <summary>
+        /// Verifies if user needs to get a level.
+        /// Updates user's level.
+        /// Verifies user achievements.
+        /// Updates user's achiements list.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="eventType"></param>
+        UserLevelingResultDto LevelUser(ApplicationUser user, EventType eventType);
     }
 }

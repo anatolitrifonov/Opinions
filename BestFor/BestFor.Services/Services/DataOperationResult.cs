@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BestFor.Services.Services
+﻿namespace BestFor.Services.Services
 {
     /// <summary>
     /// Serves as a unification mechanizm for services to return the data operation result.

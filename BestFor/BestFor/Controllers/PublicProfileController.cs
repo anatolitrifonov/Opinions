@@ -69,6 +69,7 @@ namespace BestFor.Controllers
             model.ShowWebSite = user.ShowWebSite;
             model.ShowUserDescription = user.ShowUserDescription;
             model.ShowAvatar = user.ShowAvatar;
+            model.Level = user.Level;
             
             // Check and update stats
             _statisticsService.LoadUserStatictics(user);

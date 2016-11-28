@@ -56,5 +56,8 @@ namespace BestFor.Dto
         /// React controls rendered on the page will show debug messages if URL parameter is set to true
         /// </summary>
         public bool DebugReactControls { get; set; } = false;
+
+
+        public UserLevelingResultDto UserLevelingResult { get; set; }
     }
 }

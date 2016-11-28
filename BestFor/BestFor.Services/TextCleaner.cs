@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BestFor.Services
+﻿namespace BestFor.Services
 {
     /// <summary>
     /// Helps clean up user input in case it is pasted from Word and such editors.

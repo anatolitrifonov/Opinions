@@ -61,6 +61,8 @@ namespace BestFor.Models
         [Display(Name = "AnnotationDisplayNameNumberOfComments", ResourceType = typeof(R))]
         public int NumberOfComments { get; set; }
 
+        public int Level { get; set; }
+
         [Display(Name = "AnnotationDisplayNameJoinDate", ResourceType = typeof(R))]
         public DateTime JoinDate { get; set; }
 

@@ -1,5 +1,5 @@
-﻿using System;
-using BestFor.Domain.Interfaces;
+﻿using BestFor.Domain.Interfaces;
+using System;
 
 namespace BestFor.Services
 {

@@ -38,6 +38,7 @@
 {
     <div class="best-success">@Model.Reason</div>
 }
+@Html.Partial("GainedLevelOrAchievement", Model.UserLevelingResult)
 <br />
 @* Who added it originally *@
 Added by @if (Model.Answer.UserId == null)

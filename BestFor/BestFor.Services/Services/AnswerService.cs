@@ -197,7 +197,8 @@ namespace BestFor.Services.Services
             var answer = await cachedData.FindExactById(answerId);
             // Will be strange if not found ... but have to check.
             if (answer == null) return null;
-            return answer.ToDto();
+            var result = answer.ToDto();
+            return result;
         }
 
         /// <summary>
