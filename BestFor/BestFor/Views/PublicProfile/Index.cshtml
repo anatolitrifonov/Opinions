@@ -11,17 +11,14 @@
 
 <div class="row">
     <div class="col-md-2">
-        Level @Model.Level
+        @* Show user's image with level and achievements *@
+        @Html.Partial("PartialUserImageNormal", Model as BestFor.Dto.Account.IBasicUserInfo)
     </div>
     <div class="col-md-8">
         <div class="row">
             <label asp-for="VisibleDisplayName" class="col-md-3"></label><span class="col-md-9">@Model.VisibleDisplayName</span>
         </div>
         <br />
-        @if (Model.UserImageUrl != null)
-        {
-            <img src="@Model.UserImageUrl" class="img-circle" />
-        }
         @if (Model.ShowUserDescription)
         {
             <div class="row">

@@ -1,0 +1,28 @@
+﻿@model BestFor.Dto.Account.ApplicationUsersDto
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@* Top posters *@
+<div class="row best-theme-color">
+    @*
+        Since we are layout out all inside divs in this div as float left, they do not take any height.
+        That means padding-top:25px;height:225px and height:225px will have the same height.
+        Padding is set within the div, height does not change.
+        Total height should be height of the partial view + margin top + margin bottom.
+    *@
+    <div style="padding-top:25px;height:225px">
+        @{
+            var stringOpinions = resourcesService.GetString(this.ViewBag.BestForCulture, "opinions_lower");
+            @foreach (var item in Model.Users)
+            {
+                @*
+                    We want to space them using padding and align left using float.
+                    We can't do spacing in the partial view itself because it is treated as a rectangle of a fixed size.
+                *@
+                <div style="float:left;padding-left:50px">
+                    @Html.Partial("PartialUserImageNormal", item as BestFor.Dto.Account.IBasicUserInfo)
+                </div>
+            }
+        }
+    </div>
+</div>
+

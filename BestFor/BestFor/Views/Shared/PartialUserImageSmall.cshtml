@@ -1,0 +1,21 @@
+﻿@model BestFor.Dto.Account.IBasicUserInfo
+@* Display Users avatar in "small" format.  *@
+@if (Model != null)
+{
+    int level = Model.Level < 0 || Model.Level > 10 ? 0 : Model.Level;
+    string stringOutsideImage = "~/images/themes/green/level_s" + (level + 1) + ".png";
+    string stringUserImage = Model.UserImageUrlSmall;
+    if (stringUserImage == null)
+    {
+        stringUserImage = "~/images/themes/green/noimage_s.png";
+    }
+    @* We have a fixed image width and height. And fixed avatarr size. We can use fixed numbers.*@
+    <div style="width:72px;height:77px">
+        <img src="@Url.Content(stringOutsideImage)" style="width:72px;height:77px;position:absolute;left:0px;top:0px" />
+        <div style="position:absolute;padding-top:10px;padding-left:11px">
+            <img src="@Url.Content(stringUserImage)" class="img-circle" />
+        </div>
+    </div>
+}
+
+

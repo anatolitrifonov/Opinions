@@ -1,5 +1,6 @@
-﻿using System;
-using BestFor.Dto;
+﻿using BestFor.Dto;
+using BestFor.Dto.Account;
+using System;
 using System.ComponentModel.DataAnnotations;
 using R = BestFor.Resources.BestResourcer;
 
@@ -21,7 +22,7 @@ namespace BestFor.Models
     /// ErrorMessageResourceType = typeof(BestResourcer)
     /// Every Annotation<something> must exist as a property in BestResourcer
     /// </remarks>
-    public class ProfileEditViewModel : CrudMessagesDto
+    public class ProfileEditViewModel : CrudMessagesDto, IBasicUserInfo
     {
         [Required(ErrorMessageResourceName = "AnnotationErrorMessageRequiredEmail", ErrorMessageResourceType = typeof(R))]
         [EmailAddress(ErrorMessageResourceName = "AnnotationValidationMessageEmailAddress", ErrorMessageResourceType = typeof(R))]
@@ -67,6 +68,8 @@ namespace BestFor.Models
         public DateTime JoinDate { get; set; }
 
         public string UserImageUrl { get; set; }
+
+        public string UserImageUrlSmall { get; set; }
 
         [Phone(ErrorMessageResourceName = "AnnotationValidationMessagePhoneNumber", ErrorMessageResourceType = typeof(R))]
         [Display(Name = "AnnotationDisplayNamePhoneNumber", ResourceType = typeof(R))]

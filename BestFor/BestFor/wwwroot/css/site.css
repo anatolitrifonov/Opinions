@@ -17,10 +17,7 @@ span.best-span-round-label-light
 {
     background-color: #E2DC0E;
     border-radius: 6px 6px;
-    padding-bottom: 6px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 6px;
+    padding: 6px 6px 6px 6px;
     margin-left: 6px;
     font-size:14px;
 }
@@ -30,10 +27,7 @@ span.best-span-round-label-light-highlighted
 {
     background-color: #F7F5BE;
     border-radius: 6px 6px;
-    padding-bottom: 6px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-top: 6px;
+    padding: 6px 6px 6px 6px;
     margin-left: 6px;
     font-size:14px;
 }
@@ -80,7 +74,7 @@ div.best-top-right-bar a.best-light-link
     text-decoration: none;
 }
 
-/* sets the colow for the top middle title on index page */
+/* sets the color for the top middle title on index page */
 span.best-top-center-general-text
 {
     color: #FFFFFF;
@@ -212,10 +206,7 @@ span.best-trending-overall
 {
     background-color: #8EB656;
     border-radius: 6px 6px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
+    padding: 10px 10px 10px 10px;
     margin-left: 6px;
 }
 
@@ -263,7 +254,11 @@ div.best-search-result
    color:red;
 }
 
-/* Make image a circle */
-.img-circle {
-    border-radius: 50%;
+/* Span to show that user leveled */
+span.user-leveled
+{
+    color: #A61762;
+    font-size: 25px;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }

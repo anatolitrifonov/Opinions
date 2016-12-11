@@ -1,0 +1,23 @@
+﻿@model BestFor.Dto.UserLevelingResultDto
+@if (Model != null)
+{
+    //if (Model.GainedLevel)
+    {
+
+        var display = string.Format("You reached level {0}!", Model.Level);
+        <div class="row" id="userLevelDiv">
+            <div class="col-md-3">
+                <br />
+                <span class="user-leveled">@display</span>
+                <br />
+            </div>
+            <div class="col-md-1">
+                <br />
+                <button class="btn btn-xs glyphicon glyphicon-remove" type="button"
+                        onclick="$('#userLevelDiv').css('display', 'none');"></button>
+            </div>
+        </div>
+    }
+}
+
+

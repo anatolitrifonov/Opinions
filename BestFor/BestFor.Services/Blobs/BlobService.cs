@@ -24,6 +24,7 @@ namespace BestFor.Services.Blobs
     {
         private const string USER_IMAGES_PATH = "user_";
         private const string USER_IMAGES_EXTENSION = ".png";
+        private const string USER_IMAGES_EXTENSION_SMALL = "_s.png";
         private const string USER_IMAGES_FORMAT = "png";
 
         /// <summary>
@@ -81,17 +82,22 @@ namespace BestFor.Services.Blobs
         public void SaveUserProfilePicture(string userName, BlobDataDto blobData)
         {
             // Todo check username for slashes
-
-            // Not sure how to save this just yet.
-            var path = USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
-
             // use image resizer to resize to a small avatar.
+
+            // main avatar
+            var path = USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
             var resizedImageStream = ResizeToAvatar(blobData.Stream, _avatarWidth, _avatarHeight);
-
-            // just in case
             resizedImageStream.Position = 0;
-
             SaveFileToBlob(path, resizedImageStream);
+
+            //blobData.Stream.Position = 0;
+
+            // half avatar
+            var pathSmall = USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION_SMALL;
+            resizedImageStream.Position = 0;
+            var resizedImageStreamSmall = ResizeToAvatar(resizedImageStream, _avatarWidth / 2, _avatarHeight / 2);
+            resizedImageStreamSmall.Position = 0;
+            SaveFileToBlob(pathSmall, resizedImageStreamSmall);
         }
 
         /// <summary>
@@ -129,7 +135,7 @@ namespace BestFor.Services.Blobs
 
             // set the image url
             user.ImageUrl = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureName(user.UserName) : null;
-
+            user.ImageUrlSmall = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureNameSmall(user.UserName) : null;
         }
 
         public void DeleteUserProfilePicture(string userName)
@@ -159,6 +165,11 @@ namespace BestFor.Services.Blobs
         public string GetUserProfilePictureName(string userName)
         {
             return USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION;
+        }
+
+        public string GetUserProfilePictureNameSmall(string userName)
+        {
+            return USER_IMAGES_PATH + userName + USER_IMAGES_EXTENSION_SMALL;
         }
 
         public bool DoesUserProfileHasPicture(string userName)

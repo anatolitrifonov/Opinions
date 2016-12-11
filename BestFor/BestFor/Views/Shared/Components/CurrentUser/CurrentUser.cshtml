@@ -5,15 +5,10 @@
     <div class="best-top-right-bar">
         <div class="dropdown">
             <div id="accountDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                @* Show image if user has one *@
-                @if (Model.ImageUrl == null)
-                {
-                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                }
-                else
-                {
-                    <img src="@Model.ImageUrl" border="0" width="50" height="50" class="img-circle" />
-                }
+
+                @* Show user's image with level and achievements *@
+                @Html.Partial("PartialUserImageSmall", Model as BestFor.Dto.Account.IBasicUserInfo)
+
             </div>
             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdownMenu">
                 <li>

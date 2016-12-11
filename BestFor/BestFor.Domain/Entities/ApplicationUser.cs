@@ -63,6 +63,9 @@ namespace BestFor.Domain.Entities
         [NotMapped]
         public string ImageUrl { get; set; }
 
+        [NotMapped]
+        public string ImageUrlSmall { get; set; }
+
         [StringLength(200, MinimumLength = 3)]
         public string CompanyName { get; set; }
 
@@ -102,7 +105,9 @@ namespace BestFor.Domain.Entities
                 NumberOfAnswers = NumberOfAnswers,
                 DisplayName = DisplayName,
                 IsImageCached = IsImageCached,
-                ImageUrl = ImageUrl
+                UserImageUrl = ImageUrl,
+                UserImageUrlSmall = ImageUrlSmall,
+                Level = Level
             };
         }
 
@@ -112,7 +117,9 @@ namespace BestFor.Domain.Entities
             UserName = dto.UserName;
             NumberOfAnswers = dto.NumberOfAnswers;
             IsImageCached = dto.IsImageCached;
-            ImageUrl = dto.ImageUrl;
+            ImageUrl = dto.UserImageUrl;
+            ImageUrlSmall = dto.UserImageUrlSmall;
+            Level = dto.Level;
 
             return 1;
         }

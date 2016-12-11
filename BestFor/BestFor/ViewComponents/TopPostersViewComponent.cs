@@ -29,7 +29,8 @@ namespace BestFor.ViewComponents
         {
             var model = new ApplicationUsersDto();
             model.Users = await _answerService.FindTopPosterIds();
-            return View(model);
+
+            return View("TopPosters", model);
         }
     }
 }

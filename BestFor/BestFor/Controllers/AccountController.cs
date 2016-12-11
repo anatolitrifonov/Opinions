@@ -373,6 +373,7 @@ namespace BestFor.Controllers
 
             // Populate image, load users image if needed
             model.UserImageUrl = _blobService.GetUserImagUrl(user);
+            model.UserImageUrlSmall = user.ImageUrlSmall;
 
             return View(model);
         }

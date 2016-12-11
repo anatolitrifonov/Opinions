@@ -2,7 +2,7 @@
 
 namespace BestFor.Dto.Account
 {
-    public class ApplicationUserDto : BaseDto
+    public class ApplicationUserDto : BaseDto, IBasicUserInfo
     {
         public string UserId { get; set; }
 
@@ -53,6 +53,13 @@ namespace BestFor.Dto.Account
 
         public bool IsImageCached { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string UserImageUrl { get; set; }
+
+        public string UserImageUrlSmall { get; set; }
+
+        /// <summary>
+        /// User's level 1 to N
+        /// </summary>
+        public int Level { get; set; }
     }
 }

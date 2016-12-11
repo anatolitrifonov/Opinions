@@ -57,7 +57,6 @@ namespace BestFor.Dto
         /// </summary>
         public bool DebugReactControls { get; set; } = false;
 
-
         public UserLevelingResultDto UserLevelingResult { get; set; }
     }
 }

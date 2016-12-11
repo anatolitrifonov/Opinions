@@ -29,7 +29,8 @@
 
 <div class="row">
     <div class="col-md-2">
-        Level @Model.Level
+        @* Show user's image with level and achievements *@
+        @Html.Partial("PartialUserImageNormal", Model as BestFor.Dto.Account.IBasicUserInfo)
     </div>
     <div class="col-md-8">
         <div class="row">
@@ -86,7 +87,7 @@
         <br />
         <div class="row">
             @if (Model.UserImageUrl != null)
-        {
+            {
                 <div class="col-md-2">
                     <img src="@Model.UserImageUrl" style="border: 3px solid green" />
                 </div>
@@ -101,7 +102,6 @@
                 <div class="col-md-12"><span>No Image</span></div>
             }
         </div>
-        <br />
         <div class="form-group">
             <div class="col-md-11">
                 <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="EditProfile"
