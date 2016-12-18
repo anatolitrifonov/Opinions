@@ -11,7 +11,7 @@ namespace BestFor.UnitTests.Services.Services
 
         public AnswerServiceTests()
         {
-            _answerService = new AnswerService(null, null, null, null);
+            _answerService = new AnswerService(null, null, null);
         }
 
         [Fact]

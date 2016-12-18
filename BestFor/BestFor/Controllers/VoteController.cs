@@ -55,7 +55,7 @@ namespace BestFor.Controllers
             _statisticsService.LoadUserStatictics(user);
 
             var voteResult = _voteService.VoteAnswer(
-                new AnswerVoteDto() { AnswerId = answerId, UserId = user.Id }
+                new AnswerVoteDto() { AnswerId = answerId, UserId = user.UserId }
             );
 
             if (voteResult.IsNew)
@@ -85,7 +85,7 @@ namespace BestFor.Controllers
             // Check if user statistics is loaded
             _statisticsService.LoadUserStatictics(user);
             var voteResult = _voteService.VoteAnswerDescription(
-                new AnswerDescriptionVoteDto() { AnswerDescriptionId = answerDescriptionId, UserId = user.Id }
+                new AnswerDescriptionVoteDto() { AnswerDescriptionId = answerDescriptionId, UserId = user.UserId }
             );
 
             if (voteResult.IsNew)

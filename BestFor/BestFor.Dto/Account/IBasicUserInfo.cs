@@ -5,6 +5,8 @@
     /// </summary>
     public interface IBasicUserInfo
     {
+        string UserName { get; set; }
+
         int Level { get; set; }
 
         string UserImageUrl { get; set; }

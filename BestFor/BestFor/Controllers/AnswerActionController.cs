@@ -1,10 +1,10 @@
 ﻿using BestFor.Common;
 using BestFor.Domain.Entities;
 using BestFor.Dto;
+using BestFor.Dto.Account;
 using BestFor.Models;
 using BestFor.Services.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -146,7 +146,7 @@ namespace BestFor.Controllers
             }
 
             // Save the user in case we need statistics update
-            ApplicationUser user = null;
+            ApplicationUserDto user = null;
             // Load user if he is logged in
             if (User.Identity.IsAuthenticated && User.Identity.Name != null)
             {
@@ -155,7 +155,7 @@ namespace BestFor.Controllers
             // Set the user id in the answer if user is found
             if (user != null)
             {
-                answerDescription.UserId = user.Id;
+                answerDescription.UserId = user.UserId;
                 // Check if user statistics is loaded
                 _statisticsService.LoadUserStatictics(user);
             }
@@ -210,7 +210,7 @@ namespace BestFor.Controllers
 
             // Not logged in, can not edit
             // Save the user in case we need statistics update
-            ApplicationUser user = null;
+            ApplicationUserDto user = null;
             // Load user if he is logged in
             if (User.Identity.IsAuthenticated && User.Identity.Name != null)
             {
@@ -221,7 +221,7 @@ namespace BestFor.Controllers
 
             // Kick them if answer was added not by the current user
             // This prevents going directly to the answer
-            if (answer.UserId != user.Id)
+            if (answer.UserId != user.UserId)
                 return RedirectToAction("ShowAnswer", nav);
 
             return View(answer);
@@ -259,7 +259,7 @@ namespace BestFor.Controllers
 
             // Not logged in, can not edit
             // Save the user in case we need statistics update
-            ApplicationUser user = null;
+            ApplicationUserDto user = null;
             // Load user if he is logged in
             if (User.Identity.IsAuthenticated && User.Identity.Name != null)
             {
@@ -270,7 +270,7 @@ namespace BestFor.Controllers
 
             // Kick them if answer was added not by the current user
             // This prevents going directly to the answer
-            if (answerToModify.UserId != user.Id)
+            if (answerToModify.UserId != user.UserId)
             {
                 navigationData.AnswerId = answerToModify.Id;
                 nav = new { data = NavigationHelper.Encode(navigationData) };

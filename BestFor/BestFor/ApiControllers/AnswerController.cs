@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
-using BestFor.Domain.Entities;
-using BestFor.Dto;
+﻿using BestFor.Dto;
+using BestFor.Dto.Account;
 using BestFor.Services.Profanity;
 using BestFor.Services.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Security.Claims;
 
 namespace BestFor.Controllers
 {
@@ -56,7 +55,7 @@ namespace BestFor.Controllers
 
             // Thread.Sleep(4000);
             // call the service
-            result.Answers = _answerService.FindTopAnswers(leftWord, rightWord);
+            result.Answers = _answerService.FindTopAnswers(leftWord, rightWord).ToList();
 
             return result;
         }
@@ -88,7 +87,7 @@ namespace BestFor.Controllers
                 addedSuggestion = _suggestionService.AddSuggestion(new SuggestionDto() { Phrase = answer.RightWord });
 
             // Save the user in case we need statistics update
-            ApplicationUser user = null;
+            ApplicationUserDto user = null;
             // Load user if he is logged in
             if (User.Identity.IsAuthenticated && User.Identity.Name != null)
             {
@@ -97,7 +96,7 @@ namespace BestFor.Controllers
             // Set the user id in the answer if user is found
             if (user != null)
             {
-                answer.UserId = user.Id;
+                answer.UserId = user.UserId;
                 // Check if user statistics is loaded
                 _statisticsService.LoadUserStatictics(user);
             }

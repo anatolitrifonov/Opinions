@@ -14,10 +14,12 @@ using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
-    // This project can output the Class library as a NuGet Package.
-    // To enable this option, right-click on the project and select the Properties menu item. In the Build tab select "Produce outputs on build".
     /// <summary>
-    /// Suggestion service implementation
+    /// Answer service implementation.
+    /// This service only handles answers. Answer entity only has user id. It does not contain username or display name or level.
+    /// We can not afford this level of denormalization because if for example user gains level then we need to update all answers with new user level.
+    /// Or if user gains achievement then we need to update his achievement level on all answers.
+    /// Does not sound like a good idea. This user does not know anything about users.
     /// </summary>
     public class AnswerService : IAnswerService
     {
@@ -38,14 +40,12 @@ namespace BestFor.Services.Services
         private ICacheManager _cacheManager;
         private IAnswerRepository _repository;
         private ILogger _logger;
-        private IUserService _userService;
 
-        // private static 
-        public AnswerService(ICacheManager cacheManager, IAnswerRepository repository, ILoggerFactory loggerFactory, IUserService userService)
+        public AnswerService(ICacheManager cacheManager, IAnswerRepository repository, ILoggerFactory loggerFactory)
         {
             _cacheManager = cacheManager;
             _repository = repository;
-            _userService = userService;
+
             // Have to check for null because ILoggerFactory.CreateLogger<AnswerService>() is an extension method and can not be mocked.
             if (loggerFactory != null)
             {
@@ -177,12 +177,8 @@ namespace BestFor.Services.Services
         public IEnumerable<AnswerDto> FindAnswersTrendingToday()
         {
             var data = GetTodayTrendingCachedData();
-            // Get all userIds (as list)
-            var userIds = data.Where(x => x.UserId != null).Select(x => x.UserId).Distinct().ToList();
-
-            // Let the stitcher stitch data and users and return data as dto with users
-            // we basically want answers with all the related user data.
-            return Stitcher<AnswerDto>.Stitch(data.ToList<IDtoConvertable<AnswerDto>>(), userIds, _userService);
+            if (data == null) return Enumerable.Empty<AnswerDto>();
+            return data.Select(x => x.ToDto());
         }
 
         public async Task<IEnumerable<AnswerDto>> FindAnswersTrendingOverall()
@@ -365,17 +361,9 @@ namespace BestFor.Services.Services
             // this is a simple set of keys and counts
             var result = await cachedData.FindTopIndexKeys(DEFAULT_TOP_POSTER_COUNT);
 
-            // Get just userIds
-            var userIds = result.Select(x => x.Key).ToList();
-
-            // Find all users by ids
-            var users = _userService.FindByIds(userIds);
-
-            // Put in counts
-            foreach (var user in users)
-                user.Value.NumberOfAnswers = result.First(x => x.Key == user.Value.UserId).Count;
-
-            return users.Values.ToList();
+            // If someone needs more info thei will stitch it.
+            // Our job is to just get users and counts since we already have them.
+            return result.Select(x => new ApplicationUserDto() { UserId = x.Key, NumberOfAnswers = x.Count }).ToList();
         }
 
 
@@ -482,23 +470,12 @@ namespace BestFor.Services.Services
 
             var keyword = searchPhrase.Trim().ToLower();
 
-            // take top n latest items searching by keyword.
-            //var result = allItems.Where(
-            //    x => x.LeftWord.ToLower().Contains(keyword) || x.RightWord.ToLower().Contains(keyword) ||
-            //    x.Phrase.ToLower().Contains(keyword))
-            //    .OrderByDescending(x => x.DateAdded).Take(count).Select(x => x.ToDto());
-
-            var result = allItems.Where(
+            return allItems.Where(
                 x => x.LeftWord.ToLower().Contains(keyword) || x.RightWord.ToLower().Contains(keyword) ||
                 x.Phrase.ToLower().Contains(keyword))
-                .OrderByDescending(x => x.DateAdded).Take(count);
+                .OrderByDescending(x => x.DateAdded).Take(count).Select(x => x.ToDto());
 
-            // Add user's info
-            var userIds = result.Where(x => x.UserId != null).Select(x => x.UserId).Distinct().ToList();
-
-            // Let the stitcher stitch data and users and return data as dto with users
-            // we basically want answers with all the related user data.
-            return Stitcher<AnswerDto>.Stitch(result.ToList<IDtoConvertable<AnswerDto>>(), userIds, _userService);
+            // No user stiching. Leaving it to controllers.
         }
         #endregion
 

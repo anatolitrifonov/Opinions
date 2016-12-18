@@ -1,6 +1,6 @@
 ﻿using BestFor.Common;
-using BestFor.Domain.Entities;
 using BestFor.Dto;
+using BestFor.Dto.Account;
 using BestFor.Services.Cache;
 using ImageResizer;
 using Microsoft.Extensions.Options;
@@ -107,10 +107,10 @@ namespace BestFor.Services.Blobs
         /// <param name="user"></param>
         /// <returns></returns>
         /// <remarks>Images are sparate users. This service helps tying then together.</remarks>
-        public string GetUserImagUrl(ApplicationUser user)
+        public string GetUserImagUrl(ApplicationUserDto user)
         {
             // return data if already cached.
-            if (user.IsImageCached) return user.ImageUrl;
+            if (user.IsImageCached) return user.UserImageUrl;
 
             // Go to blob service and search
             var hasImage = DoesUserProfileHasPicture(user.UserName);
@@ -118,7 +118,7 @@ namespace BestFor.Services.Blobs
             // Populate the image url if found and mark user image as cached.
             SetUserImageCached(user, hasImage);
 
-            return user.ImageUrl;
+            return user.UserImageUrl;
         }
 
         /// <summary>
@@ -128,14 +128,14 @@ namespace BestFor.Services.Blobs
         /// </summary>
         /// <param name="user"></param>
         /// <param name="hasImage"></param>
-        public void SetUserImageCached(ApplicationUser user, bool hasImage)
+        public void SetUserImageCached(ApplicationUserDto user, bool hasImage)
         {
             // found or not it is cached.
             user.IsImageCached = true;
 
             // set the image url
-            user.ImageUrl = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureName(user.UserName) : null;
-            user.ImageUrlSmall = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureNameSmall(user.UserName) : null;
+            user.UserImageUrl = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureName(user.UserName) : null;
+            user.UserImageUrlSmall = hasImage ? _blobServiceContainerUrl + GetUserProfilePictureNameSmall(user.UserName) : null;
         }
 
         public void DeleteUserProfilePicture(string userName)

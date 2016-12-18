@@ -1,4 +1,5 @@
 ﻿using BestFor.Domain.Entities;
+using BestFor.Dto.Account;
 using BestFor.Fakes;
 using BestFor.Services.Cache;
 using BestFor.Services.Services;
@@ -41,10 +42,10 @@ namespace BestFor.UnitTests.Services.Services
             // Setup
             var setup = new TestSetup();
 
-            var user = new ApplicationUser() { Id = "A" };
+            var user = new ApplicationUserDto() { UserId = "A" };
             setup.UserService.AddUserToCache(user);
 
-            Assert.Equal(setup.UserService.FindById("A").Id, "A");
+            Assert.Equal(setup.UserService.FindById("A").UserId, "A");
 
             // this will give us a cached dictionary of users
             var cache = (Dictionary<string, ApplicationUser>)setup.CacheMock.Object.Get(CacheConstants.CACHE_KEY_USERS_DATA);
@@ -76,29 +77,29 @@ namespace BestFor.UnitTests.Services.Services
 
             // this loads from database so no reason to play with cache.
             // this loads from fakes only
-            Assert.Equal(setup.UserService.FindByDisplayName("Orsa").DisplayName, "Orsa");
+            Assert.Equal(setup.UserService.FindDirectByDisplayName("Orsa").DisplayName, "Orsa");
 
             // Check that random user is not there
-            Assert.Null(setup.UserService.FindByDisplayName("B"));
+            Assert.Null(setup.UserService.FindDirectByDisplayName("B"));
 
             // Check that null gives null
-            Assert.Null(setup.UserService.FindByDisplayName(null));
+            Assert.Null(setup.UserService.FindDirectByDisplayName(null));
 
             // Check that null gives null
-            Assert.Null(setup.UserService.FindByDisplayName(""));
+            Assert.Null(setup.UserService.FindDirectByDisplayName(""));
 
             // Check that null gives null
-            Assert.Null(setup.UserService.FindByDisplayName("    "));
+            Assert.Null(setup.UserService.FindDirectByDisplayName("    "));
 
             // FYI IsNullOrWhiteSpace includes \n\r\t
             // Check that null gives null
-            Assert.Null(setup.UserService.FindByDisplayName("  \n  "));
+            Assert.Null(setup.UserService.FindDirectByDisplayName("  \n  "));
 
             // Check that null gives null
-            Assert.Null(setup.UserService.FindByDisplayName("  \r  "));
+            Assert.Null(setup.UserService.FindDirectByDisplayName("  \r  "));
 
             // Check that null gives null
-            Assert.Null(setup.UserService.FindByDisplayName("  \t  "));
+            Assert.Null(setup.UserService.FindDirectByDisplayName("  \t  "));
         }
 
         [Fact]
@@ -133,7 +134,7 @@ namespace BestFor.UnitTests.Services.Services
             // Setup
             var setup = new TestSetup();
 
-            var user = new ApplicationUser() { Id = "A" };
+            var user = new ApplicationUserDto() { UserId = "A" };
             setup.UserService.AddUserToCache(user);
 
             var result = setup.UserService.FindByIds(new List<string>() { "A", "1", "222" });

@@ -3,7 +3,7 @@
 @if (Model != null)
 {
     int level = Model.Level < 0 || Model.Level > 10 ? 0 : Model.Level;
-    string stringOutsideImage = "~/images/themes/green/level" + (level + 1) + ".png";
+    string stringOutsideImage = "~/images/themes/green/level" + level + ".png";
     string stringUserImage = Model.UserImageUrl;
     if (stringUserImage == null)
     {
@@ -11,9 +11,12 @@
     }
     @* We have a fixed image width and height. And fixed avatarr size. We can use fixed numbers.*@
     <div style="width:141px;height:153px">
-        <img src="@Url.Content(stringOutsideImage)" style="width:141px;height:153px;position:absolute" />
-        <div style="padding-left:21px;padding-top:19px">
-            <img src="@Url.Content(stringUserImage)" class="img-circle" />
+        <img src="@Url.Content(stringOutsideImage)" style="width:141px;height:153px;position:absolute;z-index:100" />
+        <div style="padding-left:21px;padding-top:19px;position:absolute;z-index:101">
+            <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="PublicProfile" y-action="Index"
+                   y-querystring="@new { userName = Model.UserName }">
+                <img src="@Url.Content(stringUserImage)" class="img-circle" />
+            </yakor>
         </div>
     </div>
 }

@@ -61,16 +61,20 @@ namespace BestFor.Controllers
             // Use the search service if search phrase is passed
             if (!string.IsNullOrEmpty(searchPhrase) && !string.IsNullOrWhiteSpace(searchPhrase))
             {
-                model.TopToday.Answers = _answerService.FindLastAnswers(searchPhrase);
+                model.TopToday.Answers = _answerService.FindLastAnswers(searchPhrase).ToList();
                 model.Keyword = searchPhrase;
                 model.HeaderText = _resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR) +
                     ": " + searchPhrase;
             }
             else
             {
-                model.TopToday.Answers = _answerService.FindAnswersTrendingToday();
+                model.TopToday.Answers = _answerService.FindAnswersTrendingToday().ToList();
                 model.HeaderText = _resourcesService.GetString(this.Culture, Lines.TRENDING_TODAY);
             }
+
+            // Answer service does not do any stiching. Meaning it can not set user information in the model/answers.
+            // Need to add user info to answers
+            Stitcher<AnswerDto>.Stitch(model.TopToday.Answers, _userService);
 
             model.Reason = reason;
 
@@ -206,7 +210,7 @@ namespace BestFor.Controllers
                 return;
             }
 
-            answerDescription.User = user.ToDto();
+            answerDescription.User = user;
         }
     }
 }

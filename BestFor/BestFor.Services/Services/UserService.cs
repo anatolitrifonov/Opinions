@@ -36,16 +36,16 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="displayName"></param>
         /// <returns></returns>
-        public ApplicationUser FindByDisplayName(string displayName)
+        public ApplicationUserDto FindDirectByDisplayName(string displayName)
         {
             // Do not check nulls
             if (string.IsNullOrEmpty(displayName)) return null;
             if (string.IsNullOrWhiteSpace(displayName)) return null;
 
-            // var// var
-
             // Find first user with this display name. 
-            return _userManager.Users.FirstOrDefault(x => x.DisplayName == displayName);
+            var user = _userManager.Users.FirstOrDefault(x => x.DisplayName == displayName);
+            if (user == null) return null;
+            return user.ToDto();
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ApplicationUser FindById(string id)
+        public ApplicationUserDto FindById(string id)
         {
             // Do not check nulls
             if (string.IsNullOrEmpty(id)) return null;
@@ -62,14 +62,14 @@ namespace BestFor.Services.Services
             // Get cache ... might take long but is not null
             var data = GetCachedData();
 
-            ApplicationUser user;
+            ApplicationUserDto user;
             if (data.TryGetValue(id, out user))
                 return user;
 
             return null;
         }
 
-        public ApplicationUser FindByUserName(string userName)
+        public ApplicationUserDto FindByUserName(string userName)
         {
             // Do not check nulls
             if (string.IsNullOrEmpty(userName)) return null;
@@ -78,8 +78,9 @@ namespace BestFor.Services.Services
             // Get cache ... might take long but is not null
             var data = GetCachedData();
 
-            ApplicationUser user = data.FirstOrDefault(x => x.Value.UserName == userName).Value;
+            var user = data.FirstOrDefault(x => x.Value.UserName == userName).Value;
 
+            if (user == null) return null;
             return user;
         }
 
@@ -102,13 +103,13 @@ namespace BestFor.Services.Services
             var result = new Dictionary<string, ApplicationUserDto>();
 
             // Build a list of users from ids.
-            ApplicationUser user;
+            ApplicationUserDto user;
             foreach (var id in ids)
             {
                 if (data.TryGetValue(id, out user))
                 {
                     if (!result.ContainsKey(id))
-                        result.Add(id, user.ToDto());
+                        result.Add(id, user);
                 }
             }
             return result;
@@ -118,11 +119,11 @@ namespace BestFor.Services.Services
         /// Find all users
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ApplicationUser> FindAll()
+        public IEnumerable<ApplicationUserDto> FindAll()
         {
             var data = GetCachedData();
 
-            var result = data.Values.AsEnumerable<ApplicationUser>();
+            var result = data.Values.ToList();
 
             return result;
         }
@@ -132,17 +133,17 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public int AddUserToCache(ApplicationUser user)
+        public int AddUserToCache(ApplicationUserDto user)
         {
             // load cache
-            Dictionary<string, ApplicationUser> data = GetCachedData();
+            Dictionary<string, ApplicationUserDto> data = GetCachedData();
             // Something went wrong if this is null.
             // if (data == null) return 0;
 
-            if (data.ContainsKey(user.Id))
-                data[user.Id] = user;
+            if (data.ContainsKey(user.UserId))
+                data[user.UserId] = user;
             else
-                data.Add(user.Id, user);
+                data.Add(user.UserId, user);
 
             return 1;
         }
@@ -166,7 +167,7 @@ namespace BestFor.Services.Services
         /// Simple implementation of user's leveling.
         /// </summary>
         /// <param name="user"></param>
-        public UserLevelingResultDto LevelUser(ApplicationUser user, EventType eventType)
+        public UserLevelingResultDto LevelUser(ApplicationUserDto user, EventType eventType)
         {
             var result = new UserLevelingResultDto();
             // Let's do levels as UserLevels 10, 100, 200, 500, 1000, 2000, 
@@ -199,10 +200,10 @@ namespace BestFor.Services.Services
         #endregion
 
         #region Private Methods
-        private void UpdateUserLevel(ApplicationUser user)
+        private void UpdateUserLevel(ApplicationUserDto user)
         {
             // Load user to update
-            var taskToLoadUser = _userManager.FindByIdAsync(user.Id);
+            var taskToLoadUser = _userManager.FindByIdAsync(user.UserId);
             taskToLoadUser.Wait();
             var userToUpdate = taskToLoadUser.Result;
 
@@ -239,29 +240,29 @@ namespace BestFor.Services.Services
         }
 
         /// <summary>
-        /// 
+        /// Switching to store Dtos.
         /// </summary>
         /// <returns></returns>
         /// <remarks>The knows problem with this in that when my content is rendered
         /// this function is called for each answer description. Need to optimize somehow.</remarks>
-        private Dictionary<string, ApplicationUser> GetCachedData()
+        private Dictionary<string, ApplicationUserDto> GetCachedData()
         {
             object data = _cacheManager.Get(CacheConstants.CACHE_KEY_USERS_DATA);
             if (data == null)
             {
-                var dataSource = new Dictionary<string, ApplicationUser>();
+                var dataSource = new Dictionary<string, ApplicationUserDto>();
 
                 // We are not going to load the number of answers per user.
                 // We will let answer service to deal with this.
                 // We will store index of all user answers there. Not here.
                 // We can theoretically do this hear too but let all the answers cache be deal with by answer service.
                 foreach (var user in _userManager.Users)
-                    dataSource.Add(user.Id, user);
+                    dataSource.Add(user.Id, user.ToDto());
 
                 _cacheManager.Add(CacheConstants.CACHE_KEY_USERS_DATA, dataSource);
                 return dataSource;
             }
-            return (Dictionary<string, ApplicationUser>)data;
+            return (Dictionary<string, ApplicationUserDto>)data;
         }
         #endregion
     }

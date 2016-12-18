@@ -191,7 +191,7 @@ namespace BestFor.Controllers
                 _logger.LogInformation(3, "User created a new account with password.");
 
                 // Add user to cache
-                _userService.AddUserToCache(user);
+                _userService.AddUserToCache(user.ToDto());
 
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
@@ -373,7 +373,7 @@ namespace BestFor.Controllers
 
             // Populate image, load users image if needed
             model.UserImageUrl = _blobService.GetUserImagUrl(user);
-            model.UserImageUrlSmall = user.ImageUrlSmall;
+            model.UserImageUrlSmall = user.UserImageUrlSmall;
 
             return View(model);
         }
@@ -494,7 +494,7 @@ namespace BestFor.Controllers
             }
 
             // Need to update cache .....
-            _userService.AddUserToCache(user);
+            _userService.AddUserToCache(user.ToDto());
 
             AddErrors(updateResult);
 
@@ -645,10 +645,10 @@ namespace BestFor.Controllers
             _blobService.GetUserImagUrl(user);
 
             // Delete only if there
-            if (user.ImageUrl != null)
+            if (user.UserImageUrl != null)
             {
                 _blobService.DeleteUserProfilePicture(user.UserName);
-                user.ImageUrl = null;
+                user.UserImageUrl = null;
             }
 
             return RedirectToAction("ViewProfile");
@@ -826,10 +826,10 @@ namespace BestFor.Controllers
         {
             // blank Display name is OK
             if (string.IsNullOrEmpty(displayName) || string.IsNullOrWhiteSpace(displayName)) return true;
-            var user = _userService.FindByDisplayName(displayName);
+            var user = _userService.FindDirectByDisplayName(displayName);
             if (user != null)
             {
-                if (userId == user.Id)
+                if (userId == user.UserId)
                     return true; // ignore existing/current user
 
                 ModelState.AddModelError(string.Empty, "This display name is already taken.");

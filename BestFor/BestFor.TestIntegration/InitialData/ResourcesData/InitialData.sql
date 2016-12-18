@@ -357,10 +357,10 @@ GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'site_description')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'site_description',
-		N'Impress the world with your opinion about the best stuff on Earth! Join the fun today! www.completeopinion.com', getDate());
+		N'Impress the world with your opinion about the best stuff on Earth! Join the fun today! www.apinioner.com', getDate());
 if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'site_description')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'site_description',
-		N'Поразите мир своим мнением о лучших вещах на Земле! Присоединяйтесь сегодня! www.completeopinion.com', getDate());
+		N'Поразите мир своим мнением о лучших вещах на Земле! Присоединяйтесь сегодня! www.apinioner.com', getDate());
 GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'global_site_index_title')

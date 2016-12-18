@@ -1,5 +1,5 @@
 ﻿using BestFor.Dto;
-using BestFor.Domain.Entities;
+using BestFor.Dto.Account;
 
 namespace BestFor.Services.Blobs
 {
@@ -16,7 +16,7 @@ namespace BestFor.Services.Blobs
         /// <param name="user"></param>
         /// <returns></returns>
         /// <remarks>Images are sparate users. This service helps tying then together.</remarks>
-        string GetUserImagUrl(ApplicationUser user);
+        string GetUserImagUrl(ApplicationUserDto user);
 
         /// <summary>
         /// Set the fact that we already checked user's image existence.
@@ -25,6 +25,6 @@ namespace BestFor.Services.Blobs
         /// </summary>
         /// <param name="user"></param>
         /// <param name="hasImage"></param>
-        void SetUserImageCached(ApplicationUser user, bool hasImage);
+        void SetUserImageCached(ApplicationUserDto user, bool hasImage);
     }
 }

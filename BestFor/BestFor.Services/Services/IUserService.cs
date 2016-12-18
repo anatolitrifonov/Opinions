@@ -1,5 +1,4 @@
-﻿using BestFor.Domain.Entities;
-using BestFor.Dto;
+﻿using BestFor.Dto;
 using BestFor.Dto.Account;
 using System.Collections.Generic;
 
@@ -15,11 +14,12 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="displayName"></param>
         /// <returns></returns>
-        ApplicationUser FindByDisplayName(string displayName);
+        /// <remarks>Direct means goes directly to database.</remarks>
+        ApplicationUserDto FindDirectByDisplayName(string displayName);
 
-        ApplicationUser FindById(string id);
+        ApplicationUserDto FindById(string id);
 
-        ApplicationUser FindByUserName(string userName);
+        ApplicationUserDto FindByUserName(string userName);
 
         /// <summary>
         /// Find users by a set of ids.
@@ -32,9 +32,9 @@ namespace BestFor.Services.Services
         /// List all users
         /// </summary>
         /// <returns></returns>
-        IEnumerable<ApplicationUser> FindAll();
+        IEnumerable<ApplicationUserDto> FindAll();
 
-        int AddUserToCache(ApplicationUser user);
+        int AddUserToCache(ApplicationUserDto user);
 
         /// <summary>
         /// Verifies if user needs to get a level.
@@ -44,6 +44,6 @@ namespace BestFor.Services.Services
         /// </summary>
         /// <param name="user"></param>
         /// <param name="eventType"></param>
-        UserLevelingResultDto LevelUser(ApplicationUser user, EventType eventType);
+        UserLevelingResultDto LevelUser(ApplicationUserDto user, EventType eventType);
     }
 }

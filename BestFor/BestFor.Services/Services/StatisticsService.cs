@@ -1,9 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using BestFor.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BestFor.Dto.Account;
+using Microsoft.Extensions.Logging;
 
 namespace BestFor.Services.Services
 {
@@ -37,16 +33,16 @@ namespace BestFor.Services.Services
         /// Update user statistics from different indexes and services if it is not up to date.
         /// </summary>
         /// <param name="user"></param>
-        public void LoadUserStatictics(ApplicationUser user)
+        public void LoadUserStatictics(ApplicationUserDto user)
         {
             // No need to go into cache and read stuff if user is up to date.
             // We hope that we covered all the places that will trigger statistics change.
             if (user.IsStatisticsCached) return;
 
-            user.NumberOfAnswers = _answerService.CountByUserId(user.Id); // user.NumberOfAnswers;
-            user.NumberOfDescriptions = _answerDescriptionService.CountByUserId(user.Id); // user.NumberOfDescriptions;
-            user.NumberOfVotes = _voteService.CountByUserId(user.Id); // user.NumberOfVotes;
-            user.NumberOfFlags = _flagService.CountByUserId(user.Id); // user.NumberOfFlags;
+            user.NumberOfAnswers = _answerService.CountByUserId(user.UserId);
+            user.NumberOfDescriptions = _answerDescriptionService.CountByUserId(user.UserId);
+            user.NumberOfVotes = _voteService.CountByUserId(user.UserId);
+            user.NumberOfFlags = _flagService.CountByUserId(user.UserId);
 
             user.IsStatisticsCached = true;
         }

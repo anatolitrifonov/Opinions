@@ -52,7 +52,7 @@ namespace BestFor.Controllers
             _statisticsService.LoadUserStatictics(user);
 
             var result = _flagService.FlagAnswer(
-                new AnswerFlagDto() { AnswerId = answerId, UserId = user.Id } 
+                new AnswerFlagDto() { AnswerId = answerId, UserId = user.UserId } 
             );
 
             if (result.IsNew)
@@ -83,7 +83,7 @@ namespace BestFor.Controllers
             
             // this does return answerId
             var result = _flagService.FlagAnswerDescription(
-                new AnswerDescriptionFlagDto() { AnswerDescriptionId = answerDescriptionId, UserId = user.Id }
+                new AnswerDescriptionFlagDto() { AnswerDescriptionId = answerDescriptionId, UserId = user.UserId }
             );
 
             if (result.IsNew)

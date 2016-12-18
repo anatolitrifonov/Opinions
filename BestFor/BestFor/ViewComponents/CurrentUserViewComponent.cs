@@ -38,10 +38,10 @@ namespace BestFor.ViewComponents
 
                 // Populate image, load users image if needed
                 // userService does not set or load it, simply does not
-                user.ImageUrl = _blobService.GetUserImagUrl(user);
-                user.ImageUrlSmall = user.ImageUrlSmall;
+                user.UserImageUrl = _blobService.GetUserImagUrl(user);
+                user.UserImageUrlSmall = user.UserImageUrlSmall;
 
-                model = user.ToDto();
+                model = user;
                 model.IsSignedIn = true;
             }
             else

@@ -138,7 +138,7 @@ namespace BestFor.Services.DataSources
         }
 
         /// <summary>
-        /// Return top first index <paramref name="count"/> keys that contain max number of items.
+        /// Return top first index <paramref name="count"/> keys that contain max number of items together with number of items.
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>

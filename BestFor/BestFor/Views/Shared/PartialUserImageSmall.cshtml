@@ -3,7 +3,7 @@
 @if (Model != null)
 {
     int level = Model.Level < 0 || Model.Level > 10 ? 0 : Model.Level;
-    string stringOutsideImage = "~/images/themes/green/level_s" + (level + 1) + ".png";
+    string stringOutsideImage = "~/images/themes/green/level_s" + level + ".png";
     string stringUserImage = Model.UserImageUrlSmall;
     if (stringUserImage == null)
     {

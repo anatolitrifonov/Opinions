@@ -4,7 +4,7 @@ using BestFor.Services.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace BestFor.Controllers
 {
@@ -48,7 +48,7 @@ namespace BestFor.Controllers
 
             var result = new AnswersDto();
 
-            result.Answers = _answerService.FindLeftAnswers(data);
+            result.Answers = _answerService.FindLeftAnswers(data).ToList();
             result.SearchKeyword = data;
 
             return View("Result", result);
@@ -70,7 +70,7 @@ namespace BestFor.Controllers
 
             var result = new AnswersDto();
 
-            result.Answers = _answerService.FindRightAnswers(data);
+            result.Answers = _answerService.FindRightAnswers(data).ToList();
             result.IsLeft = false;
             result.SearchKeyword = data;
 
@@ -87,7 +87,7 @@ namespace BestFor.Controllers
             _logger.LogDebug("SearchController Everything");
 
             var result = new AnswersDto();
-            result.Answers = _answerService.FindLastAnswers();
+            result.Answers = _answerService.FindLastAnswers().ToList();
 
             return View(result);
         }
@@ -102,7 +102,7 @@ namespace BestFor.Controllers
             _logger.LogDebug("SearchController Everything(" + searchPhrase + ")");
 
             var result = new AnswersDto();
-            result.Answers = _answerService.FindLastAnswers(searchPhrase);
+            result.Answers = _answerService.FindLastAnswers(searchPhrase).ToList();
 
             return View(result);
         }

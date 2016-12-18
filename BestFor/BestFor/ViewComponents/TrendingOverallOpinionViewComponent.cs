@@ -1,6 +1,7 @@
 ﻿using BestFor.Dto;
 using BestFor.Services.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BestFor.ViewComponents
@@ -28,7 +29,7 @@ namespace BestFor.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var model = new AnswersDto();
-            model.Answers = await _answerService.FindAnswersTrendingOverall();
+            model.Answers = (await _answerService.FindAnswersTrendingOverall()).ToList();
             return View(model);
         }
     }

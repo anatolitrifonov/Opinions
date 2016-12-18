@@ -1,13 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace BestFor.Dto
 {
-    [ExcludeFromCodeCoverage]
     public class AnswersDto : CrudMessagesDto
     {
-        public IEnumerable<AnswerDto> Answers { get; set; } = Enumerable.Empty<AnswerDto>();
+        public List<AnswerDto> Answers { get; set; }
 
         /// <summary>
         /// When true this is search result on the left words

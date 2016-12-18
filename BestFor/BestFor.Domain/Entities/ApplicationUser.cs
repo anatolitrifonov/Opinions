@@ -17,13 +17,6 @@ namespace BestFor.Domain.Entities
         [StringLength(100, ErrorMessage = "*", MinimumLength = 6)] // The {0} must be at least {2} characters long.
         public string DisplayName { get; set; }
 
-        /// <summary>
-        /// When ApplicationUser class is instantiated, IsStatisticsCached property is false by defaul.
-        /// It will be set to true once user's statistics is cached which is usually when it is requested for the first time.
-        /// </summary>        
-        [NotMapped]
-        public bool IsStatisticsCached { get; set; }
-
         public int NumberOfAnswers { get; set; }
 
         public int NumberOfDescriptions { get; set; }
@@ -49,22 +42,6 @@ namespace BestFor.Domain.Entities
 
         [StringLength(1000, MinimumLength = 3)]
         public string CancellationReason { get; set; }
-
-        /// <summary>
-        /// When this class is instantiated, this property is false.
-        /// It will be set to true once user's image url is requested for the first time.
-        /// </summary>
-        [NotMapped]
-        public bool IsImageCached { get; set; }
-
-        /// <summary>
-        /// Path to user's image
-        /// </summary>
-        [NotMapped]
-        public string ImageUrl { get; set; }
-
-        [NotMapped]
-        public string ImageUrlSmall { get; set; }
 
         [StringLength(200, MinimumLength = 3)]
         public string CompanyName { get; set; }
@@ -104,10 +81,19 @@ namespace BestFor.Domain.Entities
                 UserName = UserName,
                 NumberOfAnswers = NumberOfAnswers,
                 DisplayName = DisplayName,
-                IsImageCached = IsImageCached,
-                UserImageUrl = ImageUrl,
-                UserImageUrlSmall = ImageUrlSmall,
-                Level = Level
+                Level = Level,
+
+                DateAdded = DateAdded,
+                PhoneNumber = PhoneNumber,
+                CompanyName = CompanyName,
+                WebSite = WebSite,
+                UserDescription = UserDescription,
+                ShowEmail = ShowEmail,
+                ShowPhoneNumber = ShowPhoneNumber,
+                ShowCompanyName = ShowCompanyName,
+                ShowWebSite = ShowWebSite,
+                ShowUserDescription = ShowUserDescription,
+                ShowAvatar = ShowAvatar
             };
         }
 
@@ -116,9 +102,6 @@ namespace BestFor.Domain.Entities
             Id = dto.UserId;
             UserName = dto.UserName;
             NumberOfAnswers = dto.NumberOfAnswers;
-            IsImageCached = dto.IsImageCached;
-            ImageUrl = dto.UserImageUrl;
-            ImageUrlSmall = dto.UserImageUrlSmall;
             Level = dto.Level;
 
             return 1;
