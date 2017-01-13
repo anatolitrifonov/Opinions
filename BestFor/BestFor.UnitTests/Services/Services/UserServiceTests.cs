@@ -48,7 +48,7 @@ namespace BestFor.UnitTests.Services.Services
             Assert.Equal(setup.UserService.FindById("A").UserId, "A");
 
             // this will give us a cached dictionary of users
-            var cache = (Dictionary<string, ApplicationUser>)setup.CacheMock.Object.Get(CacheConstants.CACHE_KEY_USERS_DATA);
+            var cache = (Dictionary<string, ApplicationUserDto>)setup.CacheMock.Object.Get(CacheConstants.CACHE_KEY_USERS_DATA);
 
             // check that cache has the user
             Assert.NotNull(cache["A"]);

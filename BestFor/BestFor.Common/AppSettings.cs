@@ -36,6 +36,9 @@ namespace BestFor.Common
 
         public bool EnableFacebookSharing { get; set; }
 
+        /// <summary>
+        /// Used only for sharing on facebook.
+        /// </summary>
         public string FullDomainAddress { get; set; }
 
         /// <summary>

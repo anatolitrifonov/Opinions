@@ -6,6 +6,7 @@ using BestFor.Controllers;
 using BestFor.Data;
 using BestFor.Domain.Entities;
 using BestFor.Dto;
+using BestFor.Dto.Account;
 using BestFor.Fakes;
 using BestFor.Services.Cache;
 using BestFor.Services.DataSources;
@@ -58,38 +59,53 @@ namespace BestFor.UnitTests.Controllers
         [Fact]
         public void VoteController_VoteAnswer_AddsVote()
         {
+            const string USER_NAME = "asd";
             // Arrange
             var dataContext = new FakeDataContext();
             var testLoggerFactory = new TestLoggerFactory();
             var userManager = new UserManager<ApplicationUser>(dataContext, null, null, null, null, null, null, null, null);
-            var identity = new GenericIdentity("asd");
+            var identity = new GenericIdentity(USER_NAME);
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "ASD"));
             var principal = new GenericPrincipal(identity, null);
             var httpContext = new DefaultHttpContext() { User = principal };
             var controllerContext = new ControllerContext() { HttpContext = httpContext };
 
+            var userDto = new ApplicationUserDto() { UserName = USER_NAME };
+
             // Setup test data
-            var vote = new AnswerVoteDto() { AnswerId = 1 };
+            // var vote = new AnswerVoteDto() { AnswerId = 1 };
+
 
             // Setup user service
             var userServiceMock = new Mock<IUserService>();
-            // userServiceMock.Setup(x => x.VoteAnswer(vote)).Returns(new DataOperationResult());
+            userServiceMock.Setup(x => x.FindByUserName(It.IsAny<string>())).Returns(userDto);
 
             // Setup vote service
             var voteServiceMock = new Mock<IVoteService>();
-            voteServiceMock.Setup(x => x.VoteAnswer(vote)).Returns(new DataOperationResult());
+            voteServiceMock.Setup(x => x.VoteAnswer(It.IsAny<AnswerVoteDto>())).Returns(
+                new DataOperationResult()
+                {
+                    IsNew = true
+                }
+            );
 
             // Setup resource service
             var resourceServiceMock = new Mock<IResourcesService>();
             resourceServiceMock.Setup(x => x.GetString(It.IsAny<string>(), It.IsAny<string>())).Returns("A");
 
-            var controller = new VoteController(userServiceMock.Object, voteServiceMock.Object, resourceServiceMock.Object, testLoggerFactory, null)
+            // Setup statistics service
+            var staticticsServiceMock = new Mock<IStatisticsService>();
+            staticticsServiceMock.Setup(x => x.LoadUserStatictics(It.IsAny<ApplicationUserDto>()));
+
+            var controller = new VoteController(userServiceMock.Object, voteServiceMock.Object, resourceServiceMock.Object,
+                testLoggerFactory, staticticsServiceMock.Object)
             {
                 ControllerContext = controllerContext
             };
 
             // Act
-            var result = controller.VoteAnswer(vote.AnswerId);
+            // var result = controller.VoteAnswer(vote.AnswerId);
+            var result = controller.VoteAnswer(1);
 
             // Assert
             var viewResult = Assert.IsType<RedirectToActionResult>(result);

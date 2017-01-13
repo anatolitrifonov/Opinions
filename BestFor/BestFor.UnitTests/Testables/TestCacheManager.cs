@@ -14,7 +14,7 @@ namespace BestFor.UnitTests.Testables
     [ExcludeFromCodeCoverage]
     public class TestCacheManager
     {
-        public Dictionary<string, object> Cache;
+        private Dictionary<string, object> Cache;
 
         public Mock<ICacheManager> CacheMock;
 
@@ -24,15 +24,30 @@ namespace BestFor.UnitTests.Testables
             CacheMock = new Mock<ICacheManager>();
             // Setup cache to store in dictionary
             CacheMock.Setup(x => x.Add(It.IsAny<string>(), It.IsAny<object>()))
-                .Callback((string key, object value) => Cache.Add(key, value))
+                .Callback((string key, object value) => AddToCache(key, value))
                 .Returns((string key, object value) => value);
             CacheMock.Setup(x => x.Get(It.IsAny<string>()))
-                .Returns((string key) => Cache.ContainsKey(key) ? Cache[key] : null);
+                .Returns((string key) => IsKeyInCache(key) ? GetFromCache(key) : null);
         }
+
         public void ClearCache()
         {
             Cache.Clear();
         }
 
+        private bool IsKeyInCache(string key)
+        {
+            return Cache.ContainsKey(key);
+        }
+
+        private object GetFromCache(string key)
+        {
+            return Cache[key];
+        }
+
+        private void AddToCache(string key, object value)
+        {
+            Cache.Add(key, value);
+        }
     }
 }

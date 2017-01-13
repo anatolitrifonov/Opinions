@@ -27,6 +27,9 @@ namespace BestFor.UnitTests.Services.Services
             public Repository<AnswerFlag> AnswerFlagsRepository;
             public Repository<AnswerDescriptionFlag> AnswerDescriptionFlagRepository;
             public TestLoggerFactory TestLoggerFactory;
+            public Mock<IAnswerDescriptionService> AnswerDescriptionServiceMock;
+
+            public int EXISTING_ANSWER_ID = 15;
 
             public TestSetup()
             {
@@ -35,8 +38,16 @@ namespace BestFor.UnitTests.Services.Services
                 AnswerDescriptionFlagRepository = new Repository<AnswerDescriptionFlag>(dataContext);
                 CacheMock = new TestCacheManager().CacheMock;
                 TestLoggerFactory = new TestLoggerFactory();
+
+                AnswerDescriptionServiceMock = new Mock<IAnswerDescriptionService>();
+                // Suppose we always adding answer 15
+                AnswerDescriptionServiceMock.Setup(
+                    x => x.FindByAnswerDescriptionId(It.IsAny<int>())
+                    ).Returns(new AnswerDescriptionDto() { AnswerId = EXISTING_ANSWER_ID });
+                TestLoggerFactory = new TestLoggerFactory();
+
                 FlagService = new FlagService(
-                    null,
+                    AnswerDescriptionServiceMock.Object,
                     CacheMock.Object,
                     AnswerFlagsRepository,
                     AnswerDescriptionFlagRepository,
@@ -131,14 +142,17 @@ namespace BestFor.UnitTests.Services.Services
 
             var count = setup.AnswerDescriptionFlagRepository.Queryable().Where(x => x.UserId == "1").Count();
             Assert.Equal(0, count);
-            setup.FlagService.FlagAnswerDescription(answerDescriptionFlag1);
+            var dataOperationResult = setup.FlagService.FlagAnswerDescription(answerDescriptionFlag1);
             count = setup.AnswerDescriptionFlagRepository.Queryable().Where(x => x.UserId == "1").Count();
             Assert.Equal(1, count);
-            setup.FlagService.FlagAnswerDescription(answerDescriptionFlag2);
+            Assert.Equal(dataOperationResult.IntId, setup.EXISTING_ANSWER_ID);
+
+            dataOperationResult = setup.FlagService.FlagAnswerDescription(answerDescriptionFlag2);
             // Verify insert was called for every flag save. Flags work differently than votes.
             // Double flags are OK.
             count = setup.AnswerDescriptionFlagRepository.Queryable().Where(x => x.UserId == "1").Count();
             Assert.Equal(2, count);
+            Assert.Equal(dataOperationResult.IntId, setup.EXISTING_ANSWER_ID);
         }
 
         [Fact]

@@ -198,6 +198,12 @@ namespace BestFor.Services.DataSources
         public TEntity Insert(TEntity entity)
         {
             var key = entity.IndexKey;
+
+            // Strangely enough but this might happen.
+            // Example answer description does not always have a user but it's index key is UserId.
+            // It might not be set.
+            if (key == null) return entity;
+
             // Add to a set of items under index value
             if (_data.ContainsKey(key))
             {

@@ -1,11 +1,11 @@
 ﻿using BestFor.Data;
 using BestFor.Domain.Entities;
 using BestFor.Dto;
+using BestFor.Dto.Account;
 using BestFor.Services.Cache;
 using BestFor.Services.DataSources;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BestFor.Services.Services
 {
@@ -85,7 +85,7 @@ namespace BestFor.Services.Services
             else
             {
                 result.UsersCacheStatus = "Loaded";
-                result.UsersCacheNumberItems = ((Dictionary<string, ApplicationUser>)usersData).Count;
+                result.UsersCacheNumberItems = ((Dictionary<string, ApplicationUserDto>)usersData).Count;
             }
 
             return result;
@@ -126,9 +126,9 @@ namespace BestFor.Services.Services
 
         public int InitUsers()
         {
-            var dataSource = new Dictionary<string, ApplicationUser>();
+            var dataSource = new Dictionary<string, ApplicationUserDto>();
             foreach (var user in _userManager.Users)
-                dataSource.Add(user.Id, user);
+                dataSource.Add(user.Id, user.ToDto());
             _cacheManager.Add(CacheConstants.CACHE_KEY_USERS_DATA, dataSource);
             return dataSource.Count;
         }

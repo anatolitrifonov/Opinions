@@ -1,5 +1,6 @@
 ﻿using BestFor.Domain.Interfaces;
 using BestFor.Dto;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -53,7 +54,15 @@ namespace BestFor.Domain.Entities
         #region IFirstIndex implementation
         // We do not care about number of flags per answer. Only per user at the moment.
         [NotMapped]
-        public string IndexKey { get { return UserId; } }
+        public string IndexKey
+        {
+            get
+            {
+                if (UserId == null)
+                    throw new Exception("AnswerDescriptionFlag must have UserId set");
+                return UserId;
+            }
+        }
         #endregion
 
         #region ISecondIndex implementation

@@ -105,7 +105,11 @@ namespace BestFor.UnitTests.Services.Services
             Assert.Equal(result.IntId, answerVoteDto.AnswerId);
 
             // Verify cache get was called only once
-            setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_VOTES_DATA), Times.Once());
+            // This test became more complex. Since we are passing user id service will also
+            // update the cache of user votes and when doing that it will call for 
+            // description votes cache one more time to get it built.
+            // Changing once to twice.
+            setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_VOTES_DATA), Times.Exactly(2));
             // Verify cache add to cache was called only once
             setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_VOTES_DATA,
                 It.IsAny<KeyIndexedDataSource<AnswerVote>>()), Times.Once());
@@ -168,7 +172,11 @@ namespace BestFor.UnitTests.Services.Services
             Assert.Equal(result.IntId, 15);
 
             // Verify cache get was called only once
-            setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA), Times.Once());
+            // This test became more complex. Since we are passing user id service will also
+            // update the cache of user votes and when doing that it will call for 
+            // description votes cache one more time to get it built.
+            // Changing once to twice.
+            setup.CacheMock.Verify(x => x.Get(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA), Times.Exactly(2));
             // Verify cache add to cache was called only once
             setup.CacheMock.Verify(x => x.Add(CacheConstants.CACHE_KEY_DESCRIPTION_VOTES_DATA,
                 It.IsAny<KeyIndexedDataSource<AnswerDescriptionVote>>()), Times.Once());
