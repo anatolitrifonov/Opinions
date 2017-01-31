@@ -50,12 +50,7 @@ div.best-top-left-bar
     font-size: 36px;
     float:left;
     text-align:left;
-}
-
-/* sets the color for top bar left anchors. White :) */
-div.best-top-left-bar a
-{
-    color: #FFFFFF;
+    color: #FFFFFF; /* This is used for the color of the HOME icon*/
     text-decoration: none;
 }
 
@@ -90,6 +85,20 @@ span.best-top-center-highlighted-text
     font-size: 25px;
     font-weight: bold;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+/* set the font for the second line of text on the page */
+span.best-top-center-second-level-text 
+{
+    color: #FFFFFF;
+    font-size: 20px;
+}
+/* and a link for the above */
+span.best-top-center-second-level-text a.best-top-center-second-level-text 
+{
+    color: #FFFFFF;
+    font-size: 20px;
+    /* text-decoration: none; */
 }
 
 /* set some padding from top */

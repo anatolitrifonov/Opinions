@@ -26,6 +26,7 @@ namespace BestFor.Controllers
         private readonly IResourcesService _resourcesService;
         private readonly IUserService _userService;
         private readonly IVoteService _voteService;
+        private readonly IHelpItemService _helpItemService;
         /// <summary>
         /// Logger
         /// </summary>
@@ -37,13 +38,14 @@ namespace BestFor.Controllers
 
         public HomeController(IAnswerService answerService, IAnswerDescriptionService answerDescriptionService,
             IResourcesService resourcesService, IUserService userService, IVoteService voteService,
-            ILoggerFactory loggerFactory, IOptions<AppSettings> appSettings)
+            ILoggerFactory loggerFactory, IOptions<AppSettings> appSettings, IHelpItemService helpItemService)
         {
             _userService = userService;
             _answerService = answerService;
             _answerDescriptionService = answerDescriptionService;
             _resourcesService = resourcesService;
             _voteService = voteService;
+            _helpItemService = helpItemService;
             _appSettings = appSettings;
             _logger = loggerFactory.CreateLogger<HomeController>();
             _logger.LogInformation("created HomeController");
@@ -131,6 +133,24 @@ namespace BestFor.Controllers
             answerDetails.DebugReactControls = ReadUrlParameterAsBoolean(DEBUG_REACTJS_URL_PARAMETER_NAME);
 
             return View(answerDetails);
+        }
+
+        /// <summary>
+        /// Render help page.
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Help()
+        {
+            return View(_helpItemService.FindAll(null));
+        }
+
+        /// <summary>
+        /// Render about page.
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult About()
+        {
+            return View();
         }
 
         /// <summary>

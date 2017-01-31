@@ -15,6 +15,7 @@ namespace BestFor.Controllers
     /// Controller has to inherit BaseApiController in order for filter to work correctly.
     /// 
     /// Implements the contact us screens.
+    /// Not a protected controller.
     /// </summary>
     [ServiceFilter(typeof(LanguageActionFilter))]
     public class ContactController : BaseApiController
@@ -71,7 +72,43 @@ namespace BestFor.Controllers
             // Read the reason
             var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_CONTACTING);
 
-            // return await Task.FromResult<IActionResult>(View(model));
+            return RedirectToAction("Index", "Home", new { reason = reason });
+
+        }
+        /// <summary>
+        /// Default contact us page view.
+        /// </summary>
+        /// <returns></returns>
+        // GET: /<controller>/
+        public async Task<IActionResult> Suggestion()
+        {
+            var model = new ContactUsDto();
+
+            model.UserName = _userManager.GetUserName(User);
+            if (model.UserName == null) model.UserName = "Anonymous";
+            model.Subject = "Suggestion";
+
+            return await Task.FromResult<IActionResult>(View(model));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Suggestion(ContactUsDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            model.UserName = _userManager.GetUserName(User);
+
+            string message = "User " + model.UserName + " is sending a suggestion us. " + model.Content;
+
+            _emailSender.SendEmailAsync(model.Subject, message);
+
+            // Read the reason
+            var reason = _resourcesService.GetString(this.Culture, Lines.THANK_YOU_FOR_CONTACTING);
+
             return RedirectToAction("Index", "Home", new { reason = reason });
 
         }

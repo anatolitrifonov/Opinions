@@ -1,18 +1,23 @@
 ﻿@*Inject the service that allows searching for localized strings *@
 @inject BestFor.Services.Services.IResourcesService resourcesService
-@{ 
-    string contactUs = resourcesService.GetString(ViewBag.BestForCulture, "contact_us");
-    string suggestions = resourcesService.GetString(ViewBag.BestForCulture, "suggestions_upper");
-
+@{
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "contact_us",
+        "help_capital",
+        "about_capital",
+        "suggestions_upper"
+     });
+    string stringContactUs = localStrings[0];
+    string stringHelp = localStrings[1];
+    string stringAbout = localStrings[2];
+    string stringSuggestions = localStrings[3];
 }
 <div style="text-align:right">
         
-    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Contact" y-action="Index">
-        @suggestions
-    </yakor>&nbsp;&nbsp;
-    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Contact" y-action="Index">
-        @contactUs
-    </yakor>
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Contact" y-action="Suggestion">@stringSuggestions</yakor>&nbsp;&nbsp;
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Contact" y-action="Index">@stringContactUs</yakor>&nbsp;&nbsp;
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="About">@stringAbout</yakor>&nbsp;&nbsp;
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Help">@stringHelp</yakor>
     <!--<a href="/home/index">English</a>&nbsp;&nbsp;
     <a href="/ru-RU/home/index">Русский</a>&nbsp;&nbsp;
     <a href="/fi-FI/home/index">Finnish</a>&nbsp;&nbsp;
@@ -26,7 +31,7 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-83704789-1', 'auto');
+  ga('create', 'UA-90864720-1', 'auto');
   ga('send', 'pageview');
 
 </script>

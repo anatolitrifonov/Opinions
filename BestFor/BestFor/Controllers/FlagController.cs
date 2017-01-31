@@ -17,7 +17,7 @@ namespace BestFor.Controllers
     public class FlagController : BaseApiController
     {
         private readonly IUserService _userService;
-        private IFlagService _flagService;
+        private readonly IFlagService _flagService;
         private readonly ILogger _logger;
         private readonly IResourcesService _resourcesService;
         private readonly IStatisticsService _statisticsService;

@@ -32,7 +32,7 @@ namespace BestFor.Services.Services
         /// </summary>
         private ICacheManager _cacheManager;
         private IRepository<ResourceString> _repository;
-        private const string DEFAULT_CULTURE = "en-US";
+        public const string DEFAULT_CULTURE = "en-US";
         /// <summary>
         /// Save data between calls. This object might be needed several times. No need to go to cache every time.
         /// </summary>
@@ -112,6 +112,7 @@ namespace BestFor.Services.Services
                     result[i] = keys[i];
                 else
                     result[i] = FindOneString(culture, keys[i], resourceStrings);
+                result[i] = ReplacePatterns(result[i], _commonStrings.Translations);
             }
             return result;
         }

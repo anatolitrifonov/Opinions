@@ -1,7 +1,9 @@
-﻿if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'trending_today')
-	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'trending_today', N'Trending Today', getDate());
+﻿-- delete from ResourceStringsGO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'trending_today')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'trending_today', N'Opinions Trending Today', getDate());
 if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'trending_today')
-	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'trending_today', N'Популярные сегодня', getDate());
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'trending_today', N'Мнения Популярные Сегодня', getDate());
 GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'trending_overall')
@@ -666,4 +668,63 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 		N'Гость', getDate());
 GO
 
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'help_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'help_capital',
+		N'Help', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'help_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'help_capital',
+		N'Помощь', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'about_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'about_capital',
+		N'About', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'about_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'about_capital',
+		N'О Проекте', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'about_the_site_title')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'about_the_site_title',
+		N'About Apinioner.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'about_the_site_title')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'about_the_site_title',
+		N'О Проекте Apinioner.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'about_the_site_description')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'about_the_site_description',
+		N'About Apinioner.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'about_the_site_description')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'about_the_site_description',
+		N'О Проекте Apinioner.', getDate());
+GO
+
+update ResourceStrings set [Value] = 
+	'<p>Welcome to Apinioner.com!</p>
+<p>This is a community of people sharing their opinions on the best stuff on Earth. We are here to help and share the knowledge.</p>
+<p>This site does not sell anything. It recommends some products found useful by our visitors.</p>
+<p>You do not have to register to share your opinion.</p>
+<p>Registration allows you to battle for being the top Apinioner.</p>
+<p>Register, contribute by adding your opinions, descriptions and votes, gain levels and achievements, become Apinioner!<p>
+<p>Have a great time!</p>'
+	where CultureName = 'en-US' and [Key] = 'about_the_site_description'
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'logoff_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'logoff_capital',
+		N'Log off', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'logoff_capital')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'logoff_capital',
+		N'Выход', getDate());
+GO
+
 -- delete from ResourceStrings where [key] in ('help_others', 'add_your_opinion', 'if_search_is_not_sufficient')
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'help_title')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'help_title',
+		N'Helpful Questions and Answers.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'help_title')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'help_title',
+		N'Полезные Вопросы и Ответы.', getDate());
+GO

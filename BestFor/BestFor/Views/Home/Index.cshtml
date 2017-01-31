@@ -15,10 +15,20 @@
     <meta property="og:description" content="best opinions on thousands of questions and best products" />
 }
 @section TopCenter {
-    <div style="display: inline-block; padding-top:9px">
+    @*
+        This is the text on the top of the page.
+        Inline block prevents it taking the whole width. If we remove it the right side will start breaking to the next line.
+        We can not float left or right because we need it to just follow the alignment.
+    *@
+    <div style="display:inline-block;padding-top:9px">
         <span class="best-top-center-general-text">More than</span>
         <span class="best-top-center-highlighted-text">200 000</span>
         <span class="best-top-center-general-text">opinions on thousands of questions</span>
+        <br />
+        <span class="best-top-center-second-level-text">
+            <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+                   y-class="best-top-center-second-level-text">@searchContribute</yakor> 
+            and become an Apinioner today!</span>
     </div>
 }
 <div class="row best-theme-color">

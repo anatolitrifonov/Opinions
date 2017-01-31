@@ -1,26 +1,17 @@
 ﻿@model BestFor.Dto.Account.ApplicationUserDto
-@* This view shows information about the currently logged in user. *@
+@*
+    This is the view for a View Component called CurrentUserViewComponent.
+    This view shows information about the currently logged in user.
+    This is only the right side on the top. This is floated to the right.
+*@
 @if (Model.IsSignedIn)
 {
     <div class="best-top-right-bar">
-        <div class="dropdown">
-            <div id="accountDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-
-                @* Show user's image with level and achievements *@
-                @Html.Partial("PartialUserImageSmall", Model as BestFor.Dto.Account.IBasicUserInfo)
-
-            </div>
-            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdownMenu">
-                <li>
-                    <a class="best-user-menu" asp-controller="Account" asp-action="ViewProfile"
-                        title="Manage">@Model.DisplayName</a>
-                </li>
-                <li>
-                    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
-                        <button type="submit" class="btn btn-link">Log off</button>
-                    </form>
-                </li>
-            </ul>
+        <div class="dropdown"> @* This class just gives some position. position: relative; to be exact. 
+                                  It allows the uderlayed image display in the partial view. *@
+            @* Show user's image with level and achievements *@
+            <a class="best-user-menu" asp-controller="Account" asp-action="ViewProfile"
+                title="Manage">@Html.Partial("PartialUserImageSmall", Model as BestFor.Dto.Account.IBasicUserInfo)</a>
         </div>
     </div>
 }

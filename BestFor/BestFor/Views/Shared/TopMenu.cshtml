@@ -1,7 +1,69 @@
-﻿<div class="best-top-left-bar">
-    <a href="/@ViewBag.BestForCulture/home/index"><span class="glyphicon glyphicon-menu-hamburger"
-        aria-hidden="true"></span></a>
+﻿@*
+    This is just the left side of the top. This div is floated left.
+*@
+@using BestFor.Services
+@using BestFor.Dto
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@{ 
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "profile_capital",
+        "help_capital",
+        "about_capital",
+        "logoff_capital",
+        "contact_us",
+        "suggestions_upper"
+     });
+    string stringProfile = localStrings[0];
+    string stringHelp = localStrings[1];
+    string stringAbout = localStrings[2];
+    string stringLogoff = localStrings[3];
+    string stringContactUs = localStrings[4];
+    string stringSuggestions = localStrings[5];
+}
+<div class="best-top-left-bar">
 
-    <a href="/@ViewBag.BestForCulture/home/index"><img src="~/images/logo.png" width="40" height="40" border="0"
-                                                       style="vertical-align:top"/></a>
+    @* We need to inline-block or left float the menu otherwise the logo will break to the next line*@
+    <div class="dropdown" style="display:inline-block">
+        <div id="topLeftDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="topLeftDropdownMenu">
+            @if (User.Identity.IsAuthenticated)
+            {
+            <li>
+                <a class="best-user-menu" asp-controller="Account" asp-action="ViewProfile">@stringProfile</a>
+            </li>
+            }
+            <li>
+                <a class="best-user-menu" asp-controller="Contact" asp-action="Suggestion">@stringSuggestions</a>
+            </li>
+            <li>
+                <a class="best-user-menu" asp-controller="Contact" asp-action="Index">@stringContactUs</a>
+            </li>
+            <li>
+                <a class="best-user-menu" asp-controller="Home" asp-action="About">@stringAbout</a>
+            </li>
+            <li>
+                <a class="best-user-menu" asp-controller="Home" asp-action="Help">@stringHelp</a>
+            </li>
+            @*
+                Boostrap anchor above is padded 20px. Anchor's class only controls color.
+                Buttom below is padded only 12px
+                Need to add a bit for padding in order to line things up.
+            *@
+            @if (User.Identity.IsAuthenticated)
+            {
+            <li style="padding-left:7px">
+                <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+                    <button type="submit" class="btn btn-link">@stringLogoff</button>
+                </form>
+            </li>
+            }
+        </ul>
+    </div>
+    @* Logo *@
+    <a href="/@ViewBag.BestForCulture/home/index" id="logoAnchor" name="logoAnchor">
+        <img src="~/images/logo.png" width="40" height="40" border="0" style="vertical-align:top" />
+    </a>
 </div>

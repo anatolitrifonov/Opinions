@@ -8,8 +8,13 @@ namespace BestFor.Domain.Entities
 {
     public class Answer : EntityBase, IFirstIndex, ISecondIndex, IDtoConvertable<AnswerDto>, IIdIndex
     {
+        #region IIdIndex implementation
+        /// <summary>
+        /// Identity ...
+        /// </summary>
         [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public override int Id { get; set; }
+        #endregion
 
         [Required]
         public string LeftWord { get; set; }

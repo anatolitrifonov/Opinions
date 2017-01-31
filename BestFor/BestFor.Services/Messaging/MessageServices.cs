@@ -35,21 +35,26 @@ namespace BestFor.Services.Messaging
         /// <returns></returns>
         public void SendEmailAsync(string email, string subject, string message)
         {
-            using (var smtp = new SmtpClient(_emailServerAddress, _emailServerPort))
+            Task t = Task.Run(async () =>
             {
-                smtp.UseDefaultCredentials = false;
-                smtp.EnableSsl = true;
-                smtp.Credentials = new NetworkCredential(_emailServerUser, _emailServerPassword);
-                var mail = new MailMessage
+                using (var smtp = new SmtpClient(_emailServerAddress, _emailServerPort))
                 {
-                    Subject = subject,
-                    From = new MailAddress(_emailFromAddress),
-                    Body = message
-                };
+                    smtp.UseDefaultCredentials = false;
+                    smtp.EnableSsl = true;
+                    smtp.Credentials = new NetworkCredential(_emailServerUser, _emailServerPassword);
+                    var mail = new MailMessage
+                    {
+                        Subject = subject,
+                        From = new MailAddress(_emailFromAddress),
+                        Body = message
+                    };
 
-                mail.To.Add(email);
-                smtp.SendMailAsync(mail);
-            }
+                    mail.To.Add(email);
+                    await smtp.SendMailAsync(mail);
+                }
+            });
+
+            t.Wait(); // Wait until the above task is complete, email is sent
         }
 
         /// <summary>
@@ -60,21 +65,26 @@ namespace BestFor.Services.Messaging
         /// <returns></returns>
         public void SendEmailAsync(string subject, string message)
         {
-            using (var smtp = new SmtpClient(_emailServerAddress, _emailServerPort))
+            Task t = Task.Run(async () =>
             {
-                smtp.UseDefaultCredentials = false;
-                smtp.EnableSsl = true;
-                smtp.Credentials = new NetworkCredential(_emailServerUser, _emailServerPassword);
-                var mail = new MailMessage
+                using (var smtp = new SmtpClient(_emailServerAddress, _emailServerPort))
                 {
-                    Subject = subject,
-                    From = new MailAddress(_emailFromAddress),
-                    Body = message
-                };
+                    smtp.UseDefaultCredentials = false;
+                    smtp.EnableSsl = true;
+                    smtp.Credentials = new NetworkCredential(_emailServerUser, _emailServerPassword);
+                    var mail = new MailMessage
+                    {
+                        Subject = subject,
+                        From = new MailAddress(_emailFromAddress),
+                        Body = message
+                    };
 
-                mail.To.Add(_emailFromAddress);
-                smtp.SendMailAsync(mail);
-            }
+                    mail.To.Add(_emailFromAddress);
+                    await smtp.SendMailAsync(mail);
+                }
+            });
+
+            t.Wait(); // Wait until the above task is complete, email is sent
         }
 
         public void SendSmsAsync(string number, string message)

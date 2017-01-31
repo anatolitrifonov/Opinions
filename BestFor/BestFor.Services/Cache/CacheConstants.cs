@@ -26,5 +26,7 @@
         public const string CACHE_KEY_USER_DESCRIPTION_FLAGS_DATA = "Description Flags User Cache";
 
         public const string CACHE_KEY_USERS_DATA = "Users Cache";
+
+        public const string CACHE_KEY_HELP_DATA = "Help Items Cache";
     }
 }

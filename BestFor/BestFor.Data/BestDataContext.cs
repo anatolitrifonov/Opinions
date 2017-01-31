@@ -22,6 +22,7 @@ namespace BestFor.Data
         public DbSet<AnswerDescriptionVote> AnswerDescriptionVotes { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
+        public DbSet<HelpItem> HelpItems { get; set; }
 
         public BestDataContext(DbContextOptions<BestDataContext> options)
             : base(options)
@@ -45,6 +46,8 @@ namespace BestFor.Data
 
             // This is right now the only way to stick in the unique index that is not a key into the database.
             builder.Entity<Suggestion>().HasIndex(b => b.Phrase).IsUnique();
+            // builder.Entity<HelpItem>().HasIndex(b => [ b.Key, b.CultureName]).IsUnique();
+            // builder.Entity<HelpItem>().HasIndex( b => b.Key, b => b.CultureName).IsUnique();
         }
 
         /// <summary>
