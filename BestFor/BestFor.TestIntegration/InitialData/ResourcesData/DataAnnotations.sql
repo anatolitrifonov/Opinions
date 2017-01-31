@@ -48,12 +48,6 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 		N'Пароль должен быть между 6 и 100 символов.', getDate());
 GO
 
-delete ResourceStrings where [Key] = 'AnnotationDisplayNamePassword'
-GO
-
-delete ResourceStrings where [Key] = 'AnnotationDisplayNameConfirmPassword'
-GO
-
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationPassword')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationPassword',
 		N'Password', getDate());

@@ -45,10 +45,10 @@ if not exists(select * from HelpItems where CultureName = 'ru-RU' and [Key] = 'h
 go
 
 if not exists(select * from HelpItems where CultureName = 'en-US' and [Key] = 'help_dosell')
-	insert HelpItems(CultureName, DateAdded, [Key], HelpTitle, Value) values('en-US', getdate(), 'help_doregister', 'Do you sell products?',
+	insert HelpItems(CultureName, DateAdded, [Key], HelpTitle, Value) values('en-US', getdate(), 'help_dosell', 'Do you sell products?',
 		'No. We find products that match opinions from other sites. Clicking product link will navigate to the seller''s site.');
-if not exists(select * from HelpItems where CultureName = 'ru-RU' and [Key] = 'help_doregister')
-	insert HelpItems(CultureName, DateAdded, [Key], HelpTitle, Value) values('ru-RU', getdate(), 'help_doregister', 'Do you sell products?',
+if not exists(select * from HelpItems where CultureName = 'ru-RU' and [Key] = 'help_dosell')
+	insert HelpItems(CultureName, DateAdded, [Key], HelpTitle, Value) values('ru-RU', getdate(), 'help_dosell', 'Do you sell products?',
 		'A');
 go
 
