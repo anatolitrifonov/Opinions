@@ -20,15 +20,16 @@
             @Model.User.IsImageCached
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.User.ImageUrl)
+            @Html.DisplayNameFor(model => model.User.UserImageUrl)
         </dt>
-        <dd>@Model.User.ImageUrl 
+        <dd>@Model.User.UserImageUrl
             &nbsp;@Html.ActionLink("Upload", "UploadImage", new { userName = Model.User.UserName })<br />
-            <img src="@Model.User.ImageUrl" style="border: 3px solid green" />
+            <img src="@Model.User.UserImageUrl" style="border: 3px solid green" />
         </dd>
     </dl>
     <table class="table">
-        <tr><th colspan="5">Answers (@numberOfRecords) @Html.ActionLink("Show User's Answer Descriptions", "ShowUserDescriptions", new { id = Model.User.Id })</th></tr>
+        <tr><th colspan="5">Answers (@numberOfRecords) 
+            @Html.ActionLink("Show User's Answer Descriptions", "ShowUserDescriptions", new { id = Model.User.UserId })</th></tr>
         <tr><th>Left</th><th>Right</th><th>Phrase</th><th>Date Added</th><th>Action</th></tr>
         @foreach (var answer in Model.Answers)
         {

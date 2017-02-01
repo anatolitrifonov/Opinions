@@ -12,5 +12,7 @@ namespace BestFor.Models
         public AnswerDto Answer { get; set; }
 
         public IEnumerable<AnswerDescriptionDto> AnswerDescriptions { get; set; }
+
+        public string NavigationData { get; set;  }
     }
 }

@@ -54,11 +54,12 @@ namespace BestFor.Controllers
         /// <param name="answerId"></param>
         /// <param name="reason">Additional details on what happned to answer before we got redirected here.</param>
         /// <returns></returns>
-        /// <remarks>We can do ShowAnswer(SomeModel blah) where ShowModel has publis properties Prop1 and Prop2
-        /// Or do ShowAnswer(Prop1, Prop2) It will be the same thing since for get we need to pass them in 
+        /// <remarks>We can do ShowAnswer(SomeModel blah) where ShowModel has public properties Prop1 and Prop2
+        /// Or do ShowAnswer(Prop1, Prop2) It will be the same thing since for "get" we need to pass them in 
         /// URL anyway as ?prop1=z&prop2=x.
         /// 
         /// A bunch of actions will redirect to this one to show the answer after an action does with it.
+        /// Edit answer, vote, flag, admin
         /// </remarks>
         [HttpGet]
         [AllowAnonymous]

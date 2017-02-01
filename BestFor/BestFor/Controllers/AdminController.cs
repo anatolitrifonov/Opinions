@@ -106,7 +106,17 @@ namespace BestFor.Controllers
             // Load descriptions directly from database
             var descriptions = _answerDescriptionService.FindDirectByAnswerId(answerId);
 
-            var model = new AdminAnswerViewModel() { Answer = answer, AnswerDescriptions = descriptions };
+            // Create the object for passing data between controllers.
+            var navigationData = new NavigationDataDto();
+            navigationData.AnswerId = answerId;
+
+            var model = new AdminAnswerViewModel()
+            {
+                Answer = answer,
+                AnswerDescriptions = descriptions,
+                NavigationData = NavigationHelper.Encode(navigationData)
+            };
+
             return model;
         }
 
@@ -121,7 +131,8 @@ namespace BestFor.Controllers
         {
             var users = _userService.FindAll();
 
-            return View(users.OrderBy(x => x.DisplayName).ThenBy(x => x.UserName));
+            // return View(users.OrderBy(x => x.DisplayName).ThenBy(x => x.UserName));
+            return View(users.OrderByDescending(x => x.DateAdded).ThenBy(x => x.UserName));
         }
 
         public async Task<IActionResult> ShowUser(string id)

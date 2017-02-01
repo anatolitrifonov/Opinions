@@ -15,7 +15,8 @@
         </dd>
     </dl>
     <table class="table">
-        <tr><th colspan="4">Answer Descriptions (@numberOfRecords) @Html.ActionLink("Show User's Answers", "ShowUser", new { id = Model.User.Id })</th></tr>
+        <tr><th colspan="4">Answer Descriptions (@numberOfRecords)
+            @Html.ActionLink("Show User's Answers", "ShowUser", new { id = Model.User.UserId })</th></tr>
         <tr><th>Left</th><th>DateAdded</th><th>Answer</th><th>Actions</th></tr>
         @foreach (var answerDescription in Model.AnswerDescriptions)
         {

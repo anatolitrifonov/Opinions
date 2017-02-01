@@ -16,7 +16,7 @@ Showing answer info
     <dt>Count</dt><dd>@Model.Answer.Count</dd>
     <dt>UserId</dt><dd>@Html.ActionLink(Model.Answer.UserId, "ShowUser", new { id = Model.Answer.UserId })</dd>
     <dt>View on the site</dt>
-    <dd>@Html.ActionLink(Model.Answer.Id.ToString(), "ShowAnswer", "AnswerAction", new { answerId = Model.Answer.Id }, new { target = "_blank"})</dd>
+    <dd>@Html.ActionLink(Model.Answer.Id.ToString(), "ShowAnswer", "AnswerAction", new { data = Model.NavigationData }, new { target = "_blank"})</dd>
     <dt>View on the site as content</dt><dd><a target = "_blank" href="@linkToAnswer">View as content link</a></dd>
 </dl>
 <table class="table">
