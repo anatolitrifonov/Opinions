@@ -29,7 +29,8 @@
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
     "Microsoft.VisualStudio.Web.CodeGeneration.Tools": "1.0.0-preview2-final",
     "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.0.0-preview2-final",
-    "NLog.Extensions.Logging": "1.0.0-rtm-alpha4",
+    "NLog.Extensions.Logging": "1.0.0-*",
+    "NLog.Web.AspNetCore": "4.3.0", //only needed for ASP.NET Core users
     "React.AspNet": "2.5.0",
     "Newtonsoft.Json": "9.0.1",
     "Microsoft.AspNetCore.Mvc.TagHelpers": "1.0.0",
@@ -64,7 +65,8 @@
       "appsettings.secret.json",
       "web.config",
       "robots.txt",
-      "google9abc4825b19a260b.html"
+      "google9abc4825b19a260b.html",
+      "nlog.config"
     ]
   },
 

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using NLog.Web;
 using React.AspNet;
 
 namespace BestFor
@@ -130,7 +131,8 @@ namespace BestFor
             services.AddScoped<BestFor.Services.Services.IHelpItemService, BestFor.Services.Services.HelpItemService>();
 
             // Inject HttpContextAccessor to be able to access http context from classes.
-            // services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // needed for NLog.Web
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         /// <summary>
@@ -144,12 +146,23 @@ namespace BestFor
         /// <param name="antiforgery"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
 
             // loggerFactory.MinimumLevel = LogLevel.Information;
 
+            // add NLog to .NET Core
             loggerFactory.AddNLog();
+            // add NLog.Web
+            app.AddNLogWeb();
+
+            //Enable ASP.NET Core features (NLog.web) - only needed for ASP.NET Core users
+            // app.u
+            //app.AddNLogWeb();
+            //needed for non-NETSTANDARD platforms: configure nlog.config in your project root. 
+            // NB: you need NLog.Web.AspNetCore package for this. 
+            env.ConfigureNLog("nlog.config");
+
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
             {
