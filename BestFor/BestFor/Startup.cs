@@ -114,6 +114,7 @@ namespace BestFor
             services.AddScoped<BestFor.Data.IRepository<BestFor.Domain.Entities.AnswerVote>, BestFor.Data.Repository<BestFor.Domain.Entities.AnswerVote>>();
             services.AddScoped<BestFor.Data.IRepository<BestFor.Domain.Entities.AnswerDescriptionVote>, BestFor.Data.Repository<BestFor.Domain.Entities.AnswerDescriptionVote>>();
             services.AddScoped<BestFor.Data.IRepository<BestFor.Domain.Entities.HelpItem>, BestFor.Data.Repository<BestFor.Domain.Entities.HelpItem>>();
+            services.AddScoped<BestFor.Data.IRepository<BestFor.Domain.Entities.SearchEntry>, BestFor.Data.Repository<BestFor.Domain.Entities.SearchEntry>>();
             services.AddScoped<BestFor.Services.Cache.ICacheManager, BestFor.Services.Cache.CacheManager>();
             services.AddScoped<BestFor.Services.Services.IProfanityService, BestFor.Services.Services.ProfanityService>();
             services.AddScoped<BestFor.Services.Services.IAnswerService, BestFor.Services.Services.AnswerService>();
@@ -129,6 +130,7 @@ namespace BestFor
             services.AddScoped<BestFor.Services.Blobs.IBlobService, BestFor.Services.Blobs.BlobService>();
             services.AddScoped<BestFor.Services.Services.IStatisticsService, BestFor.Services.Services.StatisticsService>();
             services.AddScoped<BestFor.Services.Services.IHelpItemService, BestFor.Services.Services.HelpItemService>();
+            services.AddScoped<BestFor.Services.Services.ISearchEntryService, BestFor.Services.Services.SearchEntryService>();
 
             // Inject HttpContextAccessor to be able to access http context from classes.
             // needed for NLog.Web

@@ -1,0 +1,31 @@
+﻿@*Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@{
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "search_for_opinion",
+        "contribute_capital",
+        "search_capital"
+     });
+    string searchFor = localStrings[0];
+    string searchContribute = localStrings[1];
+    string searchButton = localStrings[2];
+}
+<div style="float:left;width:80%">
+    <form method="get" class="form-horizontal" role="form" action="/@ViewBag.BestForCulture/Home/Index">
+        <div class="row">
+            <div class="col-md-offset-1 col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="searchPhrase" placeholder="@searchFor">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">@searchButton</button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+                       y-class="btn btn-default">@searchContribute</yakor>
+                </div>
+            </div>
+        </form>
+    </div>
+

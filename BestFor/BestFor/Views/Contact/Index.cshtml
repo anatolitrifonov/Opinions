@@ -7,6 +7,9 @@
 @{
     ViewData["Title"] = resourcesService.GetString(ViewBag.BestForCulture, "contact_us");
 }
+@section TopCenter {
+    @Html.Partial("TopSearchHeader")
+}
 <h2>@ViewData["Title"]</h2>
 @{
     // Read localized strings

@@ -84,9 +84,8 @@
     *@
     <div class="container best-margin-top best-theme-color">
         @Html.Partial("TopMenu")
-        @* This section is only filed in on the home page. but it allows adding cutom text on each page*@
+        @* This section is only filed in on the home page. But it allows adding custom text on each page*@
         @RenderSection("TopCenter", required: false)
-        @*Html.Partial("CurrentUser")*@
         @await Component.InvokeAsync("CurrentUser")
     </div>
     @* Keep the amount of scripts loaded in this section to minimum *@

@@ -23,6 +23,7 @@ namespace BestFor.Data
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<HelpItem> HelpItems { get; set; }
+        public DbSet<SearchEntry> SearchEntries { get; set; }
 
         public BestDataContext(DbContextOptions<BestDataContext> options)
             : base(options)

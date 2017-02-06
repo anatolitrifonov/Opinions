@@ -23,13 +23,17 @@
     ViewData["Title"] = Model.ThisAnswerText;
 
     // Get antiforgery tokens for request
-    var tokens = Xsrf.GetTokens(Context);
+    // var tokens = Xsrf.GetTokens(Context);
+    var tokens = Xsrf.GetAndStoreTokens(Context);
     string xsrfToken = tokens.RequestToken;
     string xsrfHeader = tokens.HeaderName;
 }
 @section MetaKeyword {
     <meta name="keywords" content="@Model.ThisAnswerText" />
     <meta property="og:description" content="@Model.ThisAnswerText" />
+}
+@section TopCenter {
+    @Html.Partial("TopSearchHeader")
 }
 @* Show the answer itself *@
 <h1>@Model.ThisAnswerText</h1>
@@ -89,7 +93,7 @@ else
         }
     </div>
     <div class="col-sm-3">
-        @* Show edit only the answer owner *@
+        @* Show edit only if the answer owner *@
         @if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Answer.UserId)
         {
             <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="AnswerAction" y-action="Edit"

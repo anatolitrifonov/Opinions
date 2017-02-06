@@ -20,6 +20,9 @@
             " " + Model.SearchKeyword;
     }
 }
+@section TopCenter {
+    @Html.Partial("TopSearchHeader")
+}
 <h1>@ViewData["Title"]</h1>
 @helpOthersString <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute">@addYourOpinionString</yakor>
 <div class="row">

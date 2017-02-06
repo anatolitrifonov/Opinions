@@ -33,6 +33,7 @@ namespace BestFor.Fakes
             AddFakeDbSet<ResourceString, FakeResourceStrings>();
             AddFakeDbSet<AnswerFlag, FakeAnswerFlags>();
             AddFakeDbSet<AnswerDescriptionFlag, FakeAnswerDescriptionFlags>();
+            AddFakeDbSet<SearchEntry, FakeSearchEntries>();
 
             // Have to deal with users separately
             _fakeDbSets.Add(typeof(ApplicationUser), new FakeApplicationUsers());

@@ -27,6 +27,7 @@ namespace BestFor.Controllers
         private readonly IUserService _userService;
         private readonly IVoteService _voteService;
         private readonly IHelpItemService _helpItemService;
+        private readonly ISearchEntryService _searchEntryService;
         /// <summary>
         /// Logger
         /// </summary>
@@ -38,7 +39,8 @@ namespace BestFor.Controllers
 
         public HomeController(IAnswerService answerService, IAnswerDescriptionService answerDescriptionService,
             IResourcesService resourcesService, IUserService userService, IVoteService voteService,
-            ILoggerFactory loggerFactory, IOptions<AppSettings> appSettings, IHelpItemService helpItemService)
+            ILoggerFactory loggerFactory, IOptions<AppSettings> appSettings, IHelpItemService helpItemService,
+            ISearchEntryService searchEntryService)
         {
             _userService = userService;
             _answerService = answerService;
@@ -47,6 +49,7 @@ namespace BestFor.Controllers
             _voteService = voteService;
             _helpItemService = helpItemService;
             _appSettings = appSettings;
+            _searchEntryService = searchEntryService;
             _logger = loggerFactory.CreateLogger<HomeController>();
             _logger.LogInformation("created HomeController");
         }
@@ -63,6 +66,13 @@ namespace BestFor.Controllers
             // Use the search service if search phrase is passed
             if (!string.IsNullOrEmpty(searchPhrase) && !string.IsNullOrWhiteSpace(searchPhrase))
             {
+                // store the phrase that user typed.
+                _searchEntryService.AddSearchEntry(new SearchEntryDto
+                {
+                    SearchPhrase = searchPhrase,
+                    UserId = GetUserId(User, _userService)
+                });
+
                 model.TopToday.Answers = _answerService.FindLastAnswers(searchPhrase).ToList();
                 model.Keyword = searchPhrase;
                 model.HeaderText = _resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR) +

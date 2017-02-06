@@ -40,6 +40,8 @@
 
     // Built in ability to set initial state
     getInitialState: function () {
+        SuggestionPanel.writeDebug(this.props.debug, this.props.antiForgeryToken);
+
         // Invoked once before the component is mounted. The return value will be used as the initial value of this.state.
         // initial set of suggestions is blank
         return {
@@ -301,8 +303,9 @@
         if (this.xhr == null) this.xhr = new XMLHttpRequest();
         this.xhr.open("post", this.props.answersUrl, true);
         // add header for antiforgery validation if header was set as a property
-        if (this.props.antiForgeryHeaderName != null || this.props.antiForgeryHeaderName != "")
+        if (this.props.antiForgeryHeaderName != null || this.props.antiForgeryHeaderName != "") {
             this.xhr.setRequestHeader(this.props.antiForgeryHeaderName, this.props.antiForgeryToken);
+        }
         // handle received data.
         this.xhr.onload = function (e) { // e is of type XMLHttpRequestProgressEvent
             // if all good

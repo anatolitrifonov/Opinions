@@ -8,7 +8,8 @@
     ViewData["Title"] = resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
 
     // Get antiforgery tokens for request
-    var tokens = Xsrf.GetTokens(Context);
+    //var tokens = Xsrf.GetTokens(Context);
+    var tokens = Xsrf.GetAndStoreTokens(Context);
     string xsrfToken = tokens.RequestToken;
     string xsrfHeader = tokens.HeaderName;
 }
@@ -32,6 +33,7 @@
     @* left center section *@
     <div class="col-sm-9">
         <div class="text-center">
+            <input type="hidden" value="@xsrfToken" />
             @* This is the main ReactJS control working with answers. *@
             @Html.React("SuggestionPanel",
                 new

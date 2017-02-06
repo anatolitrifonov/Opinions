@@ -1,8 +1,10 @@
-﻿using System.Threading;
-using Microsoft.AspNetCore.Mvc;
-using BestFor.Dto;
+﻿using BestFor.Dto;
+using BestFor.Services.Services;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Threading;
 
 namespace BestFor.Controllers
 {
@@ -34,7 +36,6 @@ namespace BestFor.Controllers
         {
             get
             {
-                
                 return _culture ?? ParseCulture();
             }
         }
@@ -56,6 +57,10 @@ namespace BestFor.Controllers
 
         protected bool ParseAntiForgeryHeader(IAntiforgery antiforgery, CrudMessagesDto dto, HttpContext httpContext)
         {
+            //foreach(var header in httpContext.Request.Headers)
+            //{
+            //    System.Diagnostics.Trace.WriteLine(header.ToString());
+            //}
             var task = antiforgery.IsRequestValidAsync(httpContext);
             task.Wait();
             var validRequest = task.Result;
@@ -87,6 +92,21 @@ namespace BestFor.Controllers
             bool result;
             if (bool.TryParse(ReadUrlParameter(parameterName), out result)) return result;
             return false;
+        }
+
+        /// <summary>
+        /// Find userId from the currently logged in user using the userService.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userService"></param>
+        /// <returns></returns>
+        protected string GetUserId(ClaimsPrincipal user, IUserService userService)
+        {
+            if (!User.Identity.IsAuthenticated) return null;
+            if (userService == null) return null;
+            var userDto = userService.FindByUserName(User.Identity.Name);
+            if (userDto == null) return null;
+            return userDto.UserId;
         }
 
         #region Private Methods
