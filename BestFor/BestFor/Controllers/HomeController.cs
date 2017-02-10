@@ -75,8 +75,8 @@ namespace BestFor.Controllers
 
                 model.TopToday.Answers = _answerService.FindLastAnswers(searchPhrase).ToList();
                 model.Keyword = searchPhrase;
-                model.HeaderText = _resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR) +
-                    ": " + searchPhrase;
+                model.HeaderText = string.Format(_resourcesService.GetString(this.Culture, Lines.SEARCH_RESULTS_FOR), searchPhrase);
+                model.IsSearch = true;
             }
             else
             {

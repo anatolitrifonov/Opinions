@@ -6,6 +6,8 @@
     public class Lines
     {
         public static readonly string DESCRIPTION_WAS_ADDED_SUCCESSFULLY = "description_was_added_successfully";
+        public static readonly string OPINION_WAS_ADDED_SUCCESSFULLY = "opinion_was_added_successfully";
+        public static readonly string OPINION_WAS_NOT_ADDED = "opinion_was_not_added";
         public static readonly string THANK_YOU_FOR_VOTING = "thank_you_for_voting";
         public static readonly string THANK_YOU_FOR_FLAGING = "thank_you_for_flaging";
         public static readonly string THANK_YOU_FOR_IMPROVING = "thank_you_for_improving";

@@ -20,5 +20,8 @@ namespace BestFor.Dto
 
         // If set to true React controls will go into debug mode
         public bool DebugReactControls { get; set; } = false;
+
+        // Indicates if model contains search result
+        public bool IsSearch { get; set; } = false;
     }
 }

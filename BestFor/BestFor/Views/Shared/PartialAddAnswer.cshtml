@@ -1,0 +1,55 @@
+﻿@model BestFor.Models.AddAnswerViewModel
+
+@*Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@{
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "search_did_not_find",
+        "add_capital",
+        "best_start_capital",
+        "for_lower",
+        "is_lower"
+    });
+    string searchDidNotFind = localStrings[0];
+    string searchAdd = localStrings[1];
+    string searchAddAnswerHeader = string.Format(searchDidNotFind, Model.Phrase);
+    string stringBest = localStrings[2];
+    string stringFor = localStrings[3];
+    string stringIs = localStrings[4];
+}
+<div class="row">
+    <div class="col-md-offset-3 col-md-8">
+        <section>
+            <form asp-controller="CreateAnswer" asp-action="AddAnswer" method="post" class="form-horizontal" role="form">
+                <h3>@searchAddAnswerHeader</h3>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group required">
+                    <label class="col-md-2 control-label">@stringBest</label>
+                    <div class="col-md-6">
+                        <input asp-for="LeftWord" class="form-control" />
+                        <span asp-validation-for="LeftWord" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label class="col-md-2 control-label">@stringFor</label>
+                    <div class="col-md-6">
+                        <input asp-for="RightWord" class="form-control" />
+                        <span asp-validation-for="RightWord" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label class="col-md-2 control-label">@stringIs</label>
+                    <div class="col-md-6">
+                        <input asp-for="Phrase" class="form-control" value="@Model.Phrase" />
+                        <span asp-validation-for="Phrase" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-6">
+                        <button type="submit" class="btn btn-default btn-lg">@searchAdd</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

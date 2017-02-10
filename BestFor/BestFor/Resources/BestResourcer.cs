@@ -101,6 +101,18 @@ namespace BestFor.Resources
 
         public static string AnnotationValidationMessageUrl { get { return GetString("AnnotationValidationMessageUrl"); } }
 
+        public static string AnnotationErrorMessageRequiredLeftWord { get { return GetString("AnnotationErrorMessageRequiredLeftWord"); } }
+
+        public static string AnnotationErrorMessageStringLength200X3LeftWord { get { return GetString("AnnotationErrorMessageStringLength200X3LeftWord"); } }
+
+        public static string AnnotationErrorMessageRequiredRightWord { get { return GetString("AnnotationErrorMessageRequiredRightWord"); } }
+
+        public static string AnnotationErrorMessageStringLength200X3RightWord { get { return GetString("AnnotationErrorMessageStringLength200X3RightWord"); } }
+
+        public static string AnnotationErrorMessageRequiredPhrase { get { return GetString("AnnotationErrorMessageRequiredPhrase"); } }
+
+        public static string AnnotationErrorMessageStringLength200X3Phrase { get { return GetString("AnnotationErrorMessageStringLength200X3Phrase"); } }
+
         private static string GetString(string key)
         {
             // First get the http context

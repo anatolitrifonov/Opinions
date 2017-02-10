@@ -301,6 +301,14 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 		N'Описание добавлено успешно.', getDate());
 GO
 
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'opinion_was_added_successfully')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'opinion_was_added_successfully',
+		N'Opinion was added successfully.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'opinion_was_added_successfully')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'opinion_was_added_successfully',
+		N'Мнение добавлено успешно.', getDate());
+GO
+
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'thank_you_for_voting')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'thank_you_for_voting',
 		N'Thank you for voting!', getDate());
@@ -507,11 +515,11 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'search_results_for')
-	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'search_results_for',
-		N'Search results', getDate());
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'search_results_for', N'', getDate());
+update ResourceStrings set Value = N'Best opinions found for: {0}' where CultureName = 'en-US' and [Key] = 'search_results_for'
 if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'search_results_for')
-	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'search_results_for',
-		N'Результаты поиска', getDate());
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'search_results_for', N'', getDate());
+update ResourceStrings set Value = N'Лучшие мнения для: {0}' where CultureName = 'ru-RU' and [Key] = 'search_results_for'
 GO
 
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'help_others')
@@ -727,4 +735,22 @@ if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key
 if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'help_title')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'help_title',
 		N'Полезные Вопросы и Ответы.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'search_did_not_find')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'search_did_not_find', N'', getDate());
+update ResourceStrings set Value = N'You are lucky! No one added opinion for "{0}"! Be the first! What is "{0}" best for?'
+	where CultureName = 'en-US' and [Key] = 'search_did_not_find'
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'search_did_not_find')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'search_did_not_find', N'', getDate());
+update ResourceStrings set Value = N'Вам повезло! Никто не добавил мнение для "{0}"! Будьте первым! Для чего "{0}" подходит лучше всего?'
+	where CultureName = 'ru-RU' and [Key] = 'search_did_not_find'
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'opinion_was_not_added')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'opinion_was_not_added',
+		N'Opinion was not added. Reason: {0}.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'opinion_was_not_added')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'opinion_was_not_added',
+		N'Мнение не было добавлено. Причина: {0}.', getDate());
 GO

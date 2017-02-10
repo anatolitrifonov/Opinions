@@ -271,3 +271,51 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationValidationMessageUrl',
 		N'Формат URL.', getDate());
 GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationErrorMessageRequiredLeftWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationErrorMessageRequiredLeftWord',
+		N'"Best" is required.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'AnnotationErrorMessageRequiredLeftWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationErrorMessageRequiredLeftWord',
+		N'"Лучший" обязателен.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationErrorMessageStringLength200X3LeftWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationErrorMessageStringLength200X3LeftWord',
+		N'3 to 200 characters.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'AnnotationErrorMessageStringLength200X3LeftWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationErrorMessageStringLength200X3LeftWord',
+		N'от 3 до 200 символов.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationErrorMessageRequiredRightWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationErrorMessageRequiredRightWord',
+		N'"For" is required.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'AnnotationErrorMessageRequiredRightWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationErrorMessageRequiredRightWord',
+		N'"Для" обязателен.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationErrorMessageStringLength200X3RightWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationErrorMessageStringLength200X3RightWord',
+		N'3 to 200 characters.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'AnnotationErrorMessageStringLength200X3RightWord')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationErrorMessageStringLength200X3RightWord',
+		N'от 3 до 200 символов.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationErrorMessageRequiredPhrase')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationErrorMessageRequiredPhrase',
+		N'"Phrase" is required.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'AnnotationErrorMessageRequiredPhrase')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationErrorMessageRequiredPhrase',
+		N'"Фраза" обязательна.', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'AnnotationErrorMessageStringLength200X3Phrase')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'AnnotationErrorMessageStringLength200X3Phrase',
+		N'3 to 200 characters.', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'AnnotationErrorMessageStringLength200X3Phrase')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'AnnotationErrorMessageStringLength200X3Phrase',
+		N'от 3 до 200 символов.', getDate());
+GO
