@@ -1,0 +1,29 @@
+﻿@model IEnumerable<BestFor.Dto.HelpItemDto>
+@using BestFor.Services
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@* Culture is placed into view bag by action filter *@
+@{
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "contribute_capital",
+        "guest_posting",
+        "write_for_us"
+    });
+    string searchContribute = localStrings[0];
+    string searchGuestPosting = localStrings[1];
+    string searchWriteForUs = localStrings[2];
+
+    ViewData["Title"] = searchGuestPosting;
+
+}
+@section TopCenter {
+@Html.Partial("PartialTopSearchHeader")
+}
+<h2>@searchGuestPosting</h2>
+<p>Hello Writers!</p>
+<p>Thanks for visiting.</p>
+<p>We are bulding a community of opinion sharers. Posting is open even anonymously at the moment.</p>
+<p>We want Apinioner to be a great place to start your writing and see if your thoughts resonate with people.</p>
+<p>You can post under any name or nick.</p>
+<p>You do not have to register but it is advisable if you want your content linked to your name/profile.</p>
+<p>Please see <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="WriteForUs">@searchWriteForUs</yakor>.</p>

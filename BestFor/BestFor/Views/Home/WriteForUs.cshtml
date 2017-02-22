@@ -1,0 +1,44 @@
+﻿@model IEnumerable<BestFor.Dto.HelpItemDto>
+@using BestFor.Services
+@* Inject the service that allows searching for localized strings *@
+@inject BestFor.Services.Services.IResourcesService resourcesService
+@* Culture is placed into view bag by action filter *@
+@{
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+        "contribute_capital",
+        "write_for_apinioner",
+        "register_capital"
+     });
+    string searchContribute = localStrings[0];
+    ViewData["Title"] = localStrings[1];
+    string searchRegister = localStrings[2];
+
+}
+@section TopCenter {
+    @Html.Partial("PartialTopSearchHeader")
+}
+<h2>Write for Apinioner</h2>
+<p>Hello Writers!</p>
+<p>Thanks for visiting.</p>
+<p>&quot;Write for us&quot; is a great idea and we went through different versions of how it is done.
+    None of them appealed to us and we are working on our own. We just started and we will accept any help we can get.</p>
+<p>We want Apinioner to be a great place to start your writing and see if your thoughts resonate with people.</p>
+<p>You can post under any name or nick.</p>
+<p>You do not have to
+    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Account" y-action="Register">@searchRegister</yakor>
+    but it is advisable if you want your content linked to your name/profile.</p>
+<p>You can create profile with your name, web site, contact information, avatar
+    and expose only information that you want to expose.</p>
+<p>Content starts with &quot;opinion&quot; in the format of &quot;best &lt;something&gt; for &lt;something&gt;
+    is &lt;something&gt;&quot;. Example: Best gift for geeks is useful gift. Great way to catch attention.
+    Add an awesome description to your opinion. See if it catches attention!
+    Visit <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+                 >@searchContribute</yakor> page to start.</p>
+<p>Feel free to share your thoughts on any opinion you see on the site.</p>
+<p>Registered users can vote for you opinion and descriptions.</p>
+<p>Get votes, write more content, become the top Apinioner!</p>
+<h3>Restrictions.</h3>
+<p>Images and web links are not yet allowed in the posts. We are all about content. Images are a bit non trivial to review.</p>
+<p>No other restrictions.</p>
+<p>Feel free to contact us with any questions.</p>
+

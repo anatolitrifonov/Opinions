@@ -235,6 +235,22 @@ namespace BestFor
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                        name: "WriteForUs",
+                        template: "{language}-{country}/write-for-us",
+                        defaults: new { controller = "Home", action = "WriteForUs" });
+                routes.MapRoute(
+                        name: "WriteForUsWithCulture",
+                        template: "write-for-us",
+                        defaults: new { controller = "Home", action = "WriteForUs" });
+                routes.MapRoute(
+                        name: "WriteForUsHome",
+                        template: "{language}-{country}/Home/write-for-us",
+                        defaults: new { controller = "Home", action = "WriteForUs" });
+                routes.MapRoute(
+                        name: "WriteForUsHomeWithCulture",
+                        template: "Home/write-for-us",
+                        defaults: new { controller = "Home", action = "WriteForUs" });
                 // This route checks all the requests to see if this is direct link to a content
                 // Constraint will check if {content} is ok to be a "content"
                 // Basically it will check if content starts with best and is in format "best<something>for<something>is<something>"

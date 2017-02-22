@@ -164,6 +164,24 @@ namespace BestFor.Controllers
         }
 
         /// <summary>
+        /// Render WriteForUs page.
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult WriteForUs()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Render Guest posting page.
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GuestPosting()
+        {
+            return View();
+        }
+
+        /// <summary>
         /// Fill in answer details for content page.
         /// Reuse the logic between controllers. Also used by AnswerActionController.
         /// </summary>

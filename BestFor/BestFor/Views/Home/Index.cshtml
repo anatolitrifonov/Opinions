@@ -4,11 +4,20 @@
 @{
     @* Culture is placed into view bag by action filter *@
     @* This is the "normal" way of getting a localized string value *@
+    string[] localStrings = resourcesService.GetStrings(ViewBag.BestForCulture, new string[] {
+            "global_site_index_title",
+            "search_for_opinion",
+            "contribute_capital",
+            "search_capital",
+            "add_your_opinion"
+         });
+
     // Set the title
-    ViewData["Title"] = resourcesService.GetString(ViewBag.BestForCulture, "global_site_index_title");
-    var searchFor = resourcesService.GetString(ViewBag.BestForCulture, "search_for_opinion");
-    var searchContribute = resourcesService.GetString(ViewBag.BestForCulture, "contribute_capital");
-    var searchButton = resourcesService.GetString(ViewBag.BestForCulture, "search_capital");
+    ViewData["Title"] = localStrings[0];
+    var searchFor = localStrings[1];
+    var searchContribute = localStrings[2];
+    var searchButton = localStrings[3];
+    var addYourOpinion = localStrings[4];
 }
 @section MetaKeyword {
     <meta name="keywords" content="best opinions on thousands of questions and best products" />
@@ -33,26 +42,55 @@
 }
 <div class="row best-theme-color">
     @* Second part of the banner message *@
+    @* If this is search then show short form. *@
+    @* If this is not a search then show long form not to confuse first visitor with too much info. *@
     <div class="text-center best-center-light-text">
         <form method="get" class="form-horizontal" role="form">
-            <div class="row">
-                <div class="col-md-offset-1 col-md-8">
-                    <div class="input-group input-group-lg">
-                        <input type="text" class="form-control" name="searchPhrase" placeholder="@searchFor">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit">@searchButton</button>
-                        </span>
+            @if (Model.IsSearch)  // short form
+            {
+                <div class="row">
+                    <div class="col-md-offset-1 col-md-8">
+                        <div class="input-group input-group-lg">
+                            <input type="text" class="form-control" name="searchPhrase" placeholder="@searchFor">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">@searchButton</button>
+                            </span>
+                        </div>
+                    </div>
+                    @* Add some space if this is first page load. Let's not confuse people with information. *@
+                    <div class="col-md-2">
+                        <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+                               y-class="btn btn-default btn-lg">@searchContribute</yakor>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
-                           y-class="btn btn-default btn-lg">@searchContribute</yakor>
+            }
+            else // long form
+            {
+                <div class="row"><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-8">
+                        <div class="input-group input-group-lg">
+                            <input type="text" class="form-control" name="searchPhrase" placeholder="@searchFor">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">@searchButton</button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </form>
-        <br />
-        <br />
-    </div>
+                <div class="row"><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+                <div class="row">
+                        <div class="col-md-offset-4 col-md-4">
+                            <yakor y-culture="@this.ViewBag.BestForCulture" y-controller="Home" y-action="Contribute"
+                                   y-class="btn btn-default btn-lg">@addYourOpinion</yakor>
+                    </div>
+                </div>
+                <div class="row"><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+            }
+            </form>
+            <div class="row"><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
+            <br />
+            <br />
+        </div>
     @if (!string.IsNullOrEmpty(Model.Reason) && !string.IsNullOrWhiteSpace(Model.Reason))
     {
         @* Second part of the banner message *@

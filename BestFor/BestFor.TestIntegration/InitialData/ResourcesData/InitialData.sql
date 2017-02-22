@@ -727,8 +727,6 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 		N'Выход', getDate());
 GO
 
--- delete from ResourceStrings where [key] in ('help_others', 'add_your_opinion', 'if_search_is_not_sufficient')
-
 if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'help_title')
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'help_title',
 		N'Helpful Questions and Answers.', getDate());
@@ -754,3 +752,27 @@ if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key
 	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'opinion_was_not_added',
 		N'Мнение не было добавлено. Причина: {0}.', getDate());
 GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'write_for_us')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'write_for_us', N'Write for us', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'write_for_us')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'write_for_us', N'Ищем авторов', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'write_for_apinioner')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'write_for_apinioner', N'Write for Apinioner', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'write_for_apinioner')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'write_for_apinioner', N'Ищем авторов для Apinioner', getDate());
+GO
+
+if not exists(select * from ResourceStrings where CultureName = 'en-US' and [Key] = 'guest_posting')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('en-US', 'guest_posting', N'Guest Posting', getDate());
+if not exists(select * from ResourceStrings where CultureName = 'ru-RU' and [Key] = 'guest_posting')
+	insert ResourceStrings(CultureName, [Key], Value, DateAdded) values('ru-RU', 'guest_posting', N'Гостевой Блоггинг', getDate());
+GO
+
+
+
+
+
+
